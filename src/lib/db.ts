@@ -113,11 +113,12 @@ const DEFAULT_PRODUCTS: Product[] = [
     name: 'Plan Medio',
     price: 5990,
     badge: 'Más Popular',
-    subtitle: 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
-    description: 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
+    subtitle: 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
+    description: 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
     features: [
       'Todo lo del Plan Básico',
-      'Hasta 20 Fotos',
+      '✨ Tarjeta con 145 Personajes Temáticos',
+      'Hasta 20 Fotos en HD',
       'Música de fondo personalizada (YouTube)',
       '6 Estilos de galería (Polaroid, Carrete)',
       'Carta de amor interactiva'
@@ -130,8 +131,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     subtitle: 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
     description: 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
     features: [
-      'Todo lo del Plan Medio',
-      'Hasta 30 Fotos',
+      'Todo lo del Plan Medio (incluye 145 personajes)',
+      'Hasta 30 Fotos en HD',
       'Video de YouTube dedicado',
       'Línea de tiempo con fotos de hitos',
       'Rincón secreto con PIN, Propuesta y Mapa'

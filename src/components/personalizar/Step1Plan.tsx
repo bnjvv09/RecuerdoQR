@@ -40,12 +40,13 @@ export default function Step1Plan({
     {
       id: 'medium',
       name: mediumProd?.name || 'Plan Medio',
-      subtitle: mediumProd?.subtitle || 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
+      subtitle: mediumProd?.subtitle || 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
       price: mediumProd?.price || 5990,
-      description: mediumProd?.description || 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
+      description: mediumProd?.description || 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
       features: mediumProd?.features || [
         'Todo lo del Plan Básico',
-        'Hasta 20 Fotos',
+        '✨ Tarjeta con 145 Personajes Temáticos',
+        'Hasta 20 Fotos en HD',
         'Música de fondo personalizada (YouTube)',
         '6 Estilos de galería (Polaroid, Carrete)',
         'Carta de amor interactiva'
@@ -60,8 +61,8 @@ export default function Step1Plan({
       price: premiumProd?.price || 7990,
       description: premiumProd?.description || 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
       features: premiumProd?.features || [
-        'Todo lo del Plan Medio',
-        'Hasta 30 Fotos',
+        'Todo lo del Plan Medio (incluye 145 personajes)',
+        'Hasta 30 Fotos en HD',
         'Video de YouTube dedicado',
         'Línea de tiempo con fotos de hitos',
         'Rincón secreto con PIN, Propuesta y Mapa'
