@@ -1636,6 +1636,76 @@ export default function Step4Preview({
         </div>
 
       </div>
+
+      {/* 📜 MODAL DE CARTA ROMÁNTICA EXPANDIDA EN PANTALLA COMPLETA */}
+      {isPreviewLetterOpen && (
+        <div 
+          onClick={() => setIsPreviewLetterOpen(false)}
+          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-lg bg-[#fffdfa] rounded-[36px] p-6 sm:p-8 shadow-2xl border-2 border-[#e5d5be] text-left space-y-5 max-h-[88vh] overflow-y-auto animate-scale-up cursor-default"
+            style={{ fontFamily: activeFontFamily }}
+          >
+            {/* Header del Pergamino */}
+            <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: `${customColors.primary}30` }}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md text-lg shrink-0" style={{ backgroundColor: customColors.primary }}>
+                  💌
+                </div>
+                <div>
+                  <h3 className="font-serif font-extrabold text-base sm:text-lg" style={{ color: customColors.primary }}>
+                    De mi corazón para ti ❤️
+                  </h3>
+                  <p className="text-[11px] text-gray-500 font-light">
+                    Una dedicatoria especial escrita con todo el amor
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsPreviewLetterOpen(false)}
+                className="px-3.5 py-1.5 rounded-full text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition cursor-pointer flex items-center gap-1 shrink-0"
+              >
+                <span>✉️</span>
+                <span>Guardar</span>
+              </button>
+            </div>
+
+            {/* Cuerpo de la Carta con lectura amplia, cómoda y tipografía grande */}
+            <div className="space-y-4 py-2 bg-amber-50/20 p-4 sm:p-6 rounded-2xl border border-amber-100/60 shadow-inner">
+              <h4 className="font-serif font-bold text-sm sm:text-base" style={{ color: customColors.primary }}>
+                Para {partnerName || 'Mi Amor'}:
+              </h4>
+              <p className="text-sm sm:text-base font-serif italic leading-relaxed whitespace-pre-line text-gray-800 font-light">
+                {historyText || message || 'Eres lo más hermoso que me ha pasado en la vida. Cada instante a tu lado es un regalo que atesoro en mi corazón...'}
+              </p>
+            </div>
+
+            {/* Pie de Firma y Fecha */}
+            <div className="pt-3 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2" style={{ borderColor: `${customColors.primary}20` }}>
+              <span className="text-xs font-mono text-gray-400">
+                📅 Fecha Especial: <strong>{specialDate || 'Para Siempre'}</strong>
+              </span>
+              <span className="text-sm font-serif font-bold italic" style={{ color: customColors.primary }}>
+                Con todo mi amor, {userName || 'Alguien que te ama'} ✨
+              </span>
+            </div>
+
+            {/* Botón Grande de Cerrar al pie */}
+            <button
+              type="button"
+              onClick={() => setIsPreviewLetterOpen(false)}
+              className="w-full py-3.5 text-white font-bold rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer hover:opacity-90"
+              style={{ backgroundColor: customColors.primary }}
+            >
+              <span>✉️ Guardar carta en el sobre y continuar</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
