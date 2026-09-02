@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { updateOrderPayment } from '@/lib/db';
+import { updateOrderPayment, getOrderById, getExperienceByOrderId } from '@/lib/db';
+import { sendCustomerConfirmationEmail, sendAdminSalesNotification } from '@/lib/emailService';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
@@ -55,10 +56,35 @@ export async function POST(request: Request) {
         const orderId = paymentData.external_reference;
         const status = paymentData.status;
 
-        // Si el estado es aprobado, actualizar a pagado
+        // Si el estado es aprobado, actualizar a pagado y despachar emails automáticos
         if (status === 'approved' && orderId) {
           await updateOrderPayment(orderId, String(paymentId), 'paid');
           console.log(`Order ${orderId} successfully marked as PAID via verified webhook for payment ${paymentId}`);
+
+          // Enviar confirmación al cliente y alerta al administrador
+          try {
+            const order = await getOrderById(orderId);
+            const exp = await getExperienceByOrderId(orderId);
+            if (order && exp) {
+              const emailPayload = {
+                orderId: order.id,
+                customerName: order.customer_name || exp.user_name,
+                customerEmail: order.customer_email,
+                customerPhone: order.customer_phone,
+                productName: order.product?.name || `Plan ${(order.product_id || 'basic').toUpperCase()}`,
+                total: order.total,
+                slug: exp.slug,
+                partnerName: exp.partner_name,
+                userName: exp.user_name
+              };
+              await Promise.allSettled([
+                sendCustomerConfirmationEmail(emailPayload),
+                sendAdminSalesNotification(emailPayload)
+              ]);
+            }
+          } catch (emailErr) {
+            console.error('Error dispatching automated emails from webhook:', emailErr);
+          }
         }
       }
     }
