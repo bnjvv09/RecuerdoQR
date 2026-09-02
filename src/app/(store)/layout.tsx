@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WhatsAppFloatingButton from '@/components/common/WhatsAppFloatingButton';
 
 export default function StoreLayout({
   children,
@@ -11,6 +12,7 @@ export default function StoreLayout({
       <Navbar />
       <main className="flex-grow">{children}</main>
       <Footer />
+      <WhatsAppFloatingButton />
     </div>
   );
 }

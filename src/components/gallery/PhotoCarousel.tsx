@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
@@ -45,7 +46,15 @@ export default function PhotoCarousel({
             onClick={prevPhoto}
             className="absolute -left-12 sm:-left-8 w-44 aspect-[3/4] rounded-2xl overflow-hidden opacity-40 scale-85 blur-[0.5px] cursor-pointer shadow-md border border-gray-200 transition-all z-0"
           >
-            <img src={photos[prevIndex]?.url} alt="Anterior" className="w-full h-full object-cover" />
+            {photos[prevIndex]?.url && (
+              <Image 
+                src={photos[prevIndex].url} 
+                alt="Anterior" 
+                fill 
+                sizes="180px"
+                className="object-cover" 
+              />
+            )}
           </div>
         )}
 
@@ -63,12 +72,17 @@ export default function PhotoCarousel({
             >
               {/* Photo Area */}
               <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 relative shadow-inner">
-                <img
-                  src={photos[currentIndex]?.url}
-                  alt={photos[currentIndex]?.caption || `Foto ${currentIndex + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                {photos[currentIndex]?.url && (
+                  <Image
+                    src={photos[currentIndex].url}
+                    alt={photos[currentIndex]?.caption || `Foto ${currentIndex + 1}`}
+                    fill
+                    sizes="300px"
+                    priority
+                    className="object-cover group-hover:scale-105 transition duration-300"
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center z-10">
                   <div className="p-2 rounded-full bg-white/80 backdrop-blur-sm text-gray-800 shadow">
                     <ZoomIn className="w-4 h-4" />
                   </div>
@@ -94,7 +108,15 @@ export default function PhotoCarousel({
             onClick={nextPhoto}
             className="absolute -right-12 sm:-right-8 w-44 aspect-[3/4] rounded-2xl overflow-hidden opacity-40 scale-85 blur-[0.5px] cursor-pointer shadow-md border border-gray-200 transition-all z-0"
           >
-            <img src={photos[nextIndex]?.url} alt="Siguiente" className="w-full h-full object-cover" />
+            {photos[nextIndex]?.url && (
+              <Image 
+                src={photos[nextIndex].url} 
+                alt="Siguiente" 
+                fill 
+                sizes="180px"
+                className="object-cover" 
+              />
+            )}
           </div>
         )}
 

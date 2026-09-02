@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { 
   Heart, 
   Trash2, 
@@ -1235,12 +1236,12 @@ export default function Step2Personalizacion({
                           {photos.length > 0 && (
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-56 overflow-y-auto pr-1">
                               {photos.map((p, pIdx) => (
-                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-gray-200 shadow-2xs">
-                                  <img src={p.previewUrl} alt={`Foto ${pIdx + 1}`} className="w-full h-24 object-cover" />
+                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-gray-200 shadow-2xs h-24">
+                                  <Image src={p.previewUrl} alt={`Foto ${pIdx + 1}`} fill sizes="120px" className="object-cover" />
                                   <button
                                     type="button"
                                     onClick={() => removePhoto(pIdx)}
-                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer"
+                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10"
                                   >
                                     ×
                                   </button>
@@ -1249,7 +1250,7 @@ export default function Step2Personalizacion({
                                     value={p.caption}
                                     onChange={(e) => updatePhotoCaption(pIdx, e.target.value)}
                                     placeholder="Pie de foto..."
-                                    className="w-full text-[9px] px-1.5 py-1 bg-white/95 border-t border-gray-200"
+                                    className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] px-1.5 py-0.5 outline-none placeholder-gray-300 font-light z-10"
                                   />
                                 </div>
                               ))}
@@ -1310,12 +1311,12 @@ export default function Step2Personalizacion({
                           {secondaryPhotos.length > 0 && (
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-56 overflow-y-auto pr-1">
                               {secondaryPhotos.map((p, pIdx) => (
-                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-teal-200 shadow-2xs">
-                                  <img src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} className="w-full h-24 object-cover" />
+                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-teal-200 shadow-2xs h-24">
+                                  <Image src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} fill sizes="120px" className="object-cover" />
                                   <button
                                     type="button"
                                     onClick={() => removeSecondaryPhoto && removeSecondaryPhoto(pIdx)}
-                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer"
+                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10"
                                   >
                                     ×
                                   </button>
@@ -1449,11 +1450,11 @@ export default function Step2Personalizacion({
                                 <div className="pt-1 flex items-center gap-3">
                                   {m.previewUrl ? (
                                     <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-indigo-200 shadow-2xs group">
-                                      <img src={m.previewUrl} alt={m.title || 'Foto hito'} className="w-full h-full object-cover" />
+                                      <Image src={m.previewUrl} alt={m.title || 'Foto hito'} fill sizes="64px" className="object-cover" />
                                       <button
                                         type="button"
                                         onClick={() => updateMilestone(mIdx, 'previewUrl', '')}
-                                        className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] cursor-pointer shadow-md"
+                                        className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] cursor-pointer shadow-md z-10"
                                       >
                                         ×
                                       </button>

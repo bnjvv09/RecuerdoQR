@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -95,10 +96,13 @@ export default function PhotoLightbox({
           onClick={(e) => e.stopPropagation()}
           className="max-w-4xl max-h-[82vh] flex flex-col items-center justify-center relative"
         >
-          <img
+          <Image
             src={currentPhoto.url}
             alt={currentPhoto.caption || `Foto ${currentIndex + 1}`}
-            className="max-w-full max-h-[72vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+            width={1200}
+            height={900}
+            priority
+            className="max-w-full max-h-[72vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/10"
           />
 
           {currentPhoto.caption && (

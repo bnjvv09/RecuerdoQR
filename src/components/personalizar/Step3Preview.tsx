@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Smartphone, Heart, Sparkles, Music, MapPin, Gift, Lock } from 'lucide-react';
 import PhotoGallery from '@/components/gallery/PhotoGallery';
 import { PhotoStyle } from '@/types/gallery';
@@ -224,7 +225,9 @@ export default function Step3Preview({
                           <h4 className="text-[11px] font-bold text-gray-900">{m.title}</h4>
                           <p className="text-[9px] text-gray-600 font-light">{m.description}</p>
                           {m.previewUrl && (
-                            <img src={m.previewUrl} alt={m.title} className="w-full h-20 object-cover rounded-lg mt-1" />
+                            <div className="relative w-full h-20 rounded-lg overflow-hidden mt-1">
+                              <Image src={m.previewUrl} alt={m.title} fill sizes="260px" className="object-cover" />
+                            </div>
                           )}
                         </div>
                       ))}

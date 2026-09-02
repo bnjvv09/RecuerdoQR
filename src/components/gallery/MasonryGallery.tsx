@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ZoomIn } from 'lucide-react';
 import { PhotoGalleryProps } from '@/types/gallery';
@@ -44,14 +45,16 @@ export default function MasonryGallery({
                 onClick={() => onPhotoClick?.(originalIndex)}
                 className={`w-full ${aspect} rounded-2xl overflow-hidden bg-gray-100 shadow-md border border-gray-150 relative group cursor-pointer`}
               >
-                <img
+                <Image
                   src={p.url}
                   alt={p.caption || `Foto ${originalIndex + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  fill
+                  sizes="(max-width: 768px) 50vw, 300px"
+                  className="object-cover group-hover:scale-105 transition duration-300"
                 />
 
                 {/* Hover overlay with caption & zoom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2.5 flex flex-col justify-between">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2.5 flex flex-col justify-between z-10">
                   <div className="self-end p-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white">
                     <ZoomIn className="w-3.5 h-3.5" />
                   </div>
@@ -84,14 +87,16 @@ export default function MasonryGallery({
                 onClick={() => onPhotoClick?.(originalIndex)}
                 className={`w-full ${aspect} rounded-2xl overflow-hidden bg-gray-100 shadow-md border border-gray-150 relative group cursor-pointer`}
               >
-                <img
+                <Image
                   src={p.url}
                   alt={p.caption || `Foto ${originalIndex + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  fill
+                  sizes="(max-width: 768px) 50vw, 300px"
+                  className="object-cover group-hover:scale-105 transition duration-300"
                 />
 
                 {/* Hover overlay with caption & zoom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2.5 flex flex-col justify-between">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2.5 flex flex-col justify-between z-10">
                   <div className="self-end p-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white">
                     <ZoomIn className="w-3.5 h-3.5" />
                   </div>

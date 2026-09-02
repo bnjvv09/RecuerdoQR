@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, Suspense } from 'react';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getExperiences, getOrders, Order, Experience } from '@/lib/db';
 import QRCode from 'qrcode';
@@ -262,9 +263,13 @@ function GraciasContent() {
               <div className="flex justify-center my-1">
                 <div className="p-2.5 bg-white rounded-2xl border border-gray-200 shadow-sm inline-block">
                   {qrDataUrl ? (
-                    <img
+                    <Image
                       src={qrDataUrl}
                       alt="Código QR de Amor"
+                      width={160}
+                      height={160}
+                      unoptimized
+                      priority
                       className="w-36 h-36 sm:w-40 sm:h-40 mx-auto object-contain rounded-lg"
                     />
                   ) : (

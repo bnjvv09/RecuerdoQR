@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Experience } from '@/lib/db';
 import { 
   X, 
@@ -92,7 +93,11 @@ export default function AdminEditExperienceModal({
       );
       const conf = experience.config || {};
       setBirthdayWishMessage(conf.birthdayWishMessage || '');
-      setBirthdayBalloons(conf.birthdayBalloons || ['¡Mucho Éxito y Alegría!', '¡Salud y Risas Siempre!', '¡Te Queremos Infinito!']);
+      setBirthdayBalloons(
+        Array.isArray(conf.birthdayBalloons) && conf.birthdayBalloons.length >= 3
+          ? [String(conf.birthdayBalloons[0]), String(conf.birthdayBalloons[1]), String(conf.birthdayBalloons[2])]
+          : ['¡Mucho Éxito y Alegría!', '¡Salud y Risas Siempre!', '¡Te Queremos Infinito!']
+      );
       setScratchSecretMessage(conf.scratchSecretMessage || '');
       setScratchUltrasoundUrl(conf.scratchUltrasoundUrl || '');
       setPollQuestion(conf.pollQuestion || '¿Qué crees que será? 🍼');
@@ -394,7 +399,9 @@ export default function AdminEditExperienceModal({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto p-1">
               {photos.map((p, idx) => (
                 <div key={idx} className="bg-white p-2 rounded-xl border border-gray-250 relative space-y-1 group">
-                  <img src={p.url} alt="Foto" className="w-full h-20 object-cover rounded-lg" />
+                  <div className="relative w-full h-20 rounded-lg overflow-hidden">
+                    <Image src={p.url} alt="Foto" fill sizes="120px" className="object-cover" />
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleRemovePhoto(idx)}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { 
   Sparkles, 
   Smartphone, 
@@ -528,7 +529,9 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
                                 {m.previewUrl ? (
                                   <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-gray-200 justify-between">
                                     <div className="flex items-center gap-2">
-                                      <img src={m.previewUrl} alt="Hito" className="w-7 h-7 object-cover rounded" />
+                                      <div className="relative w-7 h-7 rounded overflow-hidden">
+                                        <Image src={m.previewUrl} alt="Hito" fill sizes="28px" className="object-cover" />
+                                      </div>
                                       <span className="text-[8px] text-emerald-700 font-bold">✓ Foto adjunta</span>
                                     </div>
                                     <button
@@ -715,7 +718,15 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
               ¡Experiencia Creada con Éxito!
             </h3>
 
-            <img src={createdResult.qrDataUrl} alt="QR" className="w-36 h-36 mx-auto rounded-xl border border-gray-200 p-1.5 shadow-inner" />
+            <Image 
+              src={createdResult.qrDataUrl} 
+              alt="QR" 
+              width={144} 
+              height={144} 
+              unoptimized
+              priority
+              className="w-36 h-36 mx-auto rounded-xl border border-gray-200 p-1.5 shadow-inner" 
+            />
 
             <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs font-mono truncate">
               {createdResult.url}

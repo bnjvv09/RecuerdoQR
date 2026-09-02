@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getProducts, Product, getThemes, Theme, getCreatedExperiencesCount } from '@/lib/db';
@@ -251,10 +252,13 @@ export default function LandingPage() {
 
                     <div className="w-full aspect-[4/3] rounded-xl bg-rose-50 overflow-hidden relative flex items-center justify-center border border-rose-100/50">
                       {/* Simulated couples picture inside phone */}
-                      <img 
+                      <Image 
                         src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&auto=format&fit=crop" 
                         alt="Couples mockup" 
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="180px"
+                        priority
+                        className="object-cover"
                       />
                     </div>
                   </div>
@@ -262,11 +266,13 @@ export default function LandingPage() {
               </motion.div>
 
               {/* Decorative Rose Flower Image behind or next to mockups */}
-              <div className="absolute right-[-40px] bottom-[-20px] w-36 h-36 opacity-90 pointer-events-none select-none z-0 hidden sm:block">
-                <img 
+              <div className="absolute right-[-40px] bottom-[-20px] w-36 h-36 opacity-90 pointer-events-none select-none z-0 hidden sm:block relative">
+                <Image 
                   src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop" 
                   alt="Decorative Rose" 
-                  className="w-full h-full object-contain mix-blend-multiply opacity-25"
+                  fill
+                  sizes="144px"
+                  className="object-contain mix-blend-multiply opacity-25"
                 />
               </div>
 

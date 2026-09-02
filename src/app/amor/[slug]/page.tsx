@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { getExperienceBySlug, Experience, Photo, Milestone, ExperienceSection, ensureExperienceSections } from '@/lib/db';
@@ -906,12 +907,18 @@ export default function AmorExperiencePage() {
                         {experience.config?.scratchSecretMessage || '¡Sorpresa! ¡Viene un Bebé en Camino!'}
                       </h4>
                       {experience.config?.scratchUltrasoundUrl && (
-                        <img 
-                          src={experience.config.scratchUltrasoundUrl} 
-                          alt="Ecografía" 
-                          className="w-full h-36 object-cover rounded-xl mt-1 shadow-xs border" 
+                        <div 
+                          className="relative w-full h-36 rounded-xl overflow-hidden mt-1 shadow-xs border"
                           style={{ borderColor: `${(experience.config?.customColors?.surprisePrimary || experience.config?.customColors?.primary || primaryColor || '#0284c7')}40` }}
-                        />
+                        >
+                          <Image 
+                            src={experience.config.scratchUltrasoundUrl} 
+                            alt="Ecografía" 
+                            fill
+                            sizes="(max-width: 768px) 100vw, 400px"
+                            className="object-cover" 
+                          />
+                        </div>
                       )}
                     </div>
                   )}
@@ -1785,7 +1792,9 @@ export default function AmorExperiencePage() {
                             </div>
                             <p className="text-xs text-gray-650 leading-relaxed font-light">{m.description}</p>
                             {m.image_url && (
-                              <img src={m.image_url} alt={m.title} className="w-full aspect-[16/9] object-cover rounded-lg border border-gray-100" />
+                              <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden border border-gray-100">
+                                <Image src={m.image_url} alt={m.title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover" />
+                              </div>
                             )}
                           </div>
                         </div>

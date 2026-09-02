@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { 
   Heart, 
   Sparkles, 
@@ -599,7 +600,9 @@ export default function Step4Preview({
                     {scratchSecretMessage}
                   </h4>
                   {scratchUltrasoundUrl && (
-                    <img src={scratchUltrasoundUrl} alt="Ecografía" className="w-full h-28 object-cover rounded-xl mt-1 shadow-xs border" style={{ borderColor: `${themeColor}40` }} />
+                    <div className="relative w-full h-28 rounded-xl overflow-hidden mt-1 shadow-xs border" style={{ borderColor: `${themeColor}40` }}>
+                      <Image src={scratchUltrasoundUrl} alt="Ecografía" fill sizes="260px" className="object-cover" />
+                    </div>
                   )}
                 </div>
               )}
@@ -1378,7 +1381,9 @@ export default function Step4Preview({
                               <h4 className="text-[11px] font-bold text-gray-900" style={{ fontFamily: activeFontFamily }}>{m.title}</h4>
                               <p className="text-[9px] text-gray-600 font-light" style={{ fontFamily: activeFontFamily }}>{m.description}</p>
                               {m.previewUrl && (
-                                <img src={m.previewUrl} alt={m.title} className="w-full h-20 object-cover rounded-lg mt-1" />
+                                <div className="relative w-full h-20 rounded-lg overflow-hidden mt-1">
+                                  <Image src={m.previewUrl} alt={m.title} fill sizes="260px" className="object-cover" />
+                                </div>
                               )}
                             </div>
                           ))}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
 import { Search, Check } from 'lucide-react';
 
@@ -25,64 +26,64 @@ export default function CharacterThemeSelector({
     { id: 'Gaming', label: '🎮 Videojuegos (19)' },
     { id: 'Pixar/Animation', label: '🚀 Pixar (14)' },
     { id: 'Sanrio/Anime', label: '🎀 Sanrio (4)' },
-    { id: 'Classic', label: '🐶 Clásicos (5)' }
+    { id: 'Classic', label: '🐶 Clásicos (5)' },
   ];
 
   const filteredCharacters = CHARACTERS_DATABASE.filter((char) => {
     const matchesCategory = activeCategory === 'all' || char.franchise === activeCategory;
     const matchesSearch =
-      searchQuery === '' ||
       char.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       char.theme.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  const selectedChar = CHARACTERS_DATABASE.find((c) => c.id === selectedCharacterId);
-
   return (
-    <div className="space-y-4 animate-fade-in text-left">
-      {/* Category Pills */}
-      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setActiveCategory(cat.id)}
-            className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
-              activeCategory === cat.id
-                ? 'bg-[#a21232] text-white shadow-xs'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+    <div className="space-y-4">
+      {/* Search & Category Filter */}
+      <div className="flex flex-col sm:flex-row gap-2.5">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar personaje o anime (ej: Goku, Stitch, Spiderman)..."
+            className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#a21232]/20"
+          />
+        </div>
+
+        {/* Category Pills */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all ${
+                activeCategory === cat.id
+                  ? 'bg-[#a21232] text-white shadow-xs'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Search Input */}
-      <div className="relative max-w-md">
-        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-2.5" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Buscar personaje (ej: Goku, Stitch, Elsa, Mario, Pikachu)..."
-          className="w-full bg-white border border-gray-250 rounded-full py-1.5 pl-10 pr-4 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#a21232] focus:ring-1 focus:ring-[#a21232] transition"
-        />
-      </div>
-
-      {/* Uniform Grid: Every single character has identical dimensions (w-full aspect-square) */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5 max-h-[380px] overflow-y-auto pr-1 p-1">
+      {/* Grid of Characters */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5 max-h-[360px] overflow-y-auto p-1 pr-2 scrollbar-thin">
         {filteredCharacters.map((char) => {
           const isSelected = selectedCharacterId === char.id;
+
           return (
             <div
               key={char.id}
               onClick={() => onSelectCharacter(char)}
-              className={`group relative rounded-2xl p-2 cursor-pointer transition-all flex flex-col items-center justify-between text-center border bg-white ${
+              className={`group relative p-2 rounded-2xl border cursor-pointer transition-all duration-200 flex flex-col items-center text-center justify-between ${
                 isSelected
-                  ? 'border-2 border-[#a21232] bg-rose-50/50 shadow-md ring-2 ring-[#a21232]/20 scale-[1.03]'
-                  : 'border-gray-200 hover:border-rose-300 hover:shadow-xs'
+                  ? 'border-[#a21232] bg-rose-50/50 shadow-md ring-2 ring-[#a21232]/20 scale-102'
+                  : 'border-gray-200/80 bg-white hover:border-rose-200 hover:shadow-xs'
               }`}
             >
               {/* Selected Checkmark Badge */}
@@ -92,15 +93,17 @@ export default function CharacterThemeSelector({
                 </div>
               )}
 
-              {/* Character Transparent Image Container - STRICT UNIFORM SIZE FOR ALL */}
+              {/* Character Transparent Image Container */}
               <div className="w-16 h-16 sm:w-20 sm:h-20 aspect-square relative flex items-center justify-center my-0.5">
                 <div
                   className="absolute w-12 h-12 rounded-full filter blur-md opacity-25"
                   style={{ backgroundColor: char.primary }}
                 />
-                <img
+                <Image
                   src={`/personajes/${char.file}`}
                   alt={char.name}
+                  width={80}
+                  height={80}
                   className="relative z-10 w-full h-full object-contain p-1 drop-shadow-xs group-hover:scale-110 transition-transform duration-200"
                 />
               </div>

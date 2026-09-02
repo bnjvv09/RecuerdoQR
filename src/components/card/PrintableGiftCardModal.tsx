@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import Image from 'next/image';
 import { getFontFamily } from '@/lib/fonts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Printer, Download } from 'lucide-react';
@@ -133,9 +134,11 @@ export default function PrintableGiftCardModal({
                   <div className="flex-1 space-y-2 z-10">
                     <div className="flex items-center gap-3">
                       {selectedCharacter ? (
-                        <img
+                        <Image
                           src={`/personajes/${selectedCharacter.file}`}
                           alt={selectedCharacter.name}
+                          width={56}
+                          height={56}
                           className="w-14 h-14 object-contain filter drop-shadow-md shrink-0"
                         />
                       ) : (
@@ -172,9 +175,13 @@ export default function PrintableGiftCardModal({
 
                   <div className="w-36 flex flex-col items-center justify-center p-3 rounded-2xl bg-white border-2 border-dashed shadow-xs shrink-0" style={{ borderColor: primaryColor }}>
                     {qrDataUrl ? (
-                      <img
+                      <Image
                         src={qrDataUrl}
                         alt="Código QR"
+                        width={112}
+                        height={112}
+                        unoptimized
+                        priority
                         className="w-28 h-28 mx-auto object-contain rounded-lg"
                       />
                     ) : (
@@ -197,9 +204,11 @@ export default function PrintableGiftCardModal({
                         className="absolute w-24 h-24 rounded-full filter blur-md opacity-35"
                         style={{ backgroundColor: primaryColor }}
                       />
-                      <img
+                      <Image
                         src={`/personajes/${selectedCharacter.file}`}
                         alt={selectedCharacter.name}
+                        width={112}
+                        height={112}
                         className="relative z-10 max-h-28 max-w-28 object-contain drop-shadow-md"
                       />
                     </div>
@@ -244,9 +253,13 @@ export default function PrintableGiftCardModal({
                   <div className="flex justify-center my-2">
                     <div className="p-2.5 bg-white rounded-2xl border border-gray-100 shadow-sm inline-block">
                       {qrDataUrl ? (
-                        <img
+                        <Image
                           src={qrDataUrl}
                           alt="Código QR"
+                          width={144}
+                          height={144}
+                          unoptimized
+                          priority
                           className="w-32 h-32 sm:w-36 sm:h-36 mx-auto object-contain rounded-lg"
                         />
                       ) : (

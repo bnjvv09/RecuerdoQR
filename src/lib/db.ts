@@ -63,6 +63,61 @@ export interface ExperienceSection {
   content: any;
 }
 
+export interface ExperienceConfig {
+  selectedPlan?: string;
+  selectedTheme?: string;
+  primaryColor?: string;
+  fontFamily?: string;
+  selectedCharacter?: any;
+  cardPalette?: string;
+  cardOrientation?: string;
+  cardFont?: string;
+  cardTitle?: string;
+  cardFrom?: string;
+  cardMessage?: string;
+  uploadedVoiceNoteUrl?: string;
+  uploadedVideoUrl?: string;
+  youtubeVideoUrl?: string;
+  secretPasscode?: string;
+  secretHint?: string;
+  secretMessage?: string;
+  birthdayWishMessage?: string;
+  birthdayBalloons?: [string, string, string] | string[];
+  statsKisses?: string;
+  statsKissesLabel?: string;
+  statsCoffees?: string;
+  statsCoffeesLabel?: string;
+  statsSmiles?: string;
+  statsSmilesLabel?: string;
+  proposalQuestion?: string;
+  proposalYesText?: string;
+  proposalCelebrationText?: string;
+  ringBoxMessage?: string;
+  scratchPrompt?: string;
+  scratchSecretMessage?: string;
+  scratchUltrasoundUrl?: string;
+  pollQuestion?: string;
+  pollOptionA?: string;
+  pollOptionB?: string;
+  surpriseMessage?: string;
+  ticketTitle?: string;
+  ticketConditions?: string;
+  waxSealSender?: string;
+  crystalHeartTitle?: string;
+  crystalHeartSecret?: string;
+  valentineBoxTitle?: string;
+  valentineCoupon?: string;
+  trophyTitle?: string;
+  trophyCategory?: string;
+  gratitudeHighlight?: string;
+  peaceMessage?: string;
+  peacePromise?: string;
+  peaceButtonText?: string;
+  customQuote?: string;
+  customQuoteAuthor?: string;
+  [key: string]: any;
+}
+
 export interface Experience {
   id: string;
   order_id?: string;
@@ -75,7 +130,7 @@ export interface Experience {
   history_text: string;
   song_url?: string;
   theme?: string;
-  config?: any;
+  config?: ExperienceConfig;
   created_at: string;
   photos?: Photo[];
   milestones?: Milestone[];

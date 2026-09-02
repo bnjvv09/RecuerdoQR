@@ -1,37 +1,36 @@
 import type { Metadata } from 'next';
-import { getExperienceBySlug } from '@/lib/db';
 
-interface Props {
-  params: { slug: string };
+type Props = {
+  params: Promise<{ slug: string }>;
   children: React.ReactNode;
-}
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const exp = await getExperienceBySlug(params.slug);
-  const partnerName = exp?.partner_name || 'Mi Amor';
-  const userName = exp?.user_name || 'Tu Pareja';
-
-  const title = `Nuestra Historia de Amor ❤️ | ${partnerName} & ${userName}`;
-  const description = 'Un regalo especial preparado con todo mi amor para ti... Toca para abrir nuestro recuerdo digital interactivo 🎁✨';
+  const { slug } = await params;
 
   return {
-    title,
-    description,
+    title: '❤️ Una sorpresa muy especial para ti | RecuerdoQR',
+    description: 'Alguien que te ama te ha preparado un recuerdo inolvidable con música, fotos y mensajes. Toca para abrir ✨',
     openGraph: {
-      title,
-      description,
-      type: 'website',
-      url: `https://recuerdo-qr.vercel.app/amor/${params.slug}`,
+      title: '❤️ Una sorpresa muy especial para ti | RecuerdoQR',
+      description: 'Alguien que te ama te ha preparado un recuerdo inolvidable con fotos y música ✨',
+      url: 'https://recuerdoqr.cl/amor/' + slug,
       siteName: 'RecuerdoQR',
+      locale: 'es_CL',
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: '❤️ Una sorpresa muy especial para ti | RecuerdoQR',
+      description: 'Alguien especial te ha preparado un recuerdo inolvidable ✨',
     },
   };
 }
 
-export default function AmorSlugLayout({ children }: { children: React.ReactNode }) {
+export default function AmorSlugLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

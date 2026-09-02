@@ -1,11 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { CharacterTheme } from '@/data/charactersData';
-import CharacterThemeSelector from './CharacterThemeSelector';
 import { Printer, Sparkles, Edit3, Heart, Eye, Type, Palette, QrCode as QrIcon } from 'lucide-react';
 import PrintableGiftCardModal from '@/components/card/PrintableGiftCardModal';
 import { getFontFamily } from '@/lib/fonts';
+
+const CharacterThemeSelector = dynamic(() => import('./CharacterThemeSelector'), {
+  ssr: false,
+  loading: () => (
+    <div className="py-12 text-center text-xs text-gray-400 font-light animate-pulse">
+      ✨ Cargando catálogo de 145 personajes...
+    </div>
+  ),
+});
 
 interface Step4TarjetaRegaloProps {
   selectedPlan: string;
@@ -303,9 +313,11 @@ export default function Step4TarjetaRegalo({
                 <div className="flex-1 space-y-1.5 z-10">
                   <div className="flex items-center gap-2">
                     {isThemedCardPlan && selectedCharacter ? (
-                      <img
+                      <Image
                         src={`/personajes/${selectedCharacter.file}`}
                         alt={selectedCharacter.name}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 object-contain filter drop-shadow-md shrink-0"
                       />
                     ) : (
@@ -355,9 +367,11 @@ export default function Step4TarjetaRegalo({
                 {/* Top Character */}
                 <div className="space-y-1 z-10 w-full">
                   {isThemedCardPlan && selectedCharacter ? (
-                    <img
+                    <Image
                       src={`/personajes/${selectedCharacter.file}`}
                       alt={selectedCharacter.name}
+                      width={64}
+                      height={64}
                       className="w-16 h-16 mx-auto object-contain filter drop-shadow-md"
                     />
                   ) : (

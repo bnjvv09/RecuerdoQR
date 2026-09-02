@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAdminStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import { 
@@ -79,24 +79,7 @@ export default function AdminPage() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
   const [tempPrice, setTempPrice] = useState<number>(0);
 
-  // Check existing Supabase session on mount
-  useEffect(() => {
-    async function checkSession() {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (data?.session) {
-          setIsLogged(true);
-          setUserEmail(data.session.user?.email || '');
-          loadInitialData();
-        }
-      } catch (err) {
-        console.error('Session check error:', err);
-      }
-    }
-    checkSession();
-  }, [setIsLogged]);
-
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     try {
       const [orderList, expList, themeList, prodList, settingsData] = await Promise.all([
         getOrders(),
@@ -114,7 +97,24 @@ export default function AdminPage() {
       console.error('Data loading error:', err);
       toast.error('Error al cargar los datos del panel');
     }
-  };
+  }, [setOrders, setExperiences, setThemes, setProducts, setSettings]);
+
+  // Check existing Supabase session on mount
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (data?.session) {
+          setIsLogged(true);
+          setUserEmail(data.session.user?.email || '');
+          loadInitialData();
+        }
+      } catch (err) {
+        console.error('Session check error:', err);
+      }
+    }
+    checkSession();
+  }, [setIsLogged, setUserEmail, loadInitialData]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

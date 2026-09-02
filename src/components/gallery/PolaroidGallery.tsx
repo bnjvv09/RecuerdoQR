@@ -1,13 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Layers, Grid } from 'lucide-react';
 import { PhotoGalleryProps } from '@/types/gallery';
 
 export default function PolaroidGallery({
   photos,
-  primaryColor = '#a21232',
   fontFamily,
   onPhotoClick,
   className = ''
@@ -23,40 +23,41 @@ export default function PolaroidGallery({
     );
   }
 
-  const rotations = [-2.5, 1.8, -1.2, 2.2, -1.8, 1.5, -2.0, 2.0];
+  // Pre-calculated slight rotations for organic polaroid feel
+  const rotations = [-2.5, 3, -1.5, 2, -3, 1.5, -2, 2.5];
 
   return (
-    <div className={`w-full flex flex-col items-center select-none ${className}`}>
+    <div className={`w-full flex flex-col items-center ${className}`}>
       
-      {/* Mode toggle if multiple photos */}
-      {photos.length > 2 && (
-        <div className="flex justify-center mb-3">
-          <div className="bg-black/5 p-0.5 rounded-full flex gap-1 text-[9px] font-bold">
-            <button
-              type="button"
-              onClick={() => setViewMode('stack')}
-              className={`px-2.5 py-1 rounded-full transition ${
-                viewMode === 'stack' ? 'bg-white shadow-xs text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              Destacada
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`px-2.5 py-1 rounded-full transition ${
-                viewMode === 'grid' ? 'bg-white shadow-xs text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              Mosaico ({photos.length})
-            </button>
-          </div>
+      {/* View Toggle */}
+      {photos.length > 1 && (
+        <div className="flex items-center gap-1 mb-4 bg-gray-100 p-1 rounded-full text-xs self-end">
+          <button
+            type="button"
+            onClick={() => setViewMode('stack')}
+            className={`p-1.5 rounded-full transition ${
+              viewMode === 'stack' ? 'bg-white shadow-xs text-gray-900 font-bold' : 'text-gray-500 hover:text-gray-900'
+            }`}
+            title="Pila Interactiva"
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('grid')}
+            className={`p-1.5 rounded-full transition ${
+              viewMode === 'grid' ? 'bg-white shadow-xs text-gray-900 font-bold' : 'text-gray-500 hover:text-gray-900'
+            }`}
+            title="Mosaico Cuadrícula"
+          >
+            <Grid className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
+      {/* Stack / Single Carousel Mode */}
       {viewMode === 'stack' ? (
-        <div className="relative w-full max-w-[290px] sm:max-w-[320px] flex flex-col items-center">
-          {/* Main Polaroid card */}
+        <div className="w-full max-w-[290px] flex flex-col items-center select-none">
           <div className="relative w-full aspect-[4/5] perspective-1000 flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -73,13 +74,18 @@ export default function PolaroidGallery({
               >
                 {/* Photo area */}
                 <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 relative shadow-inner">
-                  <img
-                    src={photos[activeIndex]?.url}
-                    alt={photos[activeIndex]?.caption || `Recuerdo ${activeIndex + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                  {photos[activeIndex]?.url && (
+                    <Image
+                      src={photos[activeIndex].url}
+                      alt={photos[activeIndex]?.caption || `Recuerdo ${activeIndex + 1}`}
+                      fill
+                      sizes="280px"
+                      priority
+                      className="object-cover"
+                    />
+                  )}
                   {/* Gloss shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none z-10"></div>
                 </div>
 
                 {/* Polaroid chin for caption */}
@@ -136,7 +142,15 @@ export default function PolaroidGallery({
               className="bg-white p-2.5 pb-4 rounded-xl shadow-md border border-gray-150 cursor-pointer hover:shadow-xl hover:scale-105 hover:z-10 transition-all flex flex-col justify-between"
             >
               <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 relative shadow-inner">
-                <img src={p.url} alt={p.caption || `Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                {p.url && (
+                  <Image 
+                    src={p.url} 
+                    alt={p.caption || `Foto ${idx + 1}`} 
+                    fill 
+                    sizes="150px"
+                    className="object-cover" 
+                  />
+                )}
               </div>
               <p 
                 className="text-[9px] text-gray-800 font-serif italic text-center truncate mt-2 px-0.5"

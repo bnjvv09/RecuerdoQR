@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Heart, Sparkles, Cake, PartyPopper, Flame, Smile, Baby } from 'lucide-react';
 import { PhotoGalleryProps } from '@/types/gallery';
@@ -20,7 +21,9 @@ export default function CollageGallery({
     );
   }
 
-  // Get theme decorative stickers
+  // Preset rotations for collage scrap-book feeling
+  const rotations = [-3, 2, -1.5, 3.5, -2, 1.5, -3.5, 2.5];
+
   const getThemeStickers = () => {
     switch (theme) {
       case 'birthday':
@@ -36,7 +39,6 @@ export default function CollageGallery({
   };
 
   const stickers = getThemeStickers();
-  const rotations = [-3, 2.5, -2, 3.5, -1.5, 2, -3.5, 1.5];
 
   return (
     <div className={`w-full relative py-2 ${className}`}>
@@ -73,10 +75,12 @@ export default function CollageGallery({
 
               {/* Photo */}
               <div className={`w-full ${isWide ? 'aspect-[16/9]' : 'aspect-square'} rounded-xl overflow-hidden bg-gray-100 relative shadow-inner`}>
-                <img
+                <Image
                   src={p.url}
                   alt={p.caption || `Recuerdo ${idx + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  fill
+                  sizes={isWide ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 50vw, 200px"}
+                  className="object-cover group-hover:scale-105 transition duration-300"
                 />
               </div>
 

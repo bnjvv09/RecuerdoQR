@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAdminStore } from '@/lib/store';
 import { Order, Experience } from '@/lib/db';
 import { 
@@ -307,12 +308,15 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                         </span>
                         <div className="flex gap-1.5 overflow-x-auto pb-1">
                           {selectedExp.photos.map((p, pIdx) => (
-                            <img
-                              key={pIdx}
-                              src={p.url}
-                              alt="Foto"
-                              className="w-10 h-10 object-cover rounded-lg border border-gray-200 shrink-0"
-                            />
+                            <div key={pIdx} className="relative w-10 h-10 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                              <Image
+                                src={p.url}
+                                alt="Foto"
+                                fill
+                                sizes="40px"
+                                className="object-cover"
+                              />
+                            </div>
                           ))}
                         </div>
                       </div>
