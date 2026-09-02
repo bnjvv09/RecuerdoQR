@@ -141,43 +141,48 @@ export default function AmorExperiencePage() {
   const [audioFileUrl, setAudioFileUrl] = useState<string | null>(null);
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Map of preset YouTube video IDs & IDs to local direct audio files
+  // Map of preset YouTube video IDs & IDs to local direct full audio files (3-4 mins)
   const PRESET_AUDIO_MAP: Record<string, string> = {
-    'sHj49o05jQI': '/audio/previews/dicelo.m4a',
-    'Fj-y5M5rPfg': '/audio/previews/dicelo.m4a',
-    'dicelo': '/audio/previews/dicelo.m4a',
-    'yP9vWj7R0xI': '/audio/previews/vida-de-rico.m4a',
-    'vida-de-rico': '/audio/previews/vida-de-rico.m4a',
-    'K1j31Y8rU7I': '/audio/previews/creo-en-ti.m4a',
-    'creo-en-ti': '/audio/previews/creo-en-ti.m4a',
-    'yKNxeF4KMsY': '/audio/previews/yellow.m4a',
-    'yellow': '/audio/previews/yellow.m4a',
-    'hKqN5fC60kU': '/audio/previews/quiereme-mientras-se-pueda.m4a',
-    'quiereme-mientras-se-pueda': '/audio/previews/quiereme-mientras-se-pueda.m4a',
-    '9g0n6cO552g': '/audio/previews/beso.m4a',
-    'CFPLIaMpGrY': '/audio/previews/beso.m4a',
-    'beso': '/audio/previews/beso.m4a',
-    '2Vv-BfVoq4g': '/audio/previews/perfect.m4a',
-    'perfect': '/audio/previews/perfect.m4a',
-    'v2Xk_go2v3U': '/audio/previews/un-ano.m4a',
-    'un-ano': '/audio/previews/un-ano.m4a',
+    '1fT2aB6FzFw': '/audio/full/dicelo.m4a',
+    'sHj49o05jQI': '/audio/full/dicelo.m4a',
+    'Fj-y5M5rPfg': '/audio/full/dicelo.m4a',
+    'dicelo': '/audio/full/dicelo.m4a',
+    'yP9vWj7R0xI': '/audio/full/vida-de-rico.m4a',
+    'vida-de-rico': '/audio/full/vida-de-rico.m4a',
+    'K1j31Y8rU7I': '/audio/full/creo-en-ti.m4a',
+    'creo-en-ti': '/audio/full/creo-en-ti.m4a',
+    'yKNxeF4KMsY': '/audio/full/yellow.m4a',
+    'yellow': '/audio/full/yellow.m4a',
+    'hKqN5fC60kU': '/audio/full/quiereme-mientras-se-pueda.m4a',
+    'quiereme-mientras-se-pueda': '/audio/full/quiereme-mientras-se-pueda.m4a',
+    '9g0n6cO552g': '/audio/full/beso.m4a',
+    'CFPLIaMpGrY': '/audio/full/beso.m4a',
+    'beso': '/audio/full/beso.m4a',
+    '2Vv-BfVoq4g': '/audio/full/perfect.m4a',
+    'perfect': '/audio/full/perfect.m4a',
+    'v2Xk_go2v3U': '/audio/full/un-ano.m4a',
+    'un-ano': '/audio/full/un-ano.m4a',
   };
 
   const resolveMusicSource = (url: string) => {
     if (!url) return;
+    
+    // Automatically promote preview paths to full complete song files
+    let normalizedUrl = url.replace('/audio/previews/', '/audio/full/');
+
     let directPath = '';
     for (const [key, path] of Object.entries(PRESET_AUDIO_MAP)) {
-      if (url.toLowerCase().includes(key.toLowerCase())) {
+      if (normalizedUrl.toLowerCase().includes(key.toLowerCase())) {
         directPath = path;
         break;
       }
     }
 
-    if (url.startsWith('/audio/') || url.endsWith('.m4a') || url.endsWith('.mp3') || directPath) {
-      setAudioFileUrl(directPath || url);
+    if (normalizedUrl.startsWith('/audio/') || normalizedUrl.endsWith('.m4a') || normalizedUrl.endsWith('.mp3') || directPath) {
+      setAudioFileUrl(directPath || normalizedUrl);
       setVideoCode('');
     } else {
-      extractYoutubeCode(url);
+      extractYoutubeCode(normalizedUrl);
     }
   };
 
