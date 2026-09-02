@@ -244,7 +244,8 @@ export default function Step4Checkout({
       return;
     }
 
-    onSubmit(e);
+    // 🎟️ Pasar el precio rebajado si hay un cupón aplicado
+    onSubmit(e, appliedCoupon ? finalPrice : undefined);
   };
 
   return (
