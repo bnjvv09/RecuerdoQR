@@ -134,10 +134,13 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     setBirthdayBalloons(updated);
   };
 
-  // 2. Anniversary
+  // 2. Anniversary (Customizable stats with titles and values)
   const [statsKisses, setStatsKisses] = useState('2.500+');
+  const [statsKissesLabel, setStatsKissesLabel] = useState('💋 Cantidad de Besos');
   const [statsCoffees, setStatsCoffees] = useState('800+');
+  const [statsCoffeesLabel, setStatsCoffeesLabel] = useState('☕ Citas & Salidas');
   const [statsSmiles, setStatsSmiles] = useState('1.000.000+');
+  const [statsSmilesLabel, setStatsSmilesLabel] = useState('😊 Sonrisas Compartidas');
 
   // 3 & 4. Proposals
   const [proposalQuestion, setProposalQuestion] = useState('¿Quieres ser mi compañera/o de vida por siempre? ❤️');
@@ -548,10 +551,16 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     updateBirthdayBalloon,
     statsKisses,
     setStatsKisses,
+    statsKissesLabel,
+    setStatsKissesLabel,
     statsCoffees,
     setStatsCoffees,
+    statsCoffeesLabel,
+    setStatsCoffeesLabel,
     statsSmiles,
     setStatsSmiles,
+    statsSmilesLabel,
+    setStatsSmilesLabel,
     proposalQuestion,
     setProposalQuestion,
     proposalYesText,

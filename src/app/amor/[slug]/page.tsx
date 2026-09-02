@@ -1069,15 +1069,15 @@ export default function AmorExperiencePage() {
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="p-2 rounded-xl" style={{ backgroundColor: `${primaryColor}10` }}>
                       <span className="text-sm font-bold block" style={{ color: primaryColor }}>{experience.config?.statsKisses || '2.500+'}</span>
-                      <span className="text-[8px] text-gray-500">Besos</span>
+                      <span className="text-[9px] font-medium text-gray-600 block mt-0.5">{experience.config?.statsKissesLabel || 'Besos'}</span>
                     </div>
                     <div className="p-2 rounded-xl" style={{ backgroundColor: `${primaryColor}10` }}>
                       <span className="text-sm font-bold block" style={{ color: primaryColor }}>{experience.config?.statsCoffees || '800+'}</span>
-                      <span className="text-[8px] text-gray-500">Citas</span>
+                      <span className="text-[9px] font-medium text-gray-600 block mt-0.5">{experience.config?.statsCoffeesLabel || 'Citas'}</span>
                     </div>
                     <div className="p-2 rounded-xl" style={{ backgroundColor: `${primaryColor}10` }}>
                       <span className="text-sm font-bold block" style={{ color: primaryColor }}>{experience.config?.statsSmiles || '1.000.000+'}</span>
-                      <span className="text-[8px] text-gray-500">Sonrisas</span>
+                      <span className="text-[9px] font-medium text-gray-600 block mt-0.5">{experience.config?.statsSmilesLabel || 'Sonrisas'}</span>
                     </div>
                   </div>
                 </div>

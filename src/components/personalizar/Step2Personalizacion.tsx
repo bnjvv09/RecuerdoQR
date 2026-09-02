@@ -75,10 +75,16 @@ interface Step2PersonalizacionProps {
   updateBirthdayBalloon?: (idx: number, val: string) => void;
   statsKisses?: string;
   setStatsKisses?: (val: string) => void;
+  statsKissesLabel?: string;
+  setStatsKissesLabel?: (val: string) => void;
   statsCoffees?: string;
   setStatsCoffees?: (val: string) => void;
+  statsCoffeesLabel?: string;
+  setStatsCoffeesLabel?: (val: string) => void;
   statsSmiles?: string;
   setStatsSmiles?: (val: string) => void;
+  statsSmilesLabel?: string;
+  setStatsSmilesLabel?: (val: string) => void;
   proposalQuestion: string;
   setProposalQuestion: (val: string) => void;
   proposalYesText?: string;
@@ -204,10 +210,16 @@ export default function Step2Personalizacion({
   updateBirthdayBalloon,
   statsKisses = '2.500+',
   setStatsKisses,
+  statsKissesLabel = '💋 Cantidad de Besos',
+  setStatsKissesLabel,
   statsCoffees = '800+',
   setStatsCoffees,
+  statsCoffeesLabel = '☕ Citas & Salidas',
+  setStatsCoffeesLabel,
   statsSmiles = '1.000.000+',
   setStatsSmiles,
+  statsSmilesLabel = '😊 Sonrisas Compartidas',
+  setStatsSmilesLabel,
   proposalQuestion,
   setProposalQuestion,
   proposalYesText = '¡Sí, Acepto! ❤️',
@@ -674,41 +686,100 @@ export default function Step2Personalizacion({
 
                           {/* 2. Aniversario */}
                           {isAnniversary && (
-                            <div className="space-y-3 bg-rose-50/60 p-4 rounded-2xl border border-rose-200">
-                              <span className="text-[10px] font-bold text-rose-950 uppercase flex items-center gap-1.5">
-                                <Heart className="w-3.5 h-3.5 text-rose-600" />
-                                <span>📊 Estadísticas de Nuestro Amor</span>
-                              </span>
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div>
-                                  <label className="block text-[9px] font-bold text-rose-900 uppercase mb-1">💋 Cantidad de Besos</label>
-                                  <input
-                                    type="text"
-                                    value={statsKisses}
-                                    onChange={(e) => setStatsKisses && setStatsKisses(e.target.value)}
-                                    placeholder="Ej: 2.500+"
-                                    className="w-full px-3 py-2 border border-rose-250 rounded-xl text-xs bg-white"
-                                  />
+                            <div className="space-y-4 bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-200">
+                              <div>
+                                <span className="text-xs font-bold text-rose-950 uppercase flex items-center gap-1.5">
+                                  <Heart className="w-4 h-4 text-rose-600 fill-rose-600" />
+                                  <span>📊 Estadísticas de Nuestro Amor (100% Editables)</span>
+                                </span>
+                                <p className="text-[10px] text-gray-500 font-light mt-0.5">
+                                  Personaliza el nombre, emoji y la cantidad de cada estadística de su historia juntos:
+                                </p>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                                {/* Stat 1 */}
+                                <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-2">
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-gray-700 uppercase mb-0.5">
+                                      Título Estadística #1
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsKissesLabel}
+                                      onChange={(e) => setStatsKissesLabel && setStatsKissesLabel(e.target.value)}
+                                      placeholder="Ej: 💋 Cantidad de Besos"
+                                      className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50/50 focus:bg-white font-medium"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-[#a21232] uppercase mb-0.5">
+                                      Número / Cantidad
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsKisses}
+                                      onChange={(e) => setStatsKisses && setStatsKisses(e.target.value)}
+                                      placeholder="Ej: 2.500+"
+                                      className="w-full px-2.5 py-1.5 border border-rose-200 rounded-lg text-xs bg-white font-bold text-gray-900"
+                                    />
+                                  </div>
                                 </div>
-                                <div>
-                                  <label className="block text-[9px] font-bold text-rose-900 uppercase mb-1">☕ Citas & Salidas</label>
-                                  <input
-                                    type="text"
-                                    value={statsCoffees}
-                                    onChange={(e) => setStatsCoffees && setStatsCoffees(e.target.value)}
-                                    placeholder="Ej: 800+"
-                                    className="w-full px-3 py-2 border border-rose-250 rounded-xl text-xs bg-white"
-                                  />
+
+                                {/* Stat 2 */}
+                                <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-2">
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-gray-700 uppercase mb-0.5">
+                                      Título Estadística #2
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsCoffeesLabel}
+                                      onChange={(e) => setStatsCoffeesLabel && setStatsCoffeesLabel(e.target.value)}
+                                      placeholder="Ej: ☕ Citas & Salidas"
+                                      className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50/50 focus:bg-white font-medium"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-[#a21232] uppercase mb-0.5">
+                                      Número / Cantidad
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsCoffees}
+                                      onChange={(e) => setStatsCoffees && setStatsCoffees(e.target.value)}
+                                      placeholder="Ej: 800+"
+                                      className="w-full px-2.5 py-1.5 border border-rose-200 rounded-lg text-xs bg-white font-bold text-gray-900"
+                                    />
+                                  </div>
                                 </div>
-                                <div>
-                                  <label className="block text-[9px] font-bold text-rose-900 uppercase mb-1">😊 Sonrisas Compartidas</label>
-                                  <input
-                                    type="text"
-                                    value={statsSmiles}
-                                    onChange={(e) => setStatsSmiles && setStatsSmiles(e.target.value)}
-                                    placeholder="Ej: 1.000.000+"
-                                    className="w-full px-3 py-2 border border-rose-250 rounded-xl text-xs bg-white"
-                                  />
+
+                                {/* Stat 3 */}
+                                <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-2">
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-gray-700 uppercase mb-0.5">
+                                      Título Estadística #3
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsSmilesLabel}
+                                      onChange={(e) => setStatsSmilesLabel && setStatsSmilesLabel(e.target.value)}
+                                      placeholder="Ej: 😊 Sonrisas Compartidas"
+                                      className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50/50 focus:bg-white font-medium"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-[#a21232] uppercase mb-0.5">
+                                      Número / Cantidad
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={statsSmiles}
+                                      onChange={(e) => setStatsSmiles && setStatsSmiles(e.target.value)}
+                                      placeholder="Ej: 1.000.000+"
+                                      className="w-full px-2.5 py-1.5 border border-rose-200 rounded-lg text-xs bg-white font-bold text-gray-900"
+                                    />
+                                  </div>
                                 </div>
                               </div>
                             </div>

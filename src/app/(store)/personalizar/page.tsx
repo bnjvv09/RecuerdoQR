@@ -170,8 +170,11 @@ function PersonalizarContent() {
             birthdayWishMessage: form.birthdayWishMessage,
             birthdayBalloons: form.birthdayBalloons,
             statsKisses: form.statsKisses,
+            statsKissesLabel: form.statsKissesLabel,
             statsCoffees: form.statsCoffees,
+            statsCoffeesLabel: form.statsCoffeesLabel,
             statsSmiles: form.statsSmiles,
+            statsSmilesLabel: form.statsSmilesLabel,
             proposalQuestion: form.proposalQuestion,
             proposalYesText: form.proposalYesText,
             proposalCelebrationText: form.proposalCelebrationText,
@@ -318,10 +321,16 @@ function PersonalizarContent() {
             updateBirthdayBalloon={form.updateBirthdayBalloon}
             statsKisses={form.statsKisses}
             setStatsKisses={form.setStatsKisses}
+            statsKissesLabel={form.statsKissesLabel}
+            setStatsKissesLabel={form.setStatsKissesLabel}
             statsCoffees={form.statsCoffees}
             setStatsCoffees={form.setStatsCoffees}
+            statsCoffeesLabel={form.statsCoffeesLabel}
+            setStatsCoffeesLabel={form.setStatsCoffeesLabel}
             statsSmiles={form.statsSmiles}
             setStatsSmiles={form.setStatsSmiles}
+            statsSmilesLabel={form.statsSmilesLabel}
+            setStatsSmilesLabel={form.setStatsSmilesLabel}
             proposalQuestion={form.proposalQuestion}
             setProposalQuestion={form.setProposalQuestion}
             proposalYesText={form.proposalYesText}
@@ -443,8 +452,11 @@ function PersonalizarContent() {
             birthdayWishMessage={form.birthdayWishMessage}
             birthdayBalloons={form.birthdayBalloons}
             statsKisses={form.statsKisses}
+            statsKissesLabel={form.statsKissesLabel}
             statsCoffees={form.statsCoffees}
+            statsCoffeesLabel={form.statsCoffeesLabel}
             statsSmiles={form.statsSmiles}
+            statsSmilesLabel={form.statsSmilesLabel}
             proposalQuestion={form.proposalQuestion}
             proposalYesText={form.proposalYesText}
             proposalCelebrationText={form.proposalCelebrationText}

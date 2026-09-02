@@ -86,8 +86,11 @@ interface Step4PreviewProps {
   birthdayWishMessage?: string;
   birthdayBalloons?: [string, string, string];
   statsKisses?: string;
+  statsKissesLabel?: string;
   statsCoffees?: string;
+  statsCoffeesLabel?: string;
   statsSmiles?: string;
+  statsSmilesLabel?: string;
   proposalQuestion: string;
   proposalYesText?: string;
   proposalCelebrationText?: string;
@@ -146,8 +149,11 @@ export default function Step4Preview({
   birthdayWishMessage = '¡Que todos tus deseos se hagan realidad en este nuevo año de vida! ✨',
   birthdayBalloons = ['¡Mucho Éxito y Alegría!', '¡Salud y Risas Siempre!', '¡Te Queremos Infinito!'],
   statsKisses = '2.500+',
+  statsKissesLabel = '💋 Cantidad de Besos',
   statsCoffees = '800+',
+  statsCoffeesLabel = '☕ Citas & Salidas',
   statsSmiles = '1.000.000+',
+  statsSmilesLabel = '😊 Sonrisas Compartidas',
   proposalQuestion,
   proposalYesText = '¡Sí, Acepto! ❤️',
   proposalCelebrationText = '¡Dijiste que Sí! Nuestra historia oficial comienza hoy ✨',
@@ -476,15 +482,15 @@ export default function Step4Preview({
                 <div className="grid grid-cols-3 gap-1.5 text-center">
                   <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
                     <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsKisses}</span>
-                    <span className="text-[7px] opacity-70">Besos</span>
+                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsKissesLabel || 'Besos'}</span>
                   </div>
                   <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
                     <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsCoffees}</span>
-                    <span className="text-[7px] opacity-70">Citas</span>
+                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsCoffeesLabel || 'Citas'}</span>
                   </div>
                   <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
                     <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsSmiles}</span>
-                    <span className="text-[7px] opacity-70">Sonrisas</span>
+                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsSmilesLabel || 'Sonrisas'}</span>
                   </div>
                 </div>
               </div>
