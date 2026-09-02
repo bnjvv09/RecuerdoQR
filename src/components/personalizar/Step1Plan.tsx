@@ -23,16 +23,14 @@ export default function Step1Plan({
     {
       id: 'basic',
       name: basicProd?.name || 'Plan Básico',
-      subtitle: basicProd?.subtitle || 'Página web personalizada con hasta 10 fotos, contador de tiempo y tarjeta digital temática.',
+      subtitle: basicProd?.subtitle || 'Hasta 10 Fotos • Polaroid & Collage',
       price: basicProd?.price || 4990,
-      description: basicProd?.description || 'Página web personalizada con hasta 10 fotos, contador de tiempo y tarjeta digital temática.',
+      description: basicProd?.description || 'Página web con la interacción clave de Aniversario, 2 estilos de fotos y tarjeta digital con color libre.',
       features: basicProd?.features || [
-        'Página web interactiva',
-        'Hasta 10 Fotos en HD',
-        'Contador de tiempo en vivo',
-        'Dedicatoria final con corazón',
-        'Tarjeta de Regalo Digital Temática',
-        'Código QR Digital HD'
+        '⏱️ Contador de amor en tiempo real (años, días, segundos)',
+        '💖 Dedicatoria final con corazón palpitante',
+        '📸 Hasta 10 Fotos en Polaroid y Collage',
+        '🎨 Tarjeta digital con color personalizado'
       ],
       badge: basicProd?.badge,
       popular: false,
@@ -40,32 +38,30 @@ export default function Step1Plan({
     {
       id: 'medium',
       name: mediumProd?.name || 'Plan Medio',
-      subtitle: mediumProd?.subtitle || 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
+      subtitle: mediumProd?.subtitle || 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
       price: mediumProd?.price || 5990,
-      description: mediumProd?.description || 'Nuestra opción más popular. Desbloquea el catálogo de 145 personajes temáticos para tu tarjeta, añade hasta 20 fotos, música de fondo (YouTube) y carta interactiva.',
+      description: mediumProd?.description || 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta con 145 personajes temáticos e interacciones adicionales.',
       features: mediumProd?.features || [
-        'Todo lo del Plan Básico',
-        '✨ Tarjeta con 145 Personajes Temáticos',
-        'Hasta 20 Fotos en HD',
-        'Música de fondo personalizada (YouTube)',
-        '6 Estilos de galería (Polaroid, Carrete)',
-        'Carta de amor interactiva'
+        '⏱️ Contador de amor en vivo + Corazones',
+        '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
+        '🎵 Canción especial de la pareja de fondo (YouTube)',
+        '💌 Carta de aniversario interactiva',
+        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
       ],
-      badge: mediumProd?.badge || 'Más Popular',
+      badge: mediumProd?.badge || 'Más Recomendado',
       popular: true,
     },
     {
       id: 'premium',
       name: premiumProd?.name || 'Plan Máximo',
-      subtitle: premiumProd?.subtitle || 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
+      subtitle: premiumProd?.subtitle || '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
       price: premiumProd?.price || 7990,
-      description: premiumProd?.description || 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
+      description: premiumProd?.description || 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
       features: premiumProd?.features || [
-        'Todo lo del Plan Medio (incluye 145 personajes)',
-        'Hasta 30 Fotos en HD',
-        'Video de YouTube dedicado',
-        'Línea de tiempo con fotos de hitos',
-        'Rincón secreto con PIN, Propuesta y Mapa'
+        '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
+        '✨ Línea de tiempo de hitos con fotos y fechas',
+        '📍 Mapa interactivo del lugar donde se conocieron',
+        '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
       ],
       badge: premiumProd?.badge,
       popular: false,
