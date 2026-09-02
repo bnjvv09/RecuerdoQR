@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { CHARACTERS_DATABASE } from '@/data/charactersData';
+import { getFontFamily } from '@/lib/fonts';
 
 function GraciasContent() {
   const searchParams = useSearchParams();
@@ -333,6 +335,18 @@ function GraciasContent() {
     );
   }
 
+  const expConfig = (experience.config as any) || {};
+  const isHorizontal = expConfig.cardOrientation === 'horizontal';
+  const selectedCharacter = expConfig.selectedCharacterId 
+    ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) 
+    : expConfig.selectedCharacter;
+  const primaryColor = selectedCharacter ? selectedCharacter.primary : (expConfig.cardPalette || themeDetails.accentColor);
+  const accentColor = selectedCharacter ? selectedCharacter.accent : primaryColor;
+  const activeFontFamily = getFontFamily(expConfig.cardFont || 'great-vibes');
+  const displayTitle = expConfig.cardTitle || `Para ${experience.partner_name || 'Mi Amor'}`;
+  const displayFrom = expConfig.cardFrom || experience.user_name || 'Alguien que te ama';
+  const quoteText = expConfig.cardMessage || (selectedCharacter ? selectedCharacter.quote : (experience.message || 'Hoy es el día más especial con mi persona favorita ❤️'));
+
   return (
     <div className="py-10 md:py-16 bg-rose-50/15">
       
@@ -349,13 +363,13 @@ function GraciasContent() {
             position: fixed !important;
             left: 50% !important;
             top: 50% !important;
-            transform: translate(-50%, -50%) scale(1.1) !important;
+            transform: translate(-50%, -50%) scale(1.05) !important;
             width: 100% !important;
-            max-width: 400px !important;
+            max-width: ${isHorizontal ? '560px' : '380px'} !important;
             box-shadow: none !important;
-            border: 2px dashed ${themeDetails.accentColor} !important;
+            border: 2px dashed ${primaryColor} !important;
             background: white !important;
-            padding: 32px !important;
+            padding: 24px !important;
           }
           .no-print {
             display: none !important;
@@ -370,8 +384,8 @@ function GraciasContent() {
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600 shadow-inner">
             <CheckCircle className="w-9 h-9" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-full inline-block" style={{ color: themeDetails.accentColor }}>
-            ✨ {themeDetails.badgeText}
+          <span className="text-[10px] font-bold uppercase tracking-widest bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-full inline-block" style={{ color: primaryColor }}>
+            ✨ {selectedCharacter ? `Tarjeta Temática: ${selectedCharacter.name}` : themeDetails.badgeText} ({isHorizontal ? 'Horizontal 15x10' : 'Vertical 10x15'})
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
             ¡Muchas gracias por tu compra! Tu tarjeta está lista ✨
@@ -381,77 +395,174 @@ function GraciasContent() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-3xl mx-auto">
+        <div className={`grid grid-cols-1 ${isHorizontal ? 'lg:grid-cols-12 max-w-4xl' : 'lg:grid-cols-12 max-w-3xl'} gap-8 items-center mx-auto`}>
           
           {/* Left: The Gorgeous Romantic Gift Card */}
-          <div className="lg:col-span-7 flex justify-center">
+          <div className={`${isHorizontal ? 'lg:col-span-8' : 'lg:col-span-7'} flex justify-center`}>
             <div
               id="printable-digital-card"
               ref={cardPrintRef}
-              className={`bg-white rounded-[32px] border-2 border-dashed ${themeDetails.borderDashed} p-6 sm:p-8 max-w-[340px] w-full text-center space-y-4 shadow-xl relative`}
+              style={{
+                fontFamily: activeFontFamily,
+                borderColor: primaryColor,
+                backgroundImage: selectedCharacter
+                  ? `radial-gradient(circle at 10% 20%, ${selectedCharacter.bgStart} 0%, transparent 45%), radial-gradient(circle at 90% 80%, ${selectedCharacter.bgEnd} 0%, transparent 45%)`
+                  : undefined
+              }}
+              className={`bg-white rounded-[32px] border-2 border-dashed p-6 sm:p-7 w-full shadow-xl relative overflow-hidden ${
+                isHorizontal 
+                  ? 'max-w-[540px] text-left flex gap-5 items-center justify-between' 
+                  : 'max-w-[340px] text-center space-y-3.5'
+              }`}
             >
-              {/* Theme Emoji Top */}
-              <div className="flex justify-center">
-                <span className="text-3xl select-none animate-pulse">{themeDetails.emoji}</span>
-              </div>
+              {isHorizontal ? (
+                /* HORIZONTAL LAYOUT */
+                <>
+                  <div className="flex-1 space-y-2 z-10">
+                    <div className="flex items-center gap-3">
+                      {selectedCharacter ? (
+                        <Image
+                          src={`/personajes/${selectedCharacter.file}`}
+                          alt={selectedCharacter.name}
+                          width={56}
+                          height={56}
+                          className="w-14 h-14 object-contain filter drop-shadow-md shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-sm shrink-0" style={{ backgroundColor: primaryColor }}>
+                          <span className="text-xl">🎁</span>
+                        </div>
+                      )}
+                      <div>
+                        <h2 className="font-serif text-lg sm:text-xl font-extrabold text-gray-900 leading-tight">
+                          {displayTitle}
+                        </h2>
+                        <p className="text-[11px] text-gray-500 italic font-serif">
+                          De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{displayFrom}</span>
+                        </p>
+                      </div>
+                    </div>
 
-              {/* Tagline */}
-              <div 
-                className="text-[8px] font-bold uppercase tracking-[0.25em] select-none"
-                style={{ color: themeDetails.accentColor }}
-                dangerouslySetInnerHTML={{ __html: themeDetails.tagline }}
-              />
+                    <div
+                      className="rounded-2xl p-2.5 px-3 border backdrop-blur-xs"
+                      style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                        borderColor: accentColor
+                      }}
+                    >
+                      <p className="text-[10px] text-gray-800 font-serif italic leading-relaxed">
+                        «{quoteText}»
+                      </p>
+                    </div>
 
-              {/* Names */}
-              <div className="space-y-0.5">
-                <h2 className="font-serif text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight">
-                  Para {experience.partner_name || 'Mi Amor'}
-                </h2>
-                <p className="text-[10px] text-gray-500 italic font-serif">
-                  De parte de: <span className="font-semibold text-gray-800">{experience.user_name || 'Alguien que te ama'}</span>
-                </p>
-              </div>
+                    <p className="text-[9px] text-gray-400 font-mono">
+                      📅 {formattedDate}
+                    </p>
+                  </div>
 
-              {/* Dedication Snippet */}
-              {experience.message && (
-                <div className="bg-rose-50/40 border border-rose-100/80 rounded-2xl p-2.5 px-3">
-                  <p className="text-[9px] text-gray-700 font-serif italic leading-relaxed">
-                    «{experience.message}»
-                  </p>
-                </div>
-              )}
-
-              {/* Embedded QR Code */}
-              <div className="flex justify-center my-1">
-                <div className="p-2.5 bg-white rounded-2xl border border-gray-200 shadow-sm inline-block">
-                  {qrDataUrl ? (
-                    <Image
-                      src={qrDataUrl}
-                      alt="Código QR de Amor"
-                      width={160}
-                      height={160}
-                      unoptimized
-                      priority
-                      className="w-36 h-36 sm:w-40 sm:h-40 mx-auto object-contain rounded-lg"
-                    />
+                  <div className="w-36 flex flex-col items-center justify-center p-3 rounded-2xl bg-white border-2 border-dashed shadow-xs shrink-0" style={{ borderColor: primaryColor }}>
+                    {qrDataUrl ? (
+                      <Image
+                        src={qrDataUrl}
+                        alt="Código QR"
+                        width={112}
+                        height={112}
+                        unoptimized
+                        priority
+                        className="w-28 h-28 mx-auto object-contain rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-28 h-28 bg-gray-100 flex items-center justify-center text-[9px] text-gray-400">
+                        Cargando QR...
+                      </div>
+                    )}
+                    <span className="text-[8px] font-sans font-bold uppercase tracking-wider text-gray-600 mt-1 block text-center">
+                      Escanea con tu celular 📱
+                    </span>
+                  </div>
+                </>
+              ) : (
+                /* VERTICAL LAYOUT */
+                <>
+                  {/* Character or Emoji */}
+                  {selectedCharacter ? (
+                    <div className="relative w-24 h-24 mx-auto flex items-center justify-center my-1">
+                      <div
+                        className="absolute w-20 h-20 rounded-full filter blur-md opacity-35"
+                        style={{ backgroundColor: primaryColor }}
+                      />
+                      <Image
+                        src={`/personajes/${selectedCharacter.file}`}
+                        alt={selectedCharacter.name}
+                        width={96}
+                        height={96}
+                        className="relative z-10 max-h-24 max-w-24 object-contain drop-shadow-md"
+                      />
+                    </div>
                   ) : (
-                    <div className="w-36 h-36 bg-gray-100 flex items-center justify-center text-[9px] text-gray-400">
-                      Cargando QR...
+                    <div className="flex justify-center">
+                      <span className="text-3xl select-none animate-pulse">{themeDetails.emoji}</span>
                     </div>
                   )}
-                </div>
-              </div>
 
-              {/* Scan Instruction & Date */}
-              <div className="space-y-1">
-                <p className="text-[9px] font-bold flex items-center justify-center gap-1" style={{ color: themeDetails.accentColor }}>
-                  <span>📱</span>
-                  <span>Escanea con tu celular para abrir tu sorpresa</span>
-                </p>
-                <p className="text-[8px] text-gray-400 font-mono">
-                  {formattedDate}
-                </p>
-              </div>
+                  {/* Tagline */}
+                  <div 
+                    className="text-[8px] font-bold uppercase tracking-[0.25em] select-none"
+                    style={{ color: primaryColor }}
+                  >
+                    — UN REGALO DIGITAL ESPECIAL —
+                  </div>
+
+                  {/* Names */}
+                  <div className="space-y-0.5">
+                    <h2 className="font-serif text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight">
+                      {displayTitle}
+                    </h2>
+                    <p className="text-[10px] text-gray-500 italic font-serif">
+                      De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{displayFrom}</span>
+                    </p>
+                  </div>
+
+                  {/* Dedication Snippet */}
+                  <div className="bg-rose-50/40 border border-rose-100/80 rounded-2xl p-2.5 px-3">
+                    <p className="text-[9px] text-gray-700 font-serif italic leading-relaxed">
+                      «{quoteText}»
+                    </p>
+                  </div>
+
+                  {/* Embedded QR Code */}
+                  <div className="flex justify-center my-1">
+                    <div className="p-2.5 bg-white rounded-2xl border border-gray-200 shadow-sm inline-block">
+                      {qrDataUrl ? (
+                        <Image
+                          src={qrDataUrl}
+                          alt="Código QR de Amor"
+                          width={140}
+                          height={140}
+                          unoptimized
+                          priority
+                          className="w-32 h-32 sm:w-36 sm:h-36 mx-auto object-contain rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-32 h-32 bg-gray-100 flex items-center justify-center text-[9px] text-gray-400">
+                          Cargando QR...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Scan Instruction & Date */}
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold flex items-center justify-center gap-1" style={{ color: primaryColor }}>
+                      <span>📱</span>
+                      <span>Escanea con tu celular para abrir tu sorpresa</span>
+                    </p>
+                    <p className="text-[8px] text-gray-400 font-mono">
+                      {formattedDate}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
