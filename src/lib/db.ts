@@ -626,122 +626,78 @@ export async function getExperienceByOrderId(orderId: string): Promise<Experienc
 
 // 3. EXPERIENCES
 export function ensureExperienceSections(exp: Experience): Experience {
-  if (exp.config && exp.config.sections && Array.isArray(exp.config.sections)) {
-    return {
-      ...exp,
-      sections: exp.config.sections
-    };
-  }
-
-  const sections: ExperienceSection[] = [];
   const themeId = exp.theme || 'anniversary';
 
-  // 1. Portada interactiva is always first
-  sections.push({
-    id: 'sec-portada-default',
-    type: 'portada',
-    title: exp.title || 'Para ti ❤️',
-    content: {
-      message: exp.message || 'He preparado algo especial para ti'
-    }
-  });
-
-  // 2. Carta (Our story)
-  if (exp.history_text) {
-    sections.push({
-      id: 'sec-carta-default',
-      type: 'carta',
-      title: themeId === 'love-letter' ? 'Carta de Amor 💌' : 'Nuestra Historia',
-      content: {
-        text: exp.history_text
-      }
-    });
+  let rawSections: ExperienceSection[] = [];
+  if (exp.config && exp.config.sections && Array.isArray(exp.config.sections) && exp.config.sections.length > 0) {
+    rawSections = exp.config.sections;
+  } else if (exp.sections && Array.isArray(exp.sections) && exp.sections.length > 0) {
+    rawSections = exp.sections;
+  } else {
+    // Default fallback sections
+    rawSections = [
+      { id: 'sec-portada-default', type: 'portada', content: {} },
+      { id: 'sec-musica-default', type: 'musica', content: {} },
+      { id: 'sec-contador-default', type: 'contador', content: {} },
+      { id: 'sec-carta-default', type: 'carta', content: {} },
+      { id: 'sec-galeria-default', type: 'galeria', content: {} },
+      { id: 'sec-corazones-default', type: 'corazones', content: {} }
+    ];
   }
 
-  // 3. Special Date countdown timer
-  if (exp.special_date) {
-    sections.push({
-      id: 'sec-contador-default',
-      type: 'contador',
-      title: themeId === 'birthday' ? 'Tiempo desde tu nacimiento' : 'Tiempo compartido juntos',
-      content: {
-        date: exp.special_date
-      }
-    });
-  }
+  // Ensure EVERY section has a valid, non-null content object populated
+  const sections: ExperienceSection[] = rawSections.map((sec, idx) => {
+    const sType = sec.type;
+    let sContent = sec.content && typeof sec.content === 'object' ? { ...sec.content } : {};
 
-  // 4. Photos
-  if (exp.photos && exp.photos.length > 0) {
-    sections.push({
-      id: 'sec-galeria-default',
-      type: 'galeria',
-      title: 'Nuestros recuerdos',
-      content: {
-        photos: exp.photos.map(p => ({ url: p.url, caption: p.caption || '' }))
+    if (sType === 'portada') {
+      if (!sContent.message) sContent.message = exp.message || 'He preparado algo especial para ti ❤️';
+    } else if (sType === 'carta') {
+      if (!sContent.text) sContent.text = exp.history_text || exp.message || 'Esta es nuestra hermosa historia...';
+    } else if (sType === 'contador') {
+      if (!sContent.date) sContent.date = exp.special_date || exp.config?.special_date || '2024-02-14';
+    } else if (sType === 'galeria') {
+      if (!sContent.photos || !Array.isArray(sContent.photos)) {
+        sContent.photos = (exp.photos || []).map(p => ({ url: p.url, caption: p.caption || '' }));
       }
-    });
-  }
-
-  // 5. Timeline Milestones
-  if (exp.milestones && exp.milestones.length > 0) {
-    sections.push({
-      id: 'sec-timeline-default',
-      type: 'timeline',
-      title: 'Momentos Especiales',
-      content: {
-        milestones: exp.milestones.map(m => ({
+      if (!sContent.photoStyle) sContent.photoStyle = exp.config?.photoStyle || 'polaroid';
+    } else if (sType === 'timeline') {
+      if (!sContent.milestones || !Array.isArray(sContent.milestones)) {
+        sContent.milestones = (exp.milestones || []).map(m => ({
           title: m.title,
           date: m.date,
           description: m.description,
           image_url: m.image_url || ''
-        }))
+        }));
       }
-    });
-  }
-
-  // 6. Interactive Proposal Question (if proposal theme)
-  if (['dating-proposal', 'marriage-proposal'].includes(themeId)) {
-    sections.push({
-      id: 'sec-pregunta-default',
-      type: 'pregunta',
-      title: themeId === 'marriage-proposal' ? '¿Te quieres casar conmigo? 💍' : '¿Quieres ser mi novia/o? ❤️',
-      content: {
-        question: exp.config?.proposalQuestion || (themeId === 'marriage-proposal' ? '¿Te quieres casar conmigo? 💍' : '¿Quieres ser mi novia/o? ❤️')
+    } else if (sType === 'pregunta') {
+      if (!sContent.question) {
+        sContent.question = exp.config?.proposalQuestion || (themeId === 'marriage-proposal' ? '¿Te quieres casar conmigo? 💍' : '¿Quieres ser mi novia/o? ❤️');
       }
-    });
-  }
-
-  // 7. Surprise Gift Box (if surprise theme)
-  if (themeId === 'surprise') {
-    sections.push({
-      id: 'sec-sorpresa-default',
-      type: 'sorpresa',
-      title: '¡Una sorpresa para ti!',
-      content: {
-        message: 'Haz clic para abrir tu regalo especial'
-      }
-    });
-  }
-
-  // 8. Background Music
-  if (exp.song_url) {
-    sections.push({
-      id: 'sec-musica-default',
-      type: 'musica',
-      content: {
-        url: exp.song_url
-      }
-    });
-  }
-
-  // 9. final hearts dedication (Mensaje final)
-  sections.push({
-    id: 'sec-corazones-default',
-    type: 'corazones',
-    title: 'Dedicatoria Final',
-    content: {
-      message: exp.message
+    } else if (sType === 'secreto') {
+      if (!sContent.passcode) sContent.passcode = exp.config?.secretPasscode || '1234';
+      if (!sContent.message && !sContent.text) sContent.text = exp.config?.secretMessage || '¡Te amo con todo mi corazón!';
+      if (!sContent.hint) sContent.hint = exp.config?.secretHint || '';
+    } else if (sType === 'sorpresa') {
+      if (!sContent.message) sContent.message = exp.config?.surpriseMessage || '¡Una sorpresa especial para ti!';
+    } else if (sType === 'lugar') {
+      if (!sContent.address) sContent.address = exp.config?.specialAddress || '';
+    } else if (sType === 'musica') {
+      if (!sContent.url) sContent.url = exp.song_url || '/audio/full/dicelo.m4a';
+    } else if (sType === 'audio') {
+      if (!sContent.url) sContent.url = exp.config?.uploadedVoiceNoteUrl || exp.config?.voiceNoteUrl || '';
+    } else if (sType === 'video') {
+      if (!sContent.url) sContent.url = exp.config?.uploadedVideoUrl || exp.config?.youtubeVideoUrl || '';
+    } else if (sType === 'corazones') {
+      if (!sContent.message) sContent.message = exp.message || 'He preparado algo especial para ti ❤️';
     }
+
+    return {
+      id: sec.id || `sec-${sType}-${idx}`,
+      type: sType,
+      title: sec.title || (sType === 'carta' ? (themeId === 'love-letter' ? 'Carta de Amor 💌' : 'Nuestra Historia') : undefined),
+      content: sContent
+    };
   });
 
   return {
@@ -765,7 +721,7 @@ export async function getExperienceBySlug(slug: string): Promise<Experience | nu
     .from('experiences')
     .select('*')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
 
   if (expError || !experience) {
     console.error(`Experience with slug "${slug}" not found in Supabase:`, expError);

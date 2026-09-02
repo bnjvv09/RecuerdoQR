@@ -1510,13 +1510,14 @@ export default function AmorExperiencePage() {
               if (sec.type === 'portada') return null; // Already displayed in gate steps
 
               if (sec.type === 'carta') {
+                const cartaText = sec.content?.text || sec.content?.message || experience.history_text || experience.message || '';
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-left space-y-3 ${style.cardClass}`}>
                     <h3 className={`font-serif font-extrabold text-sm border-b pb-1.5 ${style.borderColor} ${style.textColor}`}>
-                      {sec.title || 'Carta Especial'}
+                      {sec.title || (themeId === 'love-letter' ? 'Carta de Amor 💌' : 'Nuestra Historia')}
                     </h3>
                     <p className="font-serif italic text-xs leading-relaxed text-gray-700 whitespace-pre-line font-light">
-                      {sec.content.text}
+                      {cartaText}
                     </p>
                   </div>
                 );
@@ -1555,12 +1556,13 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'pregunta') {
+                const questionText = sec.content?.question || experience.config?.proposalQuestion || (themeId === 'marriage-proposal' ? '¿Te quieres casar conmigo? 💍' : '¿Quieres ser mi novia/o? ❤️');
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-4 relative overflow-hidden ${style.cardClass}`}>
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
                       {sec.title || 'Una Pregunta Especial'}
                     </h3>
-                    <p className="text-xs text-gray-800 font-serif leading-relaxed px-4">{sec.content.question}</p>
+                    <p className="text-xs text-gray-800 font-serif leading-relaxed px-4">{questionText}</p>
                     
                     {proposalResponse === 'yes' ? (
                       <div className="space-y-2.5 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-800 animate-bounce">
@@ -1607,6 +1609,8 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'secreto') {
+                const secretPasscode = sec.content?.passcode || experience.config?.secretPasscode || '1234';
+                const secretText = sec.content?.text || sec.content?.message || experience.config?.secretMessage || '¡Te amo con todo mi corazón!';
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-4 ${style.cardClass}`}>
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
@@ -1615,7 +1619,7 @@ export default function AmorExperiencePage() {
                     {secretUnlocked ? (
                       <div className="p-4 bg-rose-50/20 border border-rose-100 rounded-2xl text-left animate-fade-in space-y-2">
                         <span className="text-[9px] font-bold text-[#a21232] uppercase">Mensaje Revelado</span>
-                        <p className="text-xs text-gray-700 leading-relaxed font-light whitespace-pre-line">{sec.content.text}</p>
+                        <p className="text-xs text-gray-700 leading-relaxed font-light whitespace-pre-line">{secretText}</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -1623,13 +1627,13 @@ export default function AmorExperiencePage() {
                         <div className="flex gap-2 justify-center max-w-[180px] mx-auto">
                           <input
                             type="text"
-                            maxLength={4}
+                            maxLength={6}
                             placeholder="PIN"
                             value={secretInputPin}
                             onChange={(e) => {
                               const val = e.target.value;
                               setSecretInputPin(val);
-                              if (val === sec.content.passcode) {
+                              if (val === secretPasscode) {
                                 setSecretUnlocked(true);
                                 confetti({ particleCount: 40, spread: 40, colors: ['#ff8fa3'] });
                               }
@@ -1644,6 +1648,7 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'sorpresa') {
+                const surpriseMsg = sec.content?.message || experience.config?.surpriseMessage || '¡Una sorpresa especial para ti! ❤️';
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-4 ${style.cardClass}`}>
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
@@ -1653,7 +1658,7 @@ export default function AmorExperiencePage() {
                       <div className="p-4 bg-indigo-50 border border-indigo-150 rounded-2xl text-center space-y-2 animate-scale-up">
                         <PartyPopper className="w-8 h-8 mx-auto text-indigo-500" />
                         <h4 className="font-bold text-xs text-indigo-900">¡Regalo Abierto!</h4>
-                        <p className="text-xs text-indigo-950 font-light leading-relaxed">{sec.content.message}</p>
+                        <p className="text-xs text-indigo-950 font-light leading-relaxed">{surpriseMsg}</p>
                       </div>
                     ) : (
                       <div className="py-6 flex flex-col items-center">
@@ -1676,6 +1681,7 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'lugar') {
+                const addressStr = sec.content?.address || experience.config?.specialAddress || '';
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-left space-y-3 ${style.cardClass}`}>
                     <div className="flex items-center gap-2 border-b pb-2">
@@ -1684,12 +1690,12 @@ export default function AmorExperiencePage() {
                         {sec.title || 'Nuestro Lugar Especial'}
                       </h3>
                     </div>
-                    <p className="text-xs text-gray-700 font-bold px-1">{sec.content.address}</p>
+                    <p className="text-xs text-gray-700 font-bold px-1">{addressStr || 'Lugar inolvidable'}</p>
                     
-                    {sec.content.address && (
+                    {addressStr && (
                       <div className="aspect-video rounded-2xl overflow-hidden shadow-inner border border-gray-100 bg-gray-50">
                         <iframe
-                          src={`https://maps.google.com/maps?q=${encodeURIComponent(sec.content.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                          src={`https://maps.google.com/maps?q=${encodeURIComponent(addressStr)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                           frameBorder="0"
                           scrolling="no"
                           marginHeight={0}
@@ -1848,13 +1854,14 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'timeline') {
+                const timelineMilestones = sec.content?.milestones || experience.milestones || [];
                 return (
                   <div key={sec.id} className="space-y-4 max-w-lg mx-auto text-center">
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
                       {sec.title || 'Momentos Especiales'}
                     </h3>
                     <div className="relative pl-6 border-l border-rose-200 ml-3 space-y-6 text-left">
-                      {sec.content.milestones?.map((m: any, mIdx: number) => (
+                      {timelineMilestones.map((m: any, mIdx: number) => (
                         <div key={mIdx} className="relative space-y-2">
                           <div className={`absolute -left-[30px] top-1.5 w-4 h-4 border-4 border-white rounded-full shadow-md ${style.btnClass.split(' ')[0]}`}></div>
                           <div className={`rounded-2xl p-4 shadow border space-y-2 ${style.cardClass}`}>
