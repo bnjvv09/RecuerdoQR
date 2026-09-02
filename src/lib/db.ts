@@ -115,10 +115,11 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta con 145 personajes temáticos e interacciones adicionales.',
     features: [
       '⏱️ Contador de amor en vivo + Corazones',
+      '✨ Catálogo de 145 Personajes Temáticos a elección',
       '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
       '🎵 Canción especial de la pareja de fondo (YouTube)',
       '💌 Carta de aniversario interactiva',
-      '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+      '📸 Hasta 20 Fotos en HD'
     ]
   },
   {
@@ -129,6 +130,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
     features: [
       '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
+      '✨ Incluye los 145 Personajes Temáticos',
       '✨ Línea de tiempo de hitos con fotos y fechas',
       '📍 Mapa interactivo del lugar donde se conocieron',
       '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
@@ -187,7 +189,7 @@ const serverMemoryStore: {
 
 // --- DATA ACCESS METHODS ---
 
-const DATA_VERSION = 'v2_digital_0902';
+const DATA_VERSION = 'v4_digital_clean_normal';
 
 // 1. PRODUCTS
 export async function getProducts(): Promise<Product[]> {
