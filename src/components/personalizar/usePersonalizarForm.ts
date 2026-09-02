@@ -442,6 +442,20 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   };
 
   const validateStep4 = (): boolean => {
+    if (!customerName.trim() || customerName.trim().length < 2) {
+      toast.error('Por favor ingresa tu nombre completo');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!customerEmail.trim() || !emailRegex.test(customerEmail.trim())) {
+      toast.error('Por favor ingresa un correo electrónico válido');
+      return false;
+    }
+    const cleanDigits = customerPhone.replace(/\D/g, '');
+    if (cleanDigits.length < 8) {
+      toast.error('Por favor ingresa un número móvil chileno válido de 8 dígitos (+56 9)');
+      return false;
+    }
     return true;
   };
 

@@ -12,6 +12,7 @@ import Step4Checkout from '@/components/personalizar/Step4Checkout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { uploadImage } from '@/lib/upload';
 import { createOrder, createExperience } from '@/lib/db';
+import { sanitizeText, sanitizeObject } from '@/lib/sanitize';
 import { toast } from 'sonner';
 
 function PersonalizarContent() {
@@ -58,9 +59,15 @@ function PersonalizarContent() {
     const toastId = toast.loading('Guardando y configurando tu experiencia...');
 
     try {
-      // Generate slug
-      const cleanPartner = form.partnerName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const cleanUser = form.userName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      // Sanitizar datos del cliente
+      const cleanCustomerName = sanitizeText(form.customerName);
+      const cleanCustomerEmail = sanitizeText(form.customerEmail).toLowerCase();
+      const cleanCustomerPhone = sanitizeText(form.customerPhone);
+      const cleanDeliveryAddress = sanitizeText(form.deliveryAddress);
+
+      // Sanitizar textos de personalización
+      const cleanPartner = sanitizeText(form.partnerName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'amor';
+      const cleanUser = sanitizeText(form.userName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'pareja';
       const slug = `${cleanPartner}-${cleanUser}-${Math.floor(100 + Math.random() * 900)}`;
 
       // Upload photos
@@ -68,9 +75,9 @@ function PersonalizarContent() {
       for (const p of form.photos) {
         if (p.file) {
           const publicUrl = await uploadImage(p.file, slug);
-          uploadedPhotosList.push({ url: publicUrl, caption: p.caption });
+          uploadedPhotosList.push({ url: publicUrl, caption: sanitizeText(p.caption) });
         } else {
-          uploadedPhotosList.push({ url: p.previewUrl, caption: p.caption });
+          uploadedPhotosList.push({ url: p.previewUrl, caption: sanitizeText(p.caption) });
         }
       }
 
@@ -82,9 +89,9 @@ function PersonalizarContent() {
           imgUrl = await uploadImage(m.image, slug);
         }
         formattedMilestones.push({
-          title: m.title,
+          title: sanitizeText(m.title),
           date: m.date,
-          description: m.description,
+          description: sanitizeText(m.description),
           image_url: imgUrl,
         });
       }
@@ -104,10 +111,10 @@ function PersonalizarContent() {
       // Create Order
       const newOrder = await createOrder({
         product_id: form.selectedPlan,
-        customer_name: form.customerName,
-        customer_email: form.customerEmail,
-        customer_phone: form.customerPhone,
-        delivery_address: form.deliveryAddress,
+        customer_name: cleanCustomerName,
+        customer_email: cleanCustomerEmail,
+        customer_phone: cleanCustomerPhone,
+        delivery_address: cleanDeliveryAddress,
         total: form.totalPrice,
       });
 
