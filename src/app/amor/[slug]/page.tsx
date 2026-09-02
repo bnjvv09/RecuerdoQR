@@ -217,6 +217,13 @@ export default function AmorExperiencePage() {
     loadExp();
   }, [slug]);
 
+  // Reactive audio playback effect
+  useEffect(() => {
+    if (isPlaying && bgAudioRef.current) {
+      bgAudioRef.current.play().catch(() => {});
+    }
+  }, [isPlaying, audioFileUrl]);
+
   // Extract YouTube code helper
   const extractYoutubeCode = (url: string) => {
     if (!url) return;
@@ -545,6 +552,7 @@ export default function AmorExperiencePage() {
         <audio
           ref={bgAudioRef}
           src={audioFileUrl}
+          preload="auto"
           loop
           className="hidden"
         />
@@ -721,7 +729,16 @@ export default function AmorExperiencePage() {
                     setWelcomeOpened(true);
                     setEntered(true);
                     setIsPlaying(true);
+                    // 🚀 Reproducción inmediata en el mismo evento táctil (0ms)
+                    if (bgAudioRef.current) {
+                      bgAudioRef.current.currentTime = 0;
+                      bgAudioRef.current.play().catch((err) => console.log('Audio autoplay:', err));
+                    }
                   } else {
+                    // Pre-cargar audio en memoria durante los toques 1 a 4
+                    if (bgAudioRef.current && bgAudioRef.current.paused) {
+                      bgAudioRef.current.load();
+                    }
                     confetti({ 
                       particleCount: 15, 
                       spread: 40, 
