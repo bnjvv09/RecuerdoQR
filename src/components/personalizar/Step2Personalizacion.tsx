@@ -117,7 +117,9 @@ interface Step2PersonalizacionProps {
   songUrl: string;
   setSongUrl: (val: string) => void;
   voiceNoteFile?: File | null;
+  setVoiceNoteFile?: (file: File | null) => void;
   voiceNoteUrl?: string;
+  setVoiceNoteUrl?: (url: string) => void;
   handleVoiceNoteUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setVoiceNoteBlob?: (blob: Blob) => void;
   uploadedVideoFile?: File | null;
@@ -253,7 +255,9 @@ export default function Step2Personalizacion({
   songUrl,
   setSongUrl,
   voiceNoteFile = null,
+  setVoiceNoteFile,
   voiceNoteUrl = '',
+  setVoiceNoteUrl,
   handleVoiceNoteUpload,
   setVoiceNoteBlob,
   uploadedVideoFile = null,
@@ -386,6 +390,10 @@ export default function Step2Personalizacion({
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         if (setVoiceNoteBlob) setVoiceNoteBlob(audioBlob);
+        const recordedAudioFile = new File([audioBlob], `voicenote-${Date.now()}.webm`, { type: 'audio/webm' });
+        if (setVoiceNoteFile) setVoiceNoteFile(recordedAudioFile);
+        if (setVoiceNoteUrl) setVoiceNoteUrl(URL.createObjectURL(audioBlob));
+        toast.success('🎙️ Nota de voz grabada con éxito');
         stream.getTracks().forEach((track) => track.stop());
       };
 

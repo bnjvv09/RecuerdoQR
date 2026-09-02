@@ -580,6 +580,49 @@ export async function updateOrderPayment(
   return true;
 }
 
+export async function getOrderById(id: string): Promise<Order | null> {
+  if (isMockMode) {
+    if (typeof window !== 'undefined') {
+      const orders = getLocalData<Order[]>('orders', []);
+      const found = orders.find(o => o.id === id);
+      if (found) return found;
+    }
+    return serverMemoryStore.orders.find(o => o.id === id) || null;
+  }
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*, products(*)')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return {
+    ...data,
+    product: data.products
+  };
+}
+
+export async function getExperienceByOrderId(orderId: string): Promise<Experience | null> {
+  if (isMockMode) {
+    if (typeof window !== 'undefined') {
+      const experiences = getLocalData<Experience[]>('experiences', []);
+      const found = experiences.find(e => e.order_id === orderId);
+      if (found) return found;
+    }
+    return serverMemoryStore.experiences.find(e => e.order_id === orderId) || null;
+  }
+
+  const { data, error } = await supabase
+    .from('experiences')
+    .select('*, photos(*), milestones(*)')
+    .eq('order_id', orderId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data;
+}
+
 // 3. EXPERIENCES
 export function ensureExperienceSections(exp: Experience): Experience {
   if (exp.config && exp.config.sections && Array.isArray(exp.config.sections)) {

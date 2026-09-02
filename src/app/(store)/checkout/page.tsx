@@ -16,7 +16,7 @@ export default function CheckoutPage() {
         <div className="w-10 h-10 border-4 border-rose-200 border-t-[#a21232] rounded-full animate-spin mx-auto"></div>
         <h2 className="text-base font-serif font-bold text-gray-900">Redirigiendo a Personalización...</h2>
         <p className="text-xs text-gray-500 font-light">
-          El proceso de pago y envío se completa directamente en el Paso 4 del Personalizador.
+          El proceso de pago y creación se completa directamente en el Paso 6 del Personalizador.
         </p>
       </div>
     </div>

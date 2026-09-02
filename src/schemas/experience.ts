@@ -16,7 +16,7 @@ export const experienceCreateSchema = z.object({
   customerName: z.string().optional().default(''),
   customerPhone: z.string().optional().default(''),
   customerEmail: z.string().optional().default(''),
-  productId: z.string().optional().default('digital'),
+  productId: z.string().optional().default('basic'),
   title: z.string().min(2, 'El título debe tener al menos 2 caracteres'),
   partnerName: z.string().min(1, 'El nombre de la pareja es requerido'),
   userName: z.string().min(1, 'El nombre de quien regala es requerido'),

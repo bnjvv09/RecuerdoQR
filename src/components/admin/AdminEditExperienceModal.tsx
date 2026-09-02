@@ -344,13 +344,29 @@ export default function AdminEditExperienceModal({
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Enlace Música de YouTube</label>
-                <input
-                  type="url"
+                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Música de Fondo Oficial</label>
+                <select
                   value={songUrl}
                   onChange={(e) => setSongUrl(e.target.value)}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#a21232]"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#a21232] font-medium"
+                >
+                  <option value="/audio/full/dicelo.m4a">💍 Jay Wheeler & Zhamira – Dícelo</option>
+                  <option value="/audio/full/vida-de-rico.m4a">🥳 Camilo – Vida de Rico</option>
+                  <option value="/audio/full/creo-en-ti.m4a">💖 Reik – Creo en Ti</option>
+                  <option value="/audio/full/yellow.m4a">🌟 Coldplay – Yellow</option>
+                  <option value="/audio/full/quiereme-mientras-se-pueda.m4a">🌹 Manuel Turizo – Quiéreme Mientras Se Pueda</option>
+                  <option value="/audio/full/beso.m4a">💋 ROSALÍA & Rauw Alejandro – BESO</option>
+                  <option value="/audio/full/perfect.m4a">🇬🇧 Ed Sheeran – Perfect</option>
+                  <option value="/audio/full/un-ano.m4a">⏳ Sebastián Yatra & Reik – Un Año</option>
+                  <option value="">-- Personalizado / Otro Enlace --</option>
+                </select>
+
+                <input
+                  type="text"
+                  value={songUrl}
+                  onChange={(e) => setSongUrl(e.target.value)}
+                  placeholder="O escribe ruta de audio / enlace personalizado..."
+                  className="w-full mt-1.5 px-3 py-1.5 bg-gray-50 border border-gray-250 rounded-xl text-[11px] font-mono focus:bg-white focus:border-[#a21232]"
                 />
               </div>
             </div>

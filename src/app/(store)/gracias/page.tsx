@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { getExperiences, getOrders, Order, Experience } from '@/lib/db';
+import { getOrderById, getExperienceByOrderId, Order, Experience } from '@/lib/db';
 import QRCode from 'qrcode';
 import { 
   Heart, 
@@ -57,14 +57,12 @@ function GraciasContent() {
 
     const loadData = async () => {
       try {
-        const orderList = await getOrders();
-        const matchedOrder = orderList.find(o => o.id === orderId);
+        const matchedOrder = await getOrderById(orderId);
 
         if (matchedOrder) {
           setOrder(matchedOrder);
 
-          const expList = await getExperiences();
-          const matchedExp = expList.find(e => e.order_id === orderId);
+          const matchedExp = await getExperienceByOrderId(orderId);
           if (matchedExp) {
             setExperience(matchedExp);
 
