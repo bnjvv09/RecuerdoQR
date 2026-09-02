@@ -15,7 +15,10 @@ import {
   Sparkles,
   Share2,
   Copy,
-  Check
+  Check,
+  Star,
+  Lock,
+  Unlock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
@@ -30,6 +33,13 @@ function GraciasContent() {
   const [experience, setExperience] = useState<Experience | null>(null);
   const [loading, setLoading] = useState(true);
   const [qrDataUrl, setQrDataUrl] = useState('');
+
+  // Estados de Reseña y Desbloqueo de Código QR
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -110,6 +120,43 @@ function GraciasContent() {
     setTimeout(() => setCopied(false), 3000);
   };
 
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewComment.trim()) {
+      toast.error('Por favor escribe un breve comentario sobre tu experiencia.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+
+    try {
+      // Guardar localmente la reseña del cliente
+      const existingReviews = JSON.parse(localStorage.getItem('recuerdo_customer_reviews') || '[]');
+      existingReviews.push({
+        orderId,
+        rating,
+        comment: reviewComment.trim(),
+        partnerName: experience?.partner_name,
+        date: new Date().toISOString(),
+      });
+      localStorage.setItem('recuerdo_customer_reviews', JSON.stringify(existingReviews));
+    } catch {
+      // Silently continue
+    }
+
+    // Celebración con confeti al desbloquear
+    confetti({
+      particleCount: 160,
+      spread: 90,
+      origin: { y: 0.5 },
+      colors: ['#f59e0b', '#ec4899', '#a21232', '#10b981', '#ffffff'],
+    });
+
+    toast.success('¡Muchas gracias por tu reseña! Tu Código QR ha sido desbloqueado 🎉');
+    setReviewSubmitted(true);
+    setIsSubmittingReview(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center space-y-3">
@@ -187,6 +234,106 @@ function GraciasContent() {
   };
 
   const themeDetails = getThemeCardDetails(experience.theme);
+
+  // 🌟 VISTA 1: CALIFICACIÓN OBLIGATORIA ANTES DE DESBLOQUEAR EL QR
+  if (!reviewSubmitted) {
+    const starLabels = [
+      '',
+      '😞 Muy mejorable (1/5)',
+      '😐 Aceptable (2/5)',
+      '🙂 Buena experiencia (3/5)',
+      '😊 ¡Muy linda página! (4/5)',
+      '💖 ¡Excelente, me encantó para mi pareja! (5/5)',
+    ];
+
+    const currentRating = hoverRating || rating;
+
+    return (
+      <div className="py-10 md:py-16 bg-rose-50/20 min-h-[85vh] flex items-center justify-center px-4">
+        <div className="max-w-lg w-full bg-white rounded-3xl border border-rose-100 shadow-2xl p-6 sm:p-8 text-center space-y-6 animate-fade-in relative overflow-hidden">
+          {/* Top Banner */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-rose-500 to-[#a21232]" />
+
+          <div className="space-y-2">
+            <div className="w-14 h-14 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center mx-auto text-[#a21232] shadow-sm">
+              <Sparkles className="w-7 h-7 animate-pulse text-amber-500" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-0.5 rounded-full inline-block">
+              ✓ ¡Pago Exitoso Confirmado!
+            </span>
+            <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+              ¡Tu Recuerdo de Amor está Listo!
+            </h1>
+            <p className="text-xs text-gray-600 font-light leading-relaxed max-w-sm mx-auto">
+              Ayúdanos con tu calificación y una breve opinión para <strong>desbloquear tu Código QR y Tarjeta Digital en HD</strong>.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmitReview} className="space-y-5 text-left">
+            {/* 5 Estrellas Interactivas */}
+            <div className="bg-rose-50/40 border border-rose-100 rounded-2xl p-4 text-center space-y-2">
+              <label className="text-xs font-bold text-gray-700 block">
+                ¿Qué tal fue tu experiencia creando el recuerdo? *
+              </label>
+              <div className="flex justify-center items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    className="p-1 transition transform hover:scale-125 active:scale-95 cursor-pointer focus:outline-none"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${
+                        star <= currentRating
+                          ? 'text-amber-400 fill-amber-400 filter drop-shadow-xs'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] font-semibold text-rose-900">
+                {starLabels[currentRating]}
+              </p>
+            </div>
+
+            {/* Comentario / Reseña Obligatoria */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-gray-700">
+                Tu Opinión o Mensaje para la Pareja *
+              </label>
+              <textarea
+                required
+                rows={3}
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Ej: ¡Quedó hermoso para nuestro aniversario, las fotos y la música se ven increíbles! ❤️"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-2xl text-xs focus:outline-none focus:border-[#a21232] transition bg-white text-gray-800 placeholder-gray-400"
+              />
+            </div>
+
+            {/* Botón de Enviar y Desbloquear QR */}
+            <button
+              type="submit"
+              disabled={isSubmittingReview}
+              className="w-full py-3.5 bg-gradient-to-r from-[#a21232] via-rose-600 to-[#880e28] hover:from-[#880e28] hover:to-[#a21232] text-white font-bold rounded-2xl text-xs shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+            >
+              <Unlock className="w-4 h-4 text-amber-300" />
+              <span>Enviar Reseña y Ver Mi Código QR ✨</span>
+            </button>
+          </form>
+
+          <div className="flex items-center justify-center gap-1.5 text-[10px] text-gray-400 pt-1">
+            <Lock className="w-3 h-3 text-emerald-500" />
+            <span>Tus datos y tarjeta están protegidos bajo cifrado seguro</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-10 md:py-16 bg-rose-50/15">

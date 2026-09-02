@@ -307,6 +307,28 @@ export default function Step4Checkout({
                   }`}
                 />
 
+                {/* 📧 Sugerencias Rápidas de Dominio de Correo */}
+                {customerEmail.length > 0 && !customerEmail.includes('.com') && !customerEmail.includes('.cl') && !customerEmail.includes('.net') && (
+                  <div className="flex flex-wrap gap-1.5 mt-2 animate-fade-in items-center">
+                    <span className="text-[10px] text-gray-500 font-medium">Completar con 1 clic:</span>
+                    {['@gmail.com', '@hotmail.com', '@outlook.com', '@icloud.com'].map((dom) => (
+                      <button
+                        key={dom}
+                        type="button"
+                        onClick={() => {
+                          const username = customerEmail.includes('@') ? customerEmail.split('@')[0] : customerEmail;
+                          if (username.trim()) {
+                            setCustomerEmail(`${username.trim()}${dom}`);
+                          }
+                        }}
+                        className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-[#a21232] border border-rose-200 rounded-lg text-[10px] font-bold transition active:scale-95 cursor-pointer shadow-2xs"
+                      >
+                        {dom}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Sugerencia de Typo */}
                 {serverEmailStatus.suggestion && (
                   <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-900">
