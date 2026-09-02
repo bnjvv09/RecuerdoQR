@@ -30,6 +30,7 @@ export default function AdminSettingsPanel() {
   const [activeSubTab, setActiveSubTab] = useState<'contact' | 'coupons' | 'legal'>('contact');
   const [couponsList, setCouponsList] = useState<Coupon[]>([]);
   const [newCouponCode, setNewCouponCode] = useState('');
+  const [newCouponType, setNewCouponType] = useState<'percent' | 'fixed'>('percent');
   const [newCouponDiscount, setNewCouponDiscount] = useState(15);
 
   useEffect(() => {
@@ -43,10 +44,11 @@ export default function AdminSettingsPanel() {
       toast.error('Ingresa un código de cupón');
       return;
     }
-    const created = await createCoupon(newCouponCode, newCouponDiscount);
+    const created = await createCoupon(newCouponCode, newCouponType, newCouponDiscount);
     setCouponsList(prev => [created, ...prev.filter(c => c.code !== created.code)]);
     setNewCouponCode('');
-    toast.success(`¡Cupón ${created.code} (${created.discount_percent}%) creado con éxito!`);
+    const label = created.discount_type === 'percent' ? `-${created.discount_value}%` : `-$${created.discount_value.toLocaleString('es-CL')} CLP`;
+    toast.success(`¡Cupón ${created.code} (${label}) creado con éxito!`);
   };
 
   const handleToggleCoupon = async (id: string) => {
@@ -293,20 +295,21 @@ export default function AdminSettingsPanel() {
         </div>
       )}
 
-      {/* Tab: Cupones de Descuento (%) */}
+      {/* Tab: Cupones de Descuento */}
       {activeSubTab === 'coupons' && (
         <div className="space-y-6 animate-fade-in">
           {/* Form: Crear Nuevo Cupón */}
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs space-y-4">
             <h3 className="font-serif font-bold text-sm text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-2.5">
               <Ticket className="w-4 h-4 text-[#a21232]" />
-              <span>Crear Nuevo Cupón de Descuento (%)</span>
+              <span>Crear Nuevo Cupón de Descuento</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-              <div className="sm:col-span-6">
+              {/* Código */}
+              <div className="sm:col-span-4">
                 <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                  Código del Cupón (Lo que escribe el cliente) *
+                  Código del Cupón *
                 </label>
                 <div className="relative">
                   <Ticket className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
@@ -314,37 +317,81 @@ export default function AdminSettingsPanel() {
                     type="text"
                     value={newCouponCode}
                     onChange={(e) => setNewCouponCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                    placeholder="Ej: AMOR15, TIKTOK20, LANZAMIENTO"
+                    placeholder="Ej: AMOR15 o AMOR2000"
                     className="w-full pl-9 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs font-mono uppercase font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
                   />
                 </div>
               </div>
 
+              {/* Tipo de Descuento: Porcentaje vs Monto Fijo */}
               <div className="sm:col-span-3">
                 <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                  Porcentaje de Descuento (%) *
+                  Tipo de Descuento *
+                </label>
+                <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewCouponType('percent');
+                      setNewCouponDiscount(15);
+                    }}
+                    className={`py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                      newCouponType === 'percent'
+                        ? 'bg-[#a21232] text-white shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <span>% Porc.</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewCouponType('fixed');
+                      setNewCouponDiscount(2000);
+                    }}
+                    className={`py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                      newCouponType === 'fixed'
+                        ? 'bg-[#a21232] text-white shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <span>$ Fijo</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Valor del Descuento */}
+              <div className="sm:col-span-3">
+                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
+                  {newCouponType === 'percent' ? 'Porcentaje (% de 1 a 100) *' : 'Monto Fijo ($ en CLP) *'}
                 </label>
                 <div className="relative">
-                  <Percent className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+                  {newCouponType === 'percent' ? (
+                    <Percent className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+                  ) : (
+                    <span className="text-gray-400 absolute left-3 top-2.5 text-xs font-bold">$</span>
+                  )}
                   <input
                     type="number"
                     min={1}
-                    max={100}
+                    max={newCouponType === 'percent' ? 100 : 50000}
+                    step={newCouponType === 'percent' ? 1 : 100}
                     value={newCouponDiscount}
                     onChange={(e) => setNewCouponDiscount(Number(e.target.value))}
-                    className="w-full pl-9 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
+                    className="w-full pl-8 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
                   />
                 </div>
               </div>
 
-              <div className="sm:col-span-3">
+              {/* Botón Crear */}
+              <div className="sm:col-span-2">
                 <button
                   type="button"
                   onClick={handleCreateCoupon}
                   className="w-full py-2.5 bg-[#a21232] hover:bg-[#880e28] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Crear Cupón</span>
+                  <span>Crear</span>
                 </button>
               </div>
             </div>
@@ -379,8 +426,8 @@ export default function AdminSettingsPanel() {
                         <span className="font-mono font-black text-sm text-gray-900 tracking-wider">
                           {c.code}
                         </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 bg-[#a21232] text-white rounded-md">
-                          -{c.discount_percent}% OFF
+                        <span className="text-[10px] font-bold px-2 py-0.5 bg-[#a21232] text-white rounded-md whitespace-nowrap">
+                          {c.discount_type === 'percent' ? `-${c.discount_value}% OFF` : `-$${c.discount_value.toLocaleString('es-CL')} CLP`}
                         </span>
                       </div>
                       <p className="text-[10px] text-gray-500 font-light">

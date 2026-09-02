@@ -28,7 +28,8 @@ export interface SiteSettings {
 export interface Coupon {
   id: string;
   code: string;
-  discount_percent: number;
+  discount_type: 'percent' | 'fixed';
+  discount_value: number;
   is_active: boolean;
   created_at: string;
 }
@@ -1064,9 +1065,9 @@ export async function getCreatedExperiencesCount(): Promise<number> {
 
 // 4. COUPONS
 export const DEFAULT_COUPONS: Coupon[] = [
-  { id: 'c1', code: 'AMOR10', discount_percent: 10, is_active: true, created_at: new Date().toISOString() },
-  { id: 'c2', code: 'TIKTOK15', discount_percent: 15, is_active: true, created_at: new Date().toISOString() },
-  { id: 'c3', code: 'PROMO20', discount_percent: 20, is_active: true, created_at: new Date().toISOString() },
+  { id: 'c1', code: 'AMOR10', discount_type: 'percent', discount_value: 10, is_active: true, created_at: new Date().toISOString() },
+  { id: 'c2', code: 'AMOR2000', discount_type: 'fixed', discount_value: 2000, is_active: true, created_at: new Date().toISOString() },
+  { id: 'c3', code: 'TIKTOK15', discount_type: 'percent', discount_value: 15, is_active: true, created_at: new Date().toISOString() },
 ];
 
 export async function getCoupons(): Promise<Coupon[]> {
@@ -1077,12 +1078,17 @@ export async function getCoupons(): Promise<Coupon[]> {
   return DEFAULT_COUPONS;
 }
 
-export async function createCoupon(code: string, discount_percent: number): Promise<Coupon> {
+export async function createCoupon(code: string, discount_type: 'percent' | 'fixed', discount_value: number): Promise<Coupon> {
   const current = await getCoupons();
+  const cleanVal = discount_type === 'percent' 
+    ? Math.min(100, Math.max(1, Number(discount_value)))
+    : Math.max(100, Number(discount_value));
+
   const newCoupon: Coupon = {
     id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9),
     code: code.trim().toUpperCase(),
-    discount_percent: Math.min(100, Math.max(1, Number(discount_percent))),
+    discount_type,
+    discount_value: cleanVal,
     is_active: true,
     created_at: new Date().toISOString(),
   };
@@ -1114,7 +1120,12 @@ export async function toggleCoupon(id: string): Promise<boolean> {
   return true;
 }
 
-export async function validateCoupon(code: string): Promise<{ valid: boolean; discount_percent?: number; error?: string }> {
+export async function validateCoupon(code: string): Promise<{ 
+  valid: boolean; 
+  discount_type?: 'percent' | 'fixed'; 
+  discount_value?: number; 
+  error?: string 
+}> {
   const clean = code.trim().toUpperCase();
   if (!clean) return { valid: false, error: 'Ingresa un código de cupón' };
 
@@ -1129,6 +1140,10 @@ export async function validateCoupon(code: string): Promise<{ valid: boolean; di
     return { valid: false, error: 'Este cupón se encuentra inactivo o expirado' };
   }
 
-  return { valid: true, discount_percent: found.discount_percent };
+  return { 
+    valid: true, 
+    discount_type: found.discount_type || 'percent', 
+    discount_value: found.discount_value 
+  };
 }
 

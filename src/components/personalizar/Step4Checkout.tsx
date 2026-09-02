@@ -61,11 +61,19 @@ export default function Step4Checkout({
 
   // 🎟️ Estados de Cupones de Descuento
   const [couponInput, setCouponInput] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ 
+    code: string; 
+    type: 'percent' | 'fixed'; 
+    value: number 
+  } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
 
-  const discountAmount = appliedCoupon ? Math.round((totalPrice * appliedCoupon.percent) / 100) : 0;
+  const discountAmount = appliedCoupon 
+    ? appliedCoupon.type === 'percent'
+      ? Math.round((totalPrice * appliedCoupon.value) / 100)
+      : Math.min(totalPrice, appliedCoupon.value)
+    : 0;
   const finalPrice = Math.max(0, totalPrice - discountAmount);
 
   const handleApplyCoupon = async () => {
@@ -73,9 +81,15 @@ export default function Step4Checkout({
     setCouponLoading(true);
     try {
       const result = await validateCoupon(couponInput);
-      if (result.valid && result.discount_percent) {
-        setAppliedCoupon({ code: couponInput.trim().toUpperCase(), percent: result.discount_percent });
-        toast.success(`¡Cupón ${couponInput.trim().toUpperCase()} aplicado! (-${result.discount_percent}% de descuento)`);
+      if (result.valid && result.discount_value) {
+        const type = result.discount_type || 'percent';
+        setAppliedCoupon({ 
+          code: couponInput.trim().toUpperCase(), 
+          type, 
+          value: result.discount_value 
+        });
+        const label = type === 'percent' ? `-${result.discount_value}%` : `-$${result.discount_value.toLocaleString('es-CL')} CLP`;
+        toast.success(`¡Cupón ${couponInput.trim().toUpperCase()} aplicado! (${label} de descuento)`);
       } else {
         toast.error(result.error || 'El cupón ingresado no es válido');
       }
@@ -505,7 +519,7 @@ export default function Step4Checkout({
                     <div className="space-y-0.5">
                       <span className="text-[11px] font-bold text-emerald-900 flex items-center gap-1">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                        Cupón {appliedCoupon.code} (-{appliedCoupon.percent}%)
+                        Cupón {appliedCoupon.code} ({appliedCoupon.type === 'percent' ? `-${appliedCoupon.value}%` : `-$${appliedCoupon.value.toLocaleString('es-CL')} CLP`})
                       </span>
                       <p className="text-[10px] text-emerald-700">Descuento: -${discountAmount.toLocaleString('es-CL')} CLP</p>
                     </div>
