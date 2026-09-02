@@ -1,4 +1,5 @@
 import { supabase, isMockMode } from './supabase';
+import { compressImageToBlob } from './imageCompression';
 
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
@@ -20,9 +21,9 @@ const ALLOWED_MIME_TYPES = new Set([
 const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB
 
 /**
- * Uploads a file to Supabase Storage bucket 'photos' with security validation.
+ * Uploads a file to Supabase Storage bucket 'photos' with automatic WebP compression for lightning-fast delivery.
  */
-export async function uploadImage(file: File, path: string): Promise<string> {
+export async function uploadImage(file: File | Blob, path: string): Promise<string> {
   // 🔒 SEGURIDAD: Validar tamaño máximo de archivo
   if (file.size > MAX_FILE_SIZE_BYTES) {
     throw new Error('El archivo excede el tamaño máximo permitido de 25MB');
@@ -38,17 +39,39 @@ export async function uploadImage(file: File, path: string): Promise<string> {
   }
 
   try {
-    const rawExt = file.name.split('.').pop() || 'jpg';
-    const safeExt = rawExt.toLowerCase().replace(/[^a-z0-9]/g, '');
+    let fileToUpload: Blob = file;
+    let safeExt = 'webp';
+    let contentType = 'image/webp';
+
+    if (file.type && file.type.startsWith('image/')) {
+      // 🚀 Auto-compress 10MB camera photo to 100-200KB WebP
+      try {
+        fileToUpload = await compressImageToBlob(file, 1280, 1280, 0.78);
+        contentType = 'image/webp';
+        safeExt = 'webp';
+      } catch (compErr) {
+        console.warn('Canvas compression fallback to original file:', compErr);
+        fileToUpload = file;
+        const rawExt = (file as any).name?.split('.').pop() || 'jpg';
+        safeExt = rawExt.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+        contentType = file.type || 'image/jpeg';
+      }
+    } else {
+      // Audio or Video
+      const rawExt = (file as any).name?.split('.').pop() || 'mp4';
+      safeExt = rawExt.toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
+      contentType = file.type || 'application/octet-stream';
+    }
+
     const safePath = path.toLowerCase().replace(/[^a-z0-9-]/g, '-');
     const fileName = `${safePath}-${Math.random().toString(36).substring(2, 10)}.${safeExt}`;
     const filePath = `experiences/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('photos')
-      .upload(filePath, file, {
-        contentType: file.type || 'image/jpeg',
-        cacheControl: '31536000',
+      .upload(filePath, fileToUpload, {
+        contentType,
+        cacheControl: '31536000, immutable',
         upsert: false
       });
 

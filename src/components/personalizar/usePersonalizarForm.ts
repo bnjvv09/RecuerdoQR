@@ -479,7 +479,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       const compressedItems: PhotoInput[] = await Promise.all(
         toProcess.map(async (f) => {
           try {
-            const dataUrl = await compressImage(f, 1600, 1600, 0.85);
+            const dataUrl = await compressImage(f, 1280, 1280, 0.78);
             return {
               file: f,
               previewUrl: dataUrl,
@@ -544,7 +544,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       const compressedItems: PhotoInput[] = await Promise.all(
         toProcess.map(async (f) => {
           try {
-            const dataUrl = await compressImage(f, 1600, 1600, 0.85);
+            const dataUrl = await compressImage(f, 1280, 1280, 0.78);
             return {
               file: f,
               previewUrl: dataUrl,
