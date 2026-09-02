@@ -21,6 +21,39 @@ export const THEME_HIGHLIGHTS: Record<string, {
     premium: string[];
   }
 }> = {
+  anniversary: {
+    emoji: '❤️',
+    name: 'Aniversario',
+    badge: 'Contador de Amor & Corazones',
+    desc: 'Contador de tiempo en vivo (años, días y segundos) con lluvia de corazones palpitantes.',
+    plans: {
+      basic: [
+        '📸 Hasta 10 Fotos en Polaroid & Collage',
+        '⏱️ Contador de Tiempo en Vivo (Años, meses y días juntos)',
+        '💖 Portada Interactiva con corazón palpitante',
+        '💌 Dedicatoria y Carta de amor personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
+      ],
+      medium: [
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
+        '🔢 Estadísticas de la Pareja (Besos, cafés y momentos juntos)',
+        '💌 Carta de Aniversario Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+      ],
+      premium: [
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp (Grabada con micrófono en vivo)',
+        '🎬 Video Dedicado en HD (Subida directa de video)',
+        '⏳ Línea de Tiempo Histórica (Hitos con fotos y fechas especiales)',
+        '📍 Mapa Interactivo del lugar donde se conocieron',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
+      ]
+    }
+  },
   birthday: {
     emoji: '🎂',
     name: 'Cumpleaños',
@@ -28,27 +61,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Torta interactiva con velas encendidas para pedir un deseo, soplar con animación y estallido de confeti.',
     plans: {
       basic: [
+        '📸 Hasta 10 Fotos en Polaroid & Collage',
         '🎂 Torta virtual interactiva con velas encendidas para soplar',
-        '🎉 Animación de confeti de colores festivo',
-        '📸 Hasta 10 Fotos con dedicatorias',
-        '🎨 Tarjeta Digital con Color 100% Personalizado',
-        '📱 Código QR de alta resolución'
+        '🎉 Animación de confeti festivo y deseos',
+        '💌 Dedicatoria de Cumpleaños personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🎂 Torta virtual interactiva con velas para soplar',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🎈 Globos flotantes interactivos para reventar sorpresas',
-        '🎵 Canción de Cumpleaños / Mañanitas de fondo (YouTube)',
-        '📸 Hasta 20 Fotos en galería (6 estilos)',
-        '💌 Mensaje largo y carta de dedicatoria'
+        '💌 Carta de Felicitación Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🎂 Torta interactiva + 🎈 Globos sorpresa + 🎵 Música',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '🎬 Video sorpresa de YouTube dedicado (saludos de amigos)',
-        '✨ Línea de tiempo de fotos de su vida y mejores momentos',
-        '📸 Hasta 35 Fotos en HD (combina 2 estilos juntos)',
-        '🔒 Rincón Secreto con PIN de 4 dígitos'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con saludos y risas',
+        '🎬 Video Dedicado en HD (Saludos en video de amigos/familia)',
+        '⏳ Línea de Tiempo con fotos de su vida y mejores momentos',
+        '📍 Mapa Interactivo de la fiesta o lugar especial',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -59,27 +94,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Pregunta romántica "¿Quieres ser mi novia/o?" con botón interactivo "¡Sí, Acepto!" y confeti.',
     plans: {
       basic: [
+        '📸 Hasta 10 Fotos de sus mejores salidas juntos',
         '💍 Pregunta interactiva con botón "¡Sí, Acepto! ❤️"',
         '💖 Lluvia de corazones y confeti al aceptar',
-        '⏱️ Contador de tiempo de amor en vivo',
-        '📸 Hasta 10 Fotos de sus salidas',
-        '🎨 Tarjeta Digital con color personalizado'
+        '💌 Carta de Declaración Romántica personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '💍 Pregunta interactiva con botón "¡Sí, Acepto! ❤️"',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🏃 Botón travieso "No" que se escapa si intentan tocarlo',
-        '🎵 Canción romántica de fondo (YouTube)',
-        '💌 Carta de declaración interactiva',
-        '📸 Hasta 20 Fotos (6 estilos de galería)'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
+        '🏃 Botón travieso "No" que se escapa al intentar tocarlo',
+        '💌 Carta de Amor Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '💍 Pregunta + Botón escapista + 🎵 Música + 💌 Carta',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '📜 Certificado oficial de pareja listo para descargar',
-        '✨ Línea de tiempo de cómo se conocieron con fotos',
-        '📸 Hasta 35 Fotos en HD (combina 2 estilos)',
-        '🔒 Mensaje confidencial con PIN secreto'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp declarando tus sentimientos',
+        '🎬 Video Dedicado en HD de su historia',
+        '⏳ Línea de Tiempo Histórica de cómo se conocieron',
+        '📜 Certificado oficial de noviazgo descargable',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -90,25 +127,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Pregunta de boda "¿Te quieres casar conmigo? 💍" con animación de anillo brillante.',
     plans: {
       basic: [
-        '💍 Pregunta solemne "¿Te casas conmigo? 💍" con botón "¡Sí!"',
+        '📸 Hasta 10 Fotos de su historia de amor',
+        '💍 Pregunta solemne "¿Te casas conmigo? 💍" con botón interactivo',
         '✨ Lluvia dorada de fuegos artificiales y confeti',
-        '📸 Hasta 10 Fotos memorables',
-        '🎨 Tarjeta Digital con color personalizado'
+        '💌 Carta de Promesa de Amor para toda la vida',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '💍 Pregunta de propuesta con botón "¡Sí, Acepto!"',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial solemne)',
         '🏃 Botón travieso "No" que se escapa por la pantalla',
-        '🎵 Música solemne y romántica de fondo',
-        '💌 Carta de amor para toda la vida',
-        '📸 Hasta 20 Fotos en HD (6 estilos)'
+        '💌 Carta de Compromiso Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '💍 Pregunta + Botón escapista + Música + Carta',
-        '✨ Incluye los 145 Personajes Temáticos',
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con tu propuesta grabada',
+        '🎬 Video Dedicado en HD para la gran sorpresa',
         '💎 Caja de anillo 3D animada que se abre al tocarla',
-        '📜 Certificado oficial de compromiso descargable',
-        '📸 Hasta 35 Fotos + Video de su historia de amor'
+        '⏳ Línea de Tiempo de todo su camino juntos hacia el altar',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -119,24 +160,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Tarjeta dorada interactiva para raspar con el dedo y revelar la ecografía y fecha del bebé.',
     plans: {
       basic: [
-        '🍼 Tarjeta "Rasca y Gana" digital (raspar para revelar ecografía)',
+        '📸 Hasta 10 Fotos de la dulce espera y familia',
+        '🍼 Tarjeta "Rasca y Gana" digital para revelar la ecografía',
         '✨ Anuncio de la fecha estimada de llegada del bebé',
-        '📸 Hasta 10 Fotos de la familia y test',
-        '🎨 Tarjeta Digital personalizada con color a elección'
+        '💌 Mensaje y dedicatoria emotiva para el futuro papá/abuelos',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🍼 Tarjeta Rasca y Gana interactiva',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial tierna)',
         '📊 Encuesta familiar en vivo: ¿Crees que es Niño 💙 o Niña 💖?',
-        '🎵 Música tierna y emotiva de fondo',
-        '📸 Hasta 20 Fotos de la dulce espera'
+        '💌 Carta Emotiva de Anuncio Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🍼 Rasca y Gana + 📊 Encuesta familiar + 🎵 Música',
-        '✨ Incluye los 145 Personajes Temáticos',
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con los latidos o anuncio',
+        '🎬 Video Dedicado en HD de la ecografía o reacción familiar',
         '👣 Contador de semanas al parto con tamaño del bebé',
-        '🎬 Video de la reacción de los padres',
-        '📸 Hasta 35 Fotos de recuerdos familiares'
+        '⏳ Línea de Tiempo del crecimiento del embarazo',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -147,24 +193,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Caja con moño que tiembla y se abre al tocarla revelando un Ticket Dorado sorpresa.',
     plans: {
       basic: [
+        '📸 Hasta 10 Fotos de pistas y momentos especiales',
         '🎁 Caja de regalo 3D animada que tiembla y se abre al tocar',
-        '🎟️ Mensaje con el regalo o sorpresa revelada',
-        '📸 Hasta 10 Fotos de pistas o recuerdos',
-        '🎨 Tarjeta Digital con color personalizado'
+        '🎟️ Mensaje con la sorpresa o regalo revelado',
+        '💌 Carta y dedicatoria de sorpresa personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🎁 Caja de regalo 3D que se abre con destellos',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🎟️ Ticket Dorado VIP personalizado con código de barras',
-        '🎵 Música de fondo misteriosa o festiva',
-        '📸 Hasta 20 Fotos en HD (6 estilos)'
+        '💌 Carta de Sorpresa Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🎁 Caja + Ticket Dorado VIP + 🎵 Música',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '📍 Mapa interactivo con la ubicación secreta de la sorpresa',
-        '🔒 Rincón con PIN secreto para pistas adicionales',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con pistas o saludo',
+        '🎬 Video Dedicado en HD revelando la gran sorpresa',
+        '📍 Mapa Interactivo con la ubicación secreta de la sorpresa',
+        '⏳ Línea de Tiempo de recuerdos antes del gran día',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -175,53 +226,62 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Sobre vintage que se rompe al tocarlo y despliega la carta en formato pergamino antiguo.',
     plans: {
       basic: [
+        '📸 Hasta 10 Fotos de sus momentos juntos',
         '💌 Sobre vintage con sello de cera que se abre al tocar',
         '📜 Despliegue de la carta en formato pergamino elegante',
-        '📸 Hasta 10 Fotos especiales',
-        '🎨 Tarjeta Digital con color personalizado'
+        '💖 Dedicatoria profunda y mensaje del corazón',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '💌 Sobre con sello de cera + Pergamino',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🖋️ Efecto de escritura en vivo (las letras se van escribiendo)',
-        '🎵 Música acústica de piano/guitarra de fondo',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial romántica)',
+        '✨ Despliegue con tipografía caligráfica clásica',
+        '💌 Carta de Amor Extensa Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '💌 Sobre + Pergamino + Escritura en vivo + Música',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '🔒 Rincón secreto con PIN para una confesión oculta',
-        '✨ Línea de tiempo de los capítulos de su amor',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp leyendo tu carta con tu voz',
+        '🎬 Video Dedicado en HD con dedicatoria especial',
+        '⏳ Línea de Tiempo de todos los capítulos de su historia',
+        '📍 Mapa Interactivo del lugar donde nació su amor',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
-  anniversary: {
-    emoji: '❤️',
-    name: 'Aniversario',
-    badge: 'Contador de Amor & Corazones',
-    desc: 'Contador de tiempo en vivo (años, días y segundos) con lluvia de corazones palpitantes.',
+  'love-confession': {
+    emoji: '💖',
+    name: 'Declaración de Amor',
+    badge: 'Corazón de Cristal Interactivo',
+    desc: 'Corazón de cristal resplandeciente que se ilumina y revela tu mensaje de confesión.',
     plans: {
       basic: [
-        '⏱️ Contador de amor en tiempo real (años, días, segundos)',
-        '💖 Dedicatoria final con corazón palpitante',
-        '📸 Hasta 10 Fotos en Polaroid y Collage',
-        '🎨 Tarjeta Digital con color personalizado'
+        '📸 Hasta 10 Fotos de sus citas y momentos',
+        '💖 Corazón de cristal interactivo que se ilumina al tocar',
+        '✨ Efecto de destellos mágicos y lluvia de corazones',
+        '💌 Mensaje de confesión de amor sincero',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '⏱️ Contador de amor en vivo + Corazones',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
-        '🎵 Canción especial de la pareja de fondo (YouTube)',
-        '💌 Carta de aniversario interactiva',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
+        '🔢 Estadísticas de cuántos días llevo pensando en ti',
+        '💌 Carta de Declaración Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '✨ Línea de tiempo de hitos con fotos y fechas',
-        '📍 Mapa interactivo del lugar donde se conocieron',
-        '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp confesando lo que sientes',
+        '🎬 Video Dedicado en HD especial para ella/él',
+        '⏳ Línea de Tiempo de cómo empezó a nacer este sentimiento',
+        '📍 Mapa Interactivo de aquel lugar donde todo cambió',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -232,24 +292,29 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Lluvia de rosas y corazones flotantes con contador romántico y dedicatoria.',
     plans: {
       basic: [
-        '🌹 Lluvia de corazones y rosas flotantes',
-        '⏱️ Contador de tiempo de novios en vivo',
-        '📸 Hasta 10 Fotos románticas',
-        '🎨 Tarjeta Digital con color personalizado'
+        '📸 Hasta 10 Fotos románticas de la pareja',
+        '🌹 Lluvia de pétalos de rosas y corazones flotantes',
+        '⏱️ Contador de tiempo de enamorados en vivo',
+        '💌 Carta de San Valentín personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🌹 Lluvia de rosas + Contador de amor',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🎵 Canción romántica de San Valentín de fondo',
-        '💌 Carta de amor apasionada',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial de San Valentín)',
+        '🍫 Caja de bombones interactiva con vales sorpresa',
+        '💌 Carta de Amor Apasionada Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🌹 Todo lo de San Valentín + 🎵 Música + 💌 Carta',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '🎁 Caja sorpresa interactiva con cupón de cena',
-        '✨ Línea de tiempo con sus fotos más hermosas',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp de San Valentín',
+        '🎬 Video Dedicado en HD de su amor',
+        '⏳ Línea de Tiempo con sus momentos más bellos',
+        '🎁 Vale interactivo por una cena o escapada romántica',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -260,49 +325,62 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Efecto de fuegos artificiales digitales para felicitar por un logro, titulación o graduación.',
     plans: {
       basic: [
-        '🎆 Lluvia de fuegos artificiales dorados digitales',
-        '🏆 Mensaje de orgullo y felicitaciones',
-        '📸 Hasta 10 Fotos de logros y recuerdos',
-        '🎨 Tarjeta Digital con color personalizado'
+        '📸 Hasta 10 Fotos del camino y logros',
+        '🎆 Show de fuegos artificiales interactivos en pantalla',
+        '🏆 Mensaje de felicitación y orgullo por la meta cumplida',
+        '💌 Dedicatoria personalizada de reconocimiento',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🎆 Fuegos artificiales + Mensaje especial',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🎵 Música de celebración o triunfo de fondo',
-        '📜 Diploma digital de honor interactivo',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial triunfal)',
+        '🏆 Trofeo o Medalla de Oro 3D interactiva que gira',
+        '💌 Carta de Orgullo y Admiración Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🎆 Fuegos artificiales + Música + Diploma',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '🎬 Video de saludos de amigos y familiares',
-        '✨ Línea de tiempo del camino al éxito',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con felicitaciones',
+        '🎬 Video Dedicado en HD con saludos de orgullo',
+        '⏳ Línea de Tiempo de todo el esfuerzo hasta la meta',
+        '📜 Diploma digital de honor descargable',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
   gratitude: {
     emoji: '🙏',
     name: 'Agradecimiento',
-    badge: 'Agradecimiento Cálido',
-    desc: 'Diseño sereno y emotivo centrado en palabras de gratitud y aprecio.',
+    badge: 'Constelación de Estrellas',
+    desc: 'Un cielo nocturno interactivo donde cada estrella representa un motivo por el que estás agradecido.',
     plans: {
       basic: [
-        '🌟 Mensaje emotivo de gratitud sincera',
-        '📸 Hasta 10 Fotos de momentos compartidos',
-        '🎨 Tarjeta Digital personalizada'
+        '📸 Hasta 10 Fotos de recuerdos juntos',
+        '🌟 Constelación interactiva de estrellas de gratitud',
+        '✨ Mensaje sincero de "Gracias por estar en mi vida"',
+        '💌 Dedicatoria de agradecimiento personalizada',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🌟 Mensaje de gratitud + 🎵 Música relajante de fondo',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '💌 Carta de agradecimiento extendida',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial emotiva)',
+        '✨ 3 Estrellas interactivas para tocar y descubrir agradecimientos',
+        '💌 Carta de Gratitud Profunda Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🌟 Carta de gratitud + 🎵 Música + 🎬 Video dedicado',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '✨ Línea de tiempo de momentos de apoyo mutuo',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp dando las gracias de corazón',
+        '🎬 Video Dedicado en HD con dedicatoria especial',
+        '⏳ Línea de Tiempo de los momentos en que estuvo a tu lado',
+        '📍 Mapa Interactivo de aquel lugar inolvidable',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
     }
   },
@@ -313,23 +391,28 @@ export const THEME_HIGHLIGHTS: Record<string, {
     desc: 'Mensaje reconfortante para reencontrarse, perdonar y abrazar los buenos momentos.',
     plans: {
       basic: [
+        '📸 Hasta 10 Fotos de sus mejores recuerdos juntos',
         '🕊️ Mensaje sincero de disculpas y reencuentro',
         '🤝 Botón interactivo "¿Hacemos las paces? ❤️"',
-        '📸 Hasta 10 Fotos de sus mejores recuerdos',
-        '🎨 Tarjeta Digital personalizada'
+        '💌 Dedicatoria abierta de reconciliación',
+        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
-        '🕊️ Mensaje + Botón "¿Hacemos las paces?"',
-        '✨ Catálogo de 145 Personajes Temáticos a elección',
-        '🎵 Canción suave y reconfortante de fondo',
-        '💌 Carta abierta del corazón',
-        '📸 Hasta 20 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Básico',
+        '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+        '🎵 Música Personalizada (Banda Sonora Oficial suave)',
+        '🤝 Mensaje y botón interactivo de perdón',
+        '💌 Carta del Corazón Interactiva',
+        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
       ],
       premium: [
-        '🕊️ Todo lo anterior + 🎵 Música + 💌 Carta',
-        '✨ Incluye los 145 Personajes Temáticos',
-        '🔒 Rincón con PIN secreto con promesa de futuro',
-        '📸 Hasta 35 Fotos en HD'
+        '✓ Todo lo incluido en el Plan Medio',
+        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '🎙️ Nota de Voz Real de WhatsApp con tu mensaje de perdón',
+        '🎬 Video Dedicado en HD recordando por qué vale la pena luchar',
+        '⏳ Línea de Tiempo de los momentos más felices juntos',
+        '🔒 Rincón Secreto Protegido con PIN de 4 dígitos y promesa de futuro'
       ]
     }
   },
