@@ -367,12 +367,17 @@ export async function updateProductPrice(id: string, price: number): Promise<boo
 
 // 1.1 SITE SETTINGS
 export async function getSiteSettings(): Promise<SiteSettings> {
+  let localSettings: SiteSettings | null = null;
+  if (typeof window !== 'undefined') {
+    localSettings = getLocalData<SiteSettings | null>('custom_admin_settings', null);
+  }
+
   if (isMockMode) {
     if (typeof window !== 'undefined') {
       const stored = getLocalData<SiteSettings>('site_settings', DEFAULT_SETTINGS);
-      return stored;
+      return localSettings || stored;
     }
-    return serverMemoryStore.settings;
+    return localSettings || serverMemoryStore.settings;
   }
 
   try {
@@ -382,11 +387,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       .limit(1)
       .maybeSingle();
 
-    if (error || !data) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...data };
+    if (error || !data) return localSettings || DEFAULT_SETTINGS;
+    return { ...DEFAULT_SETTINGS, ...data, ...(localSettings || {}) };
   } catch (err) {
     console.error('Error fetching site_settings:', err);
-    return DEFAULT_SETTINGS;
+    return localSettings || DEFAULT_SETTINGS;
   }
 }
 
@@ -394,11 +399,15 @@ export async function updateSiteSettings(settings: Partial<SiteSettings>): Promi
   const current = await getSiteSettings();
   const merged = { ...current, ...settings };
 
+  if (typeof window !== 'undefined') {
+    setLocalData('custom_admin_settings', merged);
+    setLocalData('site_settings', merged);
+  }
+
+  const serverStore = serverMemoryStore.settings;
+  Object.assign(serverStore, merged);
+
   if (isMockMode) {
-    if (typeof window !== 'undefined') {
-      setLocalData('site_settings', merged);
-    }
-    serverMemoryStore.settings = merged;
     return merged;
   }
 
@@ -409,7 +418,9 @@ export async function updateSiteSettings(settings: Partial<SiteSettings>): Promi
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Supabase site_settings upsert warning:', error.message);
+    }
     return data || merged;
   } catch (err) {
     console.error('Error updating site_settings:', err);
