@@ -45,7 +45,7 @@ export const ROMANTIC_SONGS = [
     id: 'dicelo',
     title: 'Dícelo', 
     artist: 'Jay Wheeler & Zhamira', 
-    url: 'https://www.youtube.com/watch?v=sHj49o05jQI',
+    url: 'https://www.youtube.com/watch?v=1fT2aB6FzFw',
     previewAudio: '/audio/previews/dicelo.m4a'
   },
   { 
