@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       .eq('id', orderId)
       .single();
 
-    let verifiedPrice = 7990;
+    let verifiedPrice = 4990;
     let verifiedProductName = 'Plan Básico RecuerdoQR';
 
     if (order && order.products) {
@@ -42,10 +42,10 @@ export async function POST(request: Request) {
       verifiedPrice = Number(order.total);
     } else {
       // Fallback a precios oficiales verificados por el servidor
-      const planPrices: Record<string, number> = { basic: 7990, medium: 12990, premium: 17990 };
+      const planPrices: Record<string, number> = { basic: 4990, digital: 4990, medium: 6990, card: 6990, premium: 7990 };
       const fallbackPlan = body.productName?.toLowerCase().includes('máximo') || body.productName?.toLowerCase().includes('premium') ? 'premium'
         : body.productName?.toLowerCase().includes('medio') ? 'medium' : 'basic';
-      verifiedPrice = planPrices[fallbackPlan] || 7990;
+      verifiedPrice = planPrices[fallbackPlan] || 4990;
       verifiedProductName = `RecuerdoQR - ${fallbackPlan.toUpperCase()}`;
     }
 

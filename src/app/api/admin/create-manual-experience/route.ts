@@ -88,7 +88,7 @@ export async function POST(request: Request) {
           customer_email: customerEmail || `${finalSlug}@recuerdoqr.cl`,
           customer_phone: customerPhone || '',
           delivery_address: 'Entrega Directa WhatsApp ($0 Admin)',
-          total: productId === 'premium' ? 17990 : (productId === 'medium' || productId === 'card') ? 12990 : 7990,
+          total: productId === 'premium' ? 7990 : (productId === 'medium' || productId === 'card') ? 6990 : 4990,
           status: 'paid',
           payment_id: 'manual_whatsapp'
         }])

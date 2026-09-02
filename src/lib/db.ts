@@ -174,7 +174,7 @@ const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 'medium',
     name: 'Plan Medio',
-    price: 5990,
+    price: 6990,
     badge: 'Más Recomendado',
     subtitle: 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
     description: 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta con 145 personajes temáticos e interacciones adicionales.',
@@ -255,23 +255,24 @@ const serverMemoryStore: {
 
 // --- DATA ACCESS METHODS ---
 
-const DATA_VERSION = 'v4_digital_clean_normal';
+const DATA_VERSION = 'v6_user_pricing_4990_6990_7990';
 
 // 1. PRODUCTS
 export async function getProducts(): Promise<Product[]> {
   let localCustomProducts: Product[] | null = null;
   if (typeof window !== 'undefined') {
+    const savedVersion = localStorage.getItem('amor_qr_data_version');
+    if (savedVersion !== DATA_VERSION) {
+      localStorage.setItem('amor_qr_data_version', DATA_VERSION);
+      localStorage.removeItem('amor_qr_custom_admin_products');
+      setLocalData('products', DEFAULT_PRODUCTS);
+      return DEFAULT_PRODUCTS;
+    }
     localCustomProducts = getLocalData<Product[] | null>('custom_admin_products', null);
   }
 
   if (isMockMode) {
     if (typeof window !== 'undefined') {
-      const savedVersion = localStorage.getItem('amor_qr_data_version');
-      if (savedVersion !== DATA_VERSION && !localCustomProducts) {
-        localStorage.setItem('amor_qr_data_version', DATA_VERSION);
-        setLocalData('products', DEFAULT_PRODUCTS);
-        return DEFAULT_PRODUCTS;
-      }
       const stored = getLocalData<Product[]>('products', []);
       if (stored.length === 0) {
         setLocalData('products', DEFAULT_PRODUCTS);
