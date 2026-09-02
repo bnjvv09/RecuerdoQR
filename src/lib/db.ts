@@ -25,6 +25,14 @@ export interface SiteSettings {
   whatsapp_message?: string;
 }
 
+export interface Coupon {
+  id: string;
+  code: string;
+  discount_percent: number;
+  is_active: boolean;
+  created_at: string;
+}
+
 export interface Order {
   id: string;
   product_id: string;
@@ -1052,5 +1060,75 @@ export async function getCreatedExperiencesCount(): Promise<number> {
     console.error('Error getting experiences count:', err);
     return BASE_COUNT;
   }
+}
+
+// 4. COUPONS
+export const DEFAULT_COUPONS: Coupon[] = [
+  { id: 'c1', code: 'AMOR10', discount_percent: 10, is_active: true, created_at: new Date().toISOString() },
+  { id: 'c2', code: 'TIKTOK15', discount_percent: 15, is_active: true, created_at: new Date().toISOString() },
+  { id: 'c3', code: 'PROMO20', discount_percent: 20, is_active: true, created_at: new Date().toISOString() },
+];
+
+export async function getCoupons(): Promise<Coupon[]> {
+  if (typeof window !== 'undefined') {
+    const local = getLocalData<Coupon[]>('custom_coupons', []);
+    if (local.length > 0) return local;
+  }
+  return DEFAULT_COUPONS;
+}
+
+export async function createCoupon(code: string, discount_percent: number): Promise<Coupon> {
+  const current = await getCoupons();
+  const newCoupon: Coupon = {
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9),
+    code: code.trim().toUpperCase(),
+    discount_percent: Math.min(100, Math.max(1, Number(discount_percent))),
+    is_active: true,
+    created_at: new Date().toISOString(),
+  };
+
+  const filtered = current.filter(c => c.code.toUpperCase() !== newCoupon.code);
+  const updated = [newCoupon, ...filtered];
+
+  if (typeof window !== 'undefined') {
+    setLocalData('custom_coupons', updated);
+  }
+  return newCoupon;
+}
+
+export async function deleteCoupon(id: string): Promise<boolean> {
+  const current = await getCoupons();
+  const updated = current.filter(c => c.id !== id);
+  if (typeof window !== 'undefined') {
+    setLocalData('custom_coupons', updated);
+  }
+  return true;
+}
+
+export async function toggleCoupon(id: string): Promise<boolean> {
+  const current = await getCoupons();
+  const updated = current.map(c => c.id === id ? { ...c, is_active: !c.is_active } : c);
+  if (typeof window !== 'undefined') {
+    setLocalData('custom_coupons', updated);
+  }
+  return true;
+}
+
+export async function validateCoupon(code: string): Promise<{ valid: boolean; discount_percent?: number; error?: string }> {
+  const clean = code.trim().toUpperCase();
+  if (!clean) return { valid: false, error: 'Ingresa un código de cupón' };
+
+  const coupons = await getCoupons();
+  const found = coupons.find(c => c.code.toUpperCase() === clean);
+
+  if (!found) {
+    return { valid: false, error: 'El cupón ingresado no existe' };
+  }
+
+  if (!found.is_active) {
+    return { valid: false, error: 'Este cupón se encuentra inactivo o expirado' };
+  }
+
+  return { valid: true, discount_percent: found.discount_percent };
 }
 

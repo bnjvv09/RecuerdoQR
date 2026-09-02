@@ -51,7 +51,7 @@ function PersonalizarContent() {
     }
   };
 
-  const handleFinalSubmit = async (e: React.FormEvent) => {
+  const handleFinalSubmit = async (e: React.FormEvent, finalDiscountPrice?: number) => {
     e.preventDefault();
     if (!form.validateStep4()) return;
 
@@ -109,13 +109,14 @@ function PersonalizarContent() {
       }
 
       // Create Order
+      const finalAmount = finalDiscountPrice !== undefined ? finalDiscountPrice : form.totalPrice;
       const newOrder = await createOrder({
         product_id: form.selectedPlan,
         customer_name: cleanCustomerName,
         customer_email: cleanCustomerEmail,
         customer_phone: cleanCustomerPhone,
         delivery_address: cleanDeliveryAddress,
-        total: form.totalPrice,
+        total: finalAmount,
       });
 
       // Construct Sections
@@ -217,7 +218,7 @@ function PersonalizarContent() {
         body: JSON.stringify({
           orderId: newOrder.id,
           productName: form.currentProduct?.name || 'Experiencia Digital RecuerdoQR',
-          total: form.totalPrice,
+          total: finalAmount,
           customerEmail: form.customerEmail,
         }),
       });

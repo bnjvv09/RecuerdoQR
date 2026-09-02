@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAdminStore } from '@/lib/store';
-import { updateSiteSettings, SiteSettings } from '@/lib/db';
+import { updateSiteSettings, SiteSettings, Coupon, getCoupons, createCoupon, deleteCoupon, toggleCoupon } from '@/lib/db';
 import { 
   Settings, 
   Mail, 
@@ -15,7 +15,11 @@ import {
   Shield, 
   Heart,
   Share2,
-  MessageCircle
+  MessageCircle,
+  Ticket,
+  Percent,
+  Trash2,
+  Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,11 +27,39 @@ export default function AdminSettingsPanel() {
   const { settings, setSettings, updateSettingsLocal } = useAdminStore();
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeSubTab, setActiveSubTab] = useState<'contact' | 'legal'>('contact');
+  const [activeSubTab, setActiveSubTab] = useState<'contact' | 'coupons' | 'legal'>('contact');
+  const [couponsList, setCouponsList] = useState<Coupon[]>([]);
+  const [newCouponCode, setNewCouponCode] = useState('');
+  const [newCouponDiscount, setNewCouponDiscount] = useState(15);
 
   useEffect(() => {
     setFormData(settings);
+    getCoupons().then(setCouponsList).catch(console.error);
   }, [settings]);
+
+  const handleCreateCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCouponCode.trim()) {
+      toast.error('Ingresa un código de cupón');
+      return;
+    }
+    const created = await createCoupon(newCouponCode, newCouponDiscount);
+    setCouponsList(prev => [created, ...prev.filter(c => c.code !== created.code)]);
+    setNewCouponCode('');
+    toast.success(`¡Cupón ${created.code} (${created.discount_percent}%) creado con éxito!`);
+  };
+
+  const handleToggleCoupon = async (id: string) => {
+    await toggleCoupon(id);
+    setCouponsList(prev => prev.map(c => c.id === id ? { ...c, is_active: !c.is_active } : c));
+    toast.success('Estado del cupón actualizado');
+  };
+
+  const handleDeleteCoupon = async (id: string) => {
+    await deleteCoupon(id);
+    setCouponsList(prev => prev.filter(c => c.id !== id));
+    toast.success('Cupón eliminado');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +113,19 @@ export default function AdminSettingsPanel() {
           }`}
         >
           <Mail className="w-3.5 h-3.5" />
-          <span>Contacto y Redes Sociales</span>
+          <span>Contacto y Redes</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('coupons')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            activeSubTab === 'coupons'
+              ? 'bg-[#a21232] text-white shadow-xs'
+              : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+          }`}
+        >
+          <Ticket className="w-3.5 h-3.5" />
+          <span>Cupones de Descuento (%)</span>
         </button>
         <button
           type="button"
@@ -249,7 +293,130 @@ export default function AdminSettingsPanel() {
         </div>
       )}
 
-      {/* Tab: Legal, FAQ & Modals */}
+      {/* Tab: Cupones de Descuento (%) */}
+      {activeSubTab === 'coupons' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Form: Crear Nuevo Cupón */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs space-y-4">
+            <h3 className="font-serif font-bold text-sm text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-2.5">
+              <Ticket className="w-4 h-4 text-[#a21232]" />
+              <span>Crear Nuevo Cupón de Descuento (%)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+              <div className="sm:col-span-6">
+                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
+                  Código del Cupón (Lo que escribe el cliente) *
+                </label>
+                <div className="relative">
+                  <Ticket className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={newCouponCode}
+                    onChange={(e) => setNewCouponCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                    placeholder="Ej: AMOR15, TIKTOK20, LANZAMIENTO"
+                    className="w-full pl-9 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs font-mono uppercase font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
+                  Porcentaje de Descuento (%) *
+                </label>
+                <div className="relative">
+                  <Percent className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={newCouponDiscount}
+                    onChange={(e) => setNewCouponDiscount(Number(e.target.value))}
+                    className="w-full pl-9 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <button
+                  type="button"
+                  onClick={handleCreateCoupon}
+                  className="w-full py-2.5 bg-[#a21232] hover:bg-[#880e28] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Crear Cupón</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* List: Cupones Activos */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+              <h3 className="font-serif font-bold text-sm text-gray-900 flex items-center gap-2">
+                <span>Cupones Activos en la Tienda</span>
+              </h3>
+              <span className="text-[10px] bg-rose-50 text-[#a21232] border border-rose-200 px-2.5 py-0.5 rounded-full font-bold">
+                {couponsList.length} cupones registrados
+              </span>
+            </div>
+
+            {couponsList.length === 0 ? (
+              <p className="text-xs text-gray-500 text-center py-6">No hay cupones creados aún. ¡Crea el primero arriba!</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {couponsList.map((c) => (
+                  <div 
+                    key={c.id} 
+                    className={`p-4 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                      c.is_active 
+                        ? 'bg-rose-50/30 border-rose-200 shadow-2xs' 
+                        : 'bg-gray-50 border-gray-200 opacity-60'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-black text-sm text-gray-900 tracking-wider">
+                          {c.code}
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 bg-[#a21232] text-white rounded-md">
+                          -{c.discount_percent}% OFF
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 font-light">
+                        {c.is_active ? '🟢 Activo en el checkout' : '🔴 Inactivo (No aplicable)'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleCoupon(c.id)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                          c.is_active
+                            ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
+                            : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                        }`}
+                      >
+                        {c.is_active ? 'Pausar' : 'Activar'}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCoupon(c.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition cursor-pointer"
+                        title="Eliminar cupón"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {activeSubTab === 'legal' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
           {/* FAQ */}

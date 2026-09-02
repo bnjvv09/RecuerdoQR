@@ -42,11 +42,27 @@ export default function LandingPage() {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [experiencesCount, setExperiencesCount] = useState<number>(10);
+  const [customerReviews, setCustomerReviews] = useState<any[]>([]);
 
   useEffect(() => {
     getProducts().then(setProducts);
     getThemes().then(data => setThemes(data.filter(t => t.is_active)));
     getCreatedExperiencesCount().then(setExperiencesCount).catch(() => setExperiencesCount(10));
+
+    try {
+      const stored = JSON.parse(localStorage.getItem('recuerdo_customer_reviews') || '[]');
+      if (stored && Array.isArray(stored) && stored.length > 0) {
+        setCustomerReviews(stored.map((s: any) => ({
+          name: s.partnerName ? `Para ${s.partnerName}` : 'Cliente RecuerdoQR',
+          date: 'Reciente',
+          stars: s.rating || 5,
+          comment: s.comment,
+          tag: 'Opinión Verificada'
+        })));
+      }
+    } catch {
+      // Ignore
+    }
   }, []);
 
   const steps = [
@@ -72,7 +88,7 @@ export default function LandingPage() {
     }
   ];
 
-  const reviews = [
+  const defaultReviews = [
     {
       name: 'Sofía & Lucas',
       date: 'Hace 3 días',
@@ -109,6 +125,8 @@ export default function LandingPage() {
       tag: 'Plan Máximo'
     }
   ];
+
+  const allReviews = [...customerReviews, ...defaultReviews];
 
   const faqs = [
     {
@@ -486,12 +504,12 @@ export default function LandingPage() {
             <div className="flex items-center justify-center gap-2 pt-1">
               <div className="flex text-amber-400 text-sm">★★★★★</div>
               <span className="text-xs font-bold text-gray-700">5.0 de 5.0</span>
-              <span className="text-xs text-gray-400 font-light">• 5 reseñas verificadas</span>
+              <span className="text-xs text-gray-400 font-light">• {allReviews.length} reseñas verificadas</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch">
-            {reviews.map((rev, rIdx) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-5 items-stretch">
+            {allReviews.slice(0, 6).map((rev, rIdx) => (
               <motion.div
                 key={rIdx}
                 initial={{ opacity: 0, y: 15 }}

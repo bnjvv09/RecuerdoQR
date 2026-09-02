@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Product } from '@/lib/db';
-import { ShieldCheck, Lock, RefreshCw, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { Product, validateCoupon } from '@/lib/db';
+import { ShieldCheck, Lock, RefreshCw, CheckCircle2, AlertCircle, Sparkles, Ticket } from 'lucide-react';
 import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
 import { toast } from 'sonner';
 
@@ -21,7 +21,7 @@ interface Step4CheckoutProps {
   deliveryAddress: string;
   setDeliveryAddress: (val: string) => void;
   loading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent, finalDiscountPrice?: number) => void;
 }
 
 export default function Step4Checkout({
@@ -58,6 +58,33 @@ export default function Step4Checkout({
     error?: string;
     suggestion?: string;
   }>({ loading: false });
+
+  // 🎟️ Estados de Cupones de Descuento
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [showCouponInput, setShowCouponInput] = useState(false);
+
+  const discountAmount = appliedCoupon ? Math.round((totalPrice * appliedCoupon.percent) / 100) : 0;
+  const finalPrice = Math.max(0, totalPrice - discountAmount);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    try {
+      const result = await validateCoupon(couponInput);
+      if (result.valid && result.discount_percent) {
+        setAppliedCoupon({ code: couponInput.trim().toUpperCase(), percent: result.discount_percent });
+        toast.success(`¡Cupón ${couponInput.trim().toUpperCase()} aplicado! (-${result.discount_percent}% de descuento)`);
+      } else {
+        toast.error(result.error || 'El cupón ingresado no es válido');
+      }
+    } catch {
+      toast.error('Error al verificar el cupón');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   // Validaciones instantáneas del lado del cliente
   const phoneValidation = useMemo(() => {
@@ -439,11 +466,76 @@ export default function Step4Checkout({
                 <span className="text-gray-500">Costo de Envío:</span>
                 <span className="font-semibold text-emerald-600">$0 (Entrega Digital Instantánea)</span>
               </div>
+
+              {/* 🎟️ Cupón de Descuento */}
+              <div className="pt-2 border-t border-gray-100">
+                {!appliedCoupon ? (
+                  !showCouponInput ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowCouponInput(true)}
+                      className="text-[11px] font-bold text-[#a21232] hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <Ticket className="w-3.5 h-3.5" />
+                      <span>¿Tienes un cupón de descuento?</span>
+                    </button>
+                  ) : (
+                    <div className="space-y-1.5 animate-fade-in">
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => setCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                          placeholder="CÓDIGO (EJ. AMOR10)"
+                          className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs font-mono uppercase font-bold text-gray-900 focus:outline-none focus:border-[#a21232]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={couponLoading || !couponInput.trim()}
+                          className="px-3 py-1.5 bg-[#a21232] hover:bg-[#880e28] text-white text-xs font-bold rounded-lg transition shrink-0 cursor-pointer disabled:opacity-50"
+                        >
+                          {couponLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Aplicar'}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between animate-fade-in">
+                    <div className="space-y-0.5">
+                      <span className="text-[11px] font-bold text-emerald-900 flex items-center gap-1">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                        Cupón {appliedCoupon.code} (-{appliedCoupon.percent}%)
+                      </span>
+                      <p className="text-[10px] text-emerald-700">Descuento: -${discountAmount.toLocaleString('es-CL')} CLP</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAppliedCoupon(null);
+                        setCouponInput('');
+                        toast.info('Cupón removido');
+                      }}
+                      className="text-[10px] text-red-600 font-bold hover:underline cursor-pointer"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="border-t border-gray-100 pt-2 flex justify-between items-baseline">
                 <span className="font-serif font-bold text-sm text-gray-900">Total a Pagar:</span>
-                <span className="font-serif text-xl font-extrabold text-[#a21232]">
-                  ${Number(totalPrice).toLocaleString('es-CL')} CLP
-                </span>
+                <div className="text-right">
+                  {appliedCoupon && (
+                    <span className="text-xs text-gray-400 line-through mr-2 font-mono">
+                      ${Number(totalPrice).toLocaleString('es-CL')}
+                    </span>
+                  )}
+                  <span className="font-serif text-xl font-extrabold text-[#a21232]">
+                    ${Number(finalPrice).toLocaleString('es-CL')} CLP
+                  </span>
+                </div>
               </div>
             </div>
 
