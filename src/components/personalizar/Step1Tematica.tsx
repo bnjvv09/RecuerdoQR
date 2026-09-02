@@ -32,7 +32,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '⏱️ Contador de Tiempo en Vivo (Años, meses y días juntos)',
         '💖 Portada Interactiva con corazón palpitante',
         '💌 Dedicatoria y Carta de amor personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -41,7 +41,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🔢 Estadísticas de la Pareja (Besos, cafés y momentos juntos)',
         '💌 Carta de Aniversario Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -65,7 +65,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎂 Torta virtual interactiva con velas encendidas para soplar',
         '🎉 Animación de confeti festivo y deseos',
         '💌 Dedicatoria de Cumpleaños personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -74,7 +74,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🎈 Globos flotantes interactivos para reventar sorpresas',
         '💌 Carta de Felicitación Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -98,7 +98,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💍 Pregunta interactiva con botón "¡Sí, Acepto! ❤️"',
         '💖 Lluvia de corazones y confeti al aceptar',
         '💌 Carta de Declaración Romántica personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -107,7 +107,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🏃 Botón travieso "No" que se escapa al intentar tocarlo',
         '💌 Carta de Amor Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -131,7 +131,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💍 Pregunta solemne "¿Te casas conmigo? 💍" con botón interactivo',
         '✨ Lluvia dorada de fuegos artificiales y confeti',
         '💌 Carta de Promesa de Amor para toda la vida',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -140,7 +140,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial solemne)',
         '🏃 Botón travieso "No" que se escapa por la pantalla',
         '💌 Carta de Compromiso Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -164,7 +164,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🍼 Tarjeta "Rasca y Gana" digital para revelar la ecografía',
         '✨ Anuncio de la fecha estimada de llegada del bebé',
         '💌 Mensaje y dedicatoria emotiva para el futuro papá/abuelos',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -173,7 +173,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial tierna)',
         '📊 Encuesta familiar en vivo: ¿Crees que es Niño 💙 o Niña 💖?',
         '💌 Carta Emotiva de Anuncio Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -197,7 +197,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎁 Caja de regalo 3D animada que tiembla y se abre al tocar',
         '🎟️ Mensaje con la sorpresa o regalo revelado',
         '💌 Carta y dedicatoria de sorpresa personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -206,7 +206,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🎟️ Ticket Dorado VIP personalizado con código de barras',
         '💌 Carta de Sorpresa Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -230,7 +230,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💌 Sobre vintage con sello de cera que se abre al tocar',
         '📜 Despliegue de la carta en formato pergamino elegante',
         '💖 Dedicatoria profunda y mensaje del corazón',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -239,7 +239,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial romántica)',
         '✨ Despliegue con tipografía caligráfica clásica',
         '💌 Carta de Amor Extensa Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -263,7 +263,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💖 Corazón de cristal interactivo que se ilumina al tocar',
         '✨ Efecto de destellos mágicos y lluvia de corazones',
         '💌 Mensaje de confesión de amor sincero',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -272,7 +272,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
         '🔢 Estadísticas de cuántos días llevo pensando en ti',
         '💌 Carta de Declaración Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -296,7 +296,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🌹 Lluvia de pétalos de rosas y corazones flotantes',
         '⏱️ Contador de tiempo de enamorados en vivo',
         '💌 Carta de San Valentín personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -305,7 +305,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial de San Valentín)',
         '🍫 Caja de bombones interactiva con vales sorpresa',
         '💌 Carta de Amor Apasionada Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -329,7 +329,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎆 Show de fuegos artificiales interactivos en pantalla',
         '🏆 Mensaje de felicitación y orgullo por la meta cumplida',
         '💌 Dedicatoria personalizada de reconocimiento',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -338,7 +338,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial triunfal)',
         '🏆 Trofeo o Medalla de Oro 3D interactiva que gira',
         '💌 Carta de Orgullo y Admiración Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -362,7 +362,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🌟 Constelación interactiva de estrellas de gratitud',
         '✨ Mensaje sincero de "Gracias por estar en mi vida"',
         '💌 Dedicatoria de agradecimiento personalizada',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -371,7 +371,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial emotiva)',
         '✨ 3 Estrellas interactivas para tocar y descubrir agradecimientos',
         '💌 Carta de Gratitud Profunda Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
@@ -395,7 +395,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🕊️ Mensaje sincero de disculpas y reencuentro',
         '🤝 Botón interactivo "¿Hacemos las paces? ❤️"',
         '💌 Dedicatoria abierta de reconciliación',
-        '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+        '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
         '📱 Código QR en Alta Calidad activo de por vida'
       ],
       medium: [
@@ -404,7 +404,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Música Personalizada (Banda Sonora Oficial suave)',
         '🤝 Mensaje y botón interactivo de perdón',
         '💌 Carta del Corazón Interactiva',
-        '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+        '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',

@@ -25,7 +25,7 @@ export default function Step2Plan({
     '⏱️ Contador de Tiempo en Vivo (Años, meses y días juntos)',
     '💖 Portada Interactiva con corazón palpitante',
     '💌 Dedicatoria y Carta personalizada',
-    '🎨 Tarjeta de Regalo Digital Clásica (Color personalizado)',
+    '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
     '📱 Código QR en Alta Calidad activo de por vida'
   ];
 
@@ -35,7 +35,7 @@ export default function Step2Plan({
     '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
     '🔢 Estadísticas de la Pareja / Momentos Compartidos',
     '💌 Carta de Dedicatoria Interactiva',
-    '✨ Tarjeta de Regalo Personalizable (Catálogo de 145 Personajes)'
+    '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
   ];
 
   const premiumFeatures = themeInfo?.plans?.premium || [

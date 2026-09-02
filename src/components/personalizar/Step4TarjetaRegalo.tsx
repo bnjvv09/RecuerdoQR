@@ -93,10 +93,10 @@ export default function Step4TarjetaRegalo({
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
             <span>🎁</span>
-            <span>5. Personaliza tu Tarjeta Digital de Regalo con Código QR</span>
+            <span>5. Personaliza tu Tarjeta de Regalo donde irá impreso el Código QR</span>
           </h2>
           <p className="text-xs text-gray-500 font-light mt-1">
-            Elige orientación (Horizontal o Vertical), personajes temáticos, colores y dedicatoria para tu tarjeta digital imprimible o para compartir.
+            Esta es la <strong>tarjeta física/digital de entrega</strong> que le regalarás a tu persona especial con su Código QR en el centro.
           </p>
         </div>
 
@@ -108,6 +108,19 @@ export default function Step4TarjetaRegalo({
           <Printer className="w-4 h-4" />
           <span>Imprimir / Ver en Grande</span>
         </button>
+      </div>
+
+      {/* Informative Banner */}
+      <div className="bg-rose-50/70 border border-rose-200/80 rounded-2xl p-4 flex items-start gap-3 shadow-2xs">
+        <div className="w-8 h-8 rounded-xl bg-rose-100 text-[#a21232] flex items-center justify-center shrink-0 mt-0.5">
+          <QrIcon className="w-4 h-4" />
+        </div>
+        <div className="text-xs text-gray-700 space-y-0.5">
+          <p className="font-bold text-[#a21232]">¿Cómo funciona la Tarjeta de Regalo?</p>
+          <p className="font-light leading-relaxed">
+            Aquí diseñas la tarjeta de entrega. Al completar tu pedido, el <strong>Código QR de tu experiencia se estampará automáticamente en el centro de esta tarjeta</strong> en alta resolución (10x15 o 15x10 cm), lista para imprimir en papel fotográfico, meterla en un sobre o enviársela por WhatsApp.
+          </p>
+        </div>
       </div>
 
       {/* Main Grid: Left Controls & Right Live Card Preview */}
