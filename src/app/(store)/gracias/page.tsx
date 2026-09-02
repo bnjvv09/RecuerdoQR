@@ -468,16 +468,26 @@ function GraciasContent() {
                 <button
                   type="button"
                   onClick={handlePrintCard}
-                  className="w-full py-3 bg-[#a21232] hover:bg-[#880e28] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition"
+                  className="w-full py-3 bg-[#a21232] hover:bg-[#880e28] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition cursor-pointer"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Imprimir / Guardar Tarjeta (PDF)</span>
+                  <span>🖨️ Imprimir Tarjeta Postal en PDF</span>
                 </button>
+
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(`❤️ ¡Hola ${experience.partner_name || 'mi amor'}! Te preparé una sorpresa muy especial hecha con todo mi corazón: ${experienceLink}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition"
+                >
+                  <MessageCircle className="w-4 h-4 fill-white" />
+                  <span>📱 Enviar a {experience.partner_name || 'mi Pareja'} por WhatsApp</span>
+                </a>
 
                 <button
                   type="button"
                   onClick={handleDownloadQr}
-                  className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-[#a21232] font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-rose-200 transition"
+                  className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-[#a21232] font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-rose-200 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Descargar solo el QR (PNG HD)</span>
@@ -509,16 +519,6 @@ function GraciasContent() {
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Ver Experiencia en Vivo</span>
-                </a>
-
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(`❤️ ¡Hola mi amor! He preparado una sorpresa muy especial para ti: ${experienceLink}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition"
-                >
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>Enviar enlace por WhatsApp</span>
                 </a>
               </div>
             </div>

@@ -37,6 +37,17 @@ import { PhotoStyle } from '@/types/gallery';
 import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
 import { toast } from 'sonner';
 
+export const ROMANTIC_SONGS = [
+  { title: 'Perfect', artist: 'Ed Sheeran', url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g' },
+  { title: 'Entra en mi vida', artist: 'Sin Bandera', url: 'https://www.youtube.com/watch?v=KzKk2rLzZ4A' },
+  { title: 'Amor Completo', artist: 'Mon Laferte', url: 'https://www.youtube.com/watch?v=4jTfZp_yQdM' },
+  { title: 'Favorito', artist: 'Camilo', url: 'https://www.youtube.com/watch?v=5rT8Q6uX7mY' },
+  { title: 'Yellow', artist: 'Coldplay', url: 'https://www.youtube.com/watch?v=yKNxeF4KMsY' },
+  { title: 'Sabes', artist: 'Reik', url: 'https://www.youtube.com/watch?v=b4f8L3C0cQc' },
+  { title: 'Tacones Rojos', artist: 'Sebastián Yatra', url: 'https://www.youtube.com/watch?v=vV_A5O0_5jQ' },
+  { title: 'Me Enamoré de Ti', artist: 'Chayanne', url: 'https://www.youtube.com/watch?v=F0r4H3q4jYs' },
+];
+
 interface Step2PersonalizacionProps {
   selectedPlan?: string;
   selectedTheme?: string;
@@ -1342,6 +1353,74 @@ export default function Step2Personalizacion({
                               selectedStyle={secondaryPhotoStyle || 'collage'}
                               onSelectStyle={(st) => setSecondaryPhotoStyle && setSecondaryPhotoStyle(st)}
                             />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 6C. MÚSICA DE FONDO (ROMANTIC SONGS PICKER) */}
+                      {sec.type === 'musica' && (
+                        <div className="space-y-4 bg-gradient-to-br from-rose-50/70 to-pink-50/50 p-4 rounded-2xl border border-rose-200 animate-fade-in">
+                          <div className="flex items-center justify-between border-b border-rose-100 pb-2">
+                            <span className="text-[10px] font-bold text-rose-950 uppercase flex items-center gap-1.5">
+                              <Music className="w-3.5 h-3.5 text-rose-600" />
+                              <span>🎵 Música de Fondo Romántica (Reproducción Automática)</span>
+                            </span>
+                            <span className="text-[9px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold">
+                              {isBasic ? '🔒 Requiere Plan Medio o Máximo' : '✓ Incluido'}
+                            </span>
+                          </div>
+
+                          {/* Selector Rápido de Canciones en 1 Clic */}
+                          <div className="space-y-2">
+                            <label className="block text-[10px] font-bold text-gray-700 uppercase">
+                              ⚡ Elige una Canción Romántica en 1 Clic:
+                            </label>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                              {ROMANTIC_SONGS.map((song, sIdx) => {
+                                const isSelected = songUrl === song.url;
+                                return (
+                                  <button
+                                    key={sIdx}
+                                    type="button"
+                                    onClick={() => setSongUrl(song.url)}
+                                    className={`p-2 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-[#a21232] text-white border-[#a21232] shadow-sm ring-2 ring-rose-300'
+                                        : 'bg-white hover:bg-rose-50/80 text-gray-800 border-gray-200'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between gap-1 mb-1">
+                                      <Music className={`w-3 h-3 ${isSelected ? 'text-white' : 'text-rose-500'}`} />
+                                      {isSelected && <span className="text-[9px] font-bold">✓ Activa</span>}
+                                    </div>
+                                    <div>
+                                      <p className={`text-xs font-bold truncate ${isSelected ? 'text-white' : 'text-gray-900'}`}>{song.title}</p>
+                                      <p className={`text-[10px] truncate ${isSelected ? 'text-rose-100' : 'text-gray-500'}`}>{song.artist}</p>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Input de URL Personalizada */}
+                          <div className="pt-2 border-t border-rose-100">
+                            <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                              O pega tu propio enlace de YouTube:
+                            </label>
+                            <div className="relative">
+                              <Music className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+                              <input
+                                type="url"
+                                value={songUrl}
+                                onChange={(e) => setSongUrl(e.target.value)}
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                className="w-full pl-9 pr-3.5 py-2 border border-gray-250 rounded-xl text-xs bg-white focus:outline-none focus:border-[#a21232] font-mono"
+                              />
+                            </div>
+                            <p className="text-[9px] text-gray-400 mt-1">
+                              💡 Tip: Puedes pegar cualquier video o canción de YouTube para que suene de fondo.
+                            </p>
                           </div>
                         </div>
                       )}

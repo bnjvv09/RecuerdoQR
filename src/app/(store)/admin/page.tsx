@@ -32,7 +32,11 @@ import {
   Save, 
   Sparkles,
   RefreshCw,
-  Edit3
+  Edit3,
+  TrendingUp,
+  ShoppingBag,
+  Award,
+  CreditCard
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -282,6 +286,19 @@ export default function AdminPage() {
   }
 
   // 2. Render Main Admin Dashboard
+  // 📊 Métricas de Ventas y Rendimiento
+  const paidOrders = orders.filter(o => o.status === 'paid' || o.status === 'completed');
+  const totalRevenue = paidOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  
+  // Plan más vendido
+  const planCounts: Record<string, number> = {};
+  orders.forEach(o => {
+    const pId = o.product_id || 'medio';
+    planCounts[pId] = (planCounts[pId] || 0) + 1;
+  });
+  const bestPlanId = Object.keys(planCounts).sort((a, b) => planCounts[b] - planCounts[a])[0] || 'medio';
+  const bestPlanName = bestPlanId === 'basico' ? 'Plan Básico' : bestPlanId === 'premium' ? 'Plan Máximo' : 'Plan Medio';
+
   return (
     <div className="min-h-screen bg-gray-50/50 pb-16">
       
@@ -289,8 +306,83 @@ export default function AdminPage() {
       <AdminHeader onLogout={handleLogout} userEmail={userEmail} />
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         
+        {/* 📊 Métricas Financieras y de Crecimiento */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+          {/* Card 1: Ingresos Totales */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Ingresos Totales</span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <p className="font-serif font-black text-xl text-gray-900 tracking-tight">
+                ${totalRevenue.toLocaleString('es-CL')} <span className="text-xs font-normal text-gray-500">CLP</span>
+              </p>
+              <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+                ✓ {paidOrders.length} compras exitosas
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: Total Pedidos */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Pedidos</span>
+              <div className="w-8 h-8 rounded-xl bg-rose-50 text-[#a21232] flex items-center justify-center">
+                <ShoppingBag className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <p className="font-serif font-black text-xl text-gray-900 tracking-tight">
+                {orders.length} <span className="text-xs font-normal text-gray-500">órdenes</span>
+              </p>
+              <p className="text-[10px] text-gray-500 font-light mt-0.5">
+                {orders.length - paidOrders.length} pendientes
+              </p>
+            </div>
+          </div>
+
+          {/* Card 3: Plan Más Vendido */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Plan Más Vendido</span>
+              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <Award className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <p className="font-serif font-bold text-base text-gray-900 truncate">
+                {bestPlanName}
+              </p>
+              <p className="text-[10px] text-amber-700 font-semibold mt-0.5">
+                ⭐ {planCounts[bestPlanId] || 0} pedidos ({orders.length > 0 ? Math.round(((planCounts[bestPlanId] || 0) / orders.length) * 100) : 0}%)
+              </p>
+            </div>
+          </div>
+
+          {/* Card 4: Experiencias Activas */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Experiencias Creadas</span>
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <p className="font-serif font-black text-xl text-gray-900 tracking-tight">
+                {experiences.length} <span className="text-xs font-normal text-gray-500">páginas</span>
+              </p>
+              <p className="text-[10px] text-indigo-600 font-semibold mt-0.5">
+                🔒 Permanentes de por vida
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Tab 1: Orders & Shipments */}
         {activeTab === 'orders' && (
           <AdminOrdersTable 
