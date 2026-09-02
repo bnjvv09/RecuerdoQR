@@ -399,7 +399,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       .maybeSingle();
 
     if (error || !data) return localSettings || DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...data, ...(localSettings || {}) };
+    return { ...DEFAULT_SETTINGS, ...(localSettings || {}), ...data };
   } catch (err) {
     console.error('Error fetching site_settings:', err);
     return localSettings || DEFAULT_SETTINGS;
@@ -423,9 +423,19 @@ export async function updateSiteSettings(settings: Partial<SiteSettings>): Promi
   }
 
   try {
+    const { data: existing } = await supabase
+      .from('site_settings')
+      .select('id')
+      .limit(1)
+      .maybeSingle();
+
+    const rowId = existing?.id || '00000000-0000-0000-0000-000000000001';
+    const payload = { ...merged };
+    delete (payload as any).id;
+
     const { data, error } = await supabase
       .from('site_settings')
-      .upsert({ id: 'primary', ...merged })
+      .upsert({ id: rowId, ...payload })
       .select()
       .single();
 
@@ -1093,6 +1103,16 @@ export async function getCoupons(): Promise<Coupon[]> {
   return DEFAULT_COUPONS;
 }
 
+const generateUUID = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    try { return crypto.randomUUID(); } catch {}
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export async function createCoupon(code: string, discount_type: 'percent' | 'fixed', discount_value: number): Promise<Coupon> {
   const current = await getCoupons();
   const cleanVal = discount_type === 'percent' 
@@ -1100,7 +1120,7 @@ export async function createCoupon(code: string, discount_type: 'percent' | 'fix
     : Math.max(100, Number(discount_value));
 
   const newCoupon: Coupon = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9),
+    id: generateUUID(),
     code: code.trim().toUpperCase(),
     discount_type,
     discount_value: cleanVal,
