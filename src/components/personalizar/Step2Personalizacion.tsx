@@ -430,9 +430,20 @@ export default function Step2Personalizacion({
       audioPreviewRef.current = audio;
       audio.volume = 0.85;
       audio.play().catch(() => toast.info('Haz clic para reproducir la muestra de audio'));
-      audio.onended = () => setPlayingSongId(null);
+      
+      const previewTimeout = setTimeout(() => {
+        if (audioPreviewRef.current === audio) {
+          audio.pause();
+          setPlayingSongId(null);
+        }
+      }, 20000);
+
+      audio.onended = () => {
+        clearTimeout(previewTimeout);
+        setPlayingSongId(null);
+      };
       setPlayingSongId(song.id);
-      toast.success(`Reproduciendo «${song.title}» 🎵`);
+      toast.success(`Muestra rápida (20s) de «${song.title}» 🎵`);
     }
   };
 
