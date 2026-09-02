@@ -49,8 +49,14 @@ export async function POST(request: Request) {
       verifiedProductName = `RecuerdoQR - ${fallbackPlan.toUpperCase()}`;
     }
 
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+    const proto = request.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+    const defaultAppUrl = host ? `${proto}://${host}` : 'https://recuerdoqr.cl';
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost'))
+      ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
+      : defaultAppUrl;
+
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
 
     // Si no hay token de Mercado Pago configurado o es de prueba, simular la redirección
     if (!accessToken || accessToken.includes('MOCK') || accessToken === 'APP_USR-xxxxxx-xxxxxx-xxxxxx') {
@@ -59,7 +65,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ init_point: mockCheckoutUrl, isMock: true });
     }
 
-    // Integración real con Mercado Pago con PRECIO VERIFICADO POR EL SERVIDOR
+    // Integración real con Mercado Pago con PRECIO VERIFICADO POR EL SERVIDOR y medios de pago chilenos habilitados
     const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
       headers: {
@@ -75,6 +81,11 @@ export async function POST(request: Request) {
             currency_id: 'CLP',
           },
         ],
+        payment_methods: {
+          excluded_payment_methods: [],
+          excluded_payment_types: [],
+          installments: 12,
+        },
         back_urls: {
           success: `${appUrl}/gracias?orderId=${orderId}&status=success`,
           failure: `${appUrl}/checkout?orderId=${orderId}&status=failure`,

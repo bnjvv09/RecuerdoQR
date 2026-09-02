@@ -154,8 +154,14 @@ export async function POST(request: Request) {
       }
     }
 
-    // Generate QR Code
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
+    // Generate QR Code with robust host detection
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+    const proto = request.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+    const defaultAppUrl = host ? `${proto}://${host}` : 'https://recuerdoqr.cl';
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost'))
+      ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
+      : defaultAppUrl;
+
     const liveUrl = `${appUrl}/amor/${finalSlug}`;
     const qrDataUrl = await QRCode.toDataURL(liveUrl, {
       width: 600,
