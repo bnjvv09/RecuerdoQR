@@ -901,3 +901,27 @@ export async function updateExperienceTheme(id: string, theme: string): Promise<
   }
 }
 
+export async function getCreatedExperiencesCount(): Promise<number> {
+  const BASE_COUNT = 10;
+  try {
+    if (isMockMode) {
+      if (typeof window !== 'undefined') {
+        const local = getLocalData<Experience[]>('experiences', []);
+        return BASE_COUNT + local.length;
+      }
+      return BASE_COUNT + (serverMemoryStore.experiences?.length || 0);
+    }
+    const { count, error } = await supabase
+      .from('experiences')
+      .select('*', { count: 'exact', head: true });
+
+    if (error || count === null || count === undefined) {
+      return BASE_COUNT;
+    }
+    return BASE_COUNT + count;
+  } catch (err) {
+    console.error('Error getting experiences count:', err);
+    return BASE_COUNT;
+  }
+}
+

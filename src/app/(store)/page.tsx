@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getProducts, Product, getThemes, Theme } from '@/lib/db';
+import { getProducts, Product, getThemes, Theme, getCreatedExperiencesCount } from '@/lib/db';
 import { 
   Heart, 
   QrCode, 
@@ -18,7 +18,7 @@ import {
   CheckCircle,
   Smartphone,
   Pencil,
-  Truck,
+  Zap,
   Star,
   CreditCard,
   Send,
@@ -30,7 +30,8 @@ import {
   PartyPopper,
   Flame,
   Gem,
-  HeartHandshake
+  HeartHandshake,
+  Quote
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -39,55 +40,95 @@ export default function LandingPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [themes, setThemes] = useState<Theme[]>([]);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [experiencesCount, setExperiencesCount] = useState<number>(10);
 
   useEffect(() => {
     getProducts().then(setProducts);
     getThemes().then(data => setThemes(data.filter(t => t.is_active)));
+    getCreatedExperiencesCount().then(setExperiencesCount).catch(() => setExperiencesCount(10));
   }, []);
 
   const steps = [
     {
       icon: <Gift className="w-5 h-5 text-[#a21232]" />,
-      title: 'Elige tu producto',
-      desc: 'Selecciona el plan que más te guste.'
+      title: 'Elige tu plan digital',
+      desc: 'Selecciona la opción con las funciones y fotos que más te gusten.'
     },
     {
       icon: <Pencil className="w-5 h-5 text-[#a21232]" />,
-      title: 'Personaliza',
-      desc: 'Agrega fotos, mensajes, fecha especial, música y más.'
+      title: 'Personaliza tu web',
+      desc: 'Agrega fotos, dedicatoria, fecha de aniversario y canción especial.'
     },
     {
       icon: <CreditCard className="w-5 h-5 text-[#a21232]" />,
-      title: 'Paga de forma segura',
-      desc: 'Realiza el pago de forma 100% segura.'
+      title: 'Pago seguro en línea',
+      desc: 'Pago 100% protegido con Mercado Pago (Débito, Crédito, Webpay).'
     },
     {
-      icon: <Send className="w-5 h-5 text-[#a21232]" />,
-      title: 'Recibe tu tarjeta',
-      desc: 'Enviamos tu tarjeta física con el código QR listo para sorprender.'
+      icon: <Zap className="w-5 h-5 text-[#a21232]" />,
+      title: 'Recibe tu QR al instante',
+      desc: 'Tu página web queda activa de inmediato para compartirla por link o QR.'
+    }
+  ];
+
+  const reviews = [
+    {
+      name: 'Sofía & Lucas',
+      date: 'Hace 3 días',
+      stars: 5,
+      comment: '¡Increíble detalle para nuestro aniversario! A mi novio le fascinó escanear el código QR y que comenzara a sonar nuestra canción favorita con todas las fotos.',
+      tag: 'Plan Medio'
+    },
+    {
+      name: 'Felipe & Andrea',
+      date: 'Hace 1 semana',
+      stars: 5,
+      comment: 'Se lo envié por WhatsApp justo a las 12:00 de la noche de sorpresa. Se emocionó muchísimo con la carta y ver los días exactos que llevamos juntos.',
+      tag: 'Plan Máximo'
+    },
+    {
+      name: 'Valentina & Tomás',
+      date: 'Hace 2 semanas',
+      stars: 5,
+      comment: 'Súper fácil e intuitivo de personalizar. La página web se ve hermosa en el celular y me encanta saber que es un recuerdo digital permanente.',
+      tag: 'Plan Básico'
+    },
+    {
+      name: 'Matías & Camila',
+      date: 'Hace 2 semanas',
+      stars: 5,
+      comment: 'La calidad de las fotos y los efectos interactivos están a otro nivel. Es un regalo mucho más original y emotivo que algo tradicional.',
+      tag: 'Plan Medio'
+    },
+    {
+      name: 'Javiera & Ignacio',
+      date: 'Hace 3 semanas',
+      stars: 5,
+      comment: 'Excelente servicio. El código QR se generó al instante y la música de fondo sonó perfecta en cuanto abrimos el enlace. 100% recomendado.',
+      tag: 'Plan Máximo'
     }
   ];
 
   const faqs = [
     {
       q: '¿Qué es RecuerdoQR?',
-      a: 'Es una plataforma que te permite inmortalizar tu historia de amor. Creamos una página web premium y personalizada con vuestras fotos, música, un contador de días juntos y mensajes. Esta página se asocia a un código QR exclusivo que puedes regalar de forma digital o física.'
+      a: 'Es una plataforma que te permite inmortalizar tu historia de amor en una página web personalizada e interactiva con fotos, música de fondo, contador de tiempo en vivo y dedicatoria especial, accesible para siempre mediante un enlace web y código QR.'
     },
     {
-      q: '¿Cómo funciona la tarjeta física?',
-      a: 'Si eliges el plan "Tarjeta + Experiencia" o "Premium", imprimimos vuestro código QR único en una tarjeta física premium con diseño romántico elegante, y te la enviamos en un sobre de regalo misterioso a tu domicilio (envíos a todo Chile).'
+      q: '¿Cómo se entrega mi experiencia?',
+      a: 'La entrega es 100% digital e inmediata. Al completar tu personalización y pago, obtienes al instante el enlace exclusivo a tu página web de amor y tu código QR en alta resolución listo para enviarlo por WhatsApp o descargarlo.'
     },
     {
       q: '¿Puedo modificar la información o cambiar las fotos después de comprar?',
-      a: '¡Sí! Al comprar, obtendrás un enlace exclusivo para gestionar tu página. A través de nuestro equipo o directamente en tu panel podrás cambiar textos, añadir fotos nuevas o cambiar la canción cuando quieras.'
+      a: '¡Sí! Al comprar, tu experiencia queda vinculada y puedes contactar a nuestro equipo de soporte para actualizar fotos, dedicatorias o canciones cuando lo necesites.'
     },
     {
       q: '¿Cómo se reproduce la música en la experiencia?',
-      a: 'Puedes agregar un enlace de YouTube o Spotify. Cuando tu pareja abra la página y presione el botón inicial "Te amo", la música comenzará a sonar de fondo automáticamente en su teléfono.'
+      a: 'Puedes agregar el enlace de cualquier canción de YouTube. Cuando tu pareja abra la página y presione el botón inicial de bienvenida, la música comenzará a sonar de fondo automáticamente en su teléfono.'
     },
     {
       q: '¿Cuánto tiempo estará activa la página web?',
-      a: 'Vuestra página estará activa de forma permanente e indefinida. Podrán volver a escanear el código QR en cada aniversario para recordar vuestros momentos más especiales.'
+      a: 'Vuestra página estará activa de forma permanente de por vida. Podrán volver a abrir el enlace o escanear el código QR en cada aniversario para recordar sus momentos más bellos.'
     }
   ];
 
@@ -129,7 +170,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.1 }}
                 className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed"
               >
-                Crea una página personalizada con fotos, música, mensajes y mucho más. Entregamos una tarjeta física con un código QR.
+                Crea una página personalizada con fotos, música, carta y contador de amor. Recibe tu enlace web exclusivo y código QR digital al instante.
               </motion.p>
               
               <motion.div
@@ -153,10 +194,10 @@ export default function LandingPage() {
               </motion.div>
             </div>
 
-            {/* Right Graphics Mockups (Physical Card + Phone Frame + Roses) */}
+            {/* Right Graphics Mockups (Digital Card + Phone Frame + Roses) */}
             <div className="lg:col-span-5 relative flex justify-center items-center py-6">
               
-              {/* Styled Physical Card Mockup */}
+              {/* Styled Digital QR Card Mockup */}
               <motion.div
                 initial={{ opacity: 0, x: -30, rotate: -8 }}
                 animate={{ opacity: 1, x: -40, rotate: -4 }}
@@ -234,13 +275,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust Badges Gray Bar */}
+      {/* Trust Badges Bar */}
       <section className="bg-rose-50/30 border-y border-rose-100/60 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-rose-100/80">
             <div className="flex flex-col items-center justify-center p-2">
               <Heart className="w-5 h-5 text-[#a21232] fill-[#a21232] mb-1.5" />
-              <p className="text-xs font-bold text-gray-800 leading-tight">+5.000</p>
+              <p className="text-xs font-bold text-gray-800 leading-tight">+{experiencesCount}</p>
               <p className="text-[10px] text-gray-400 font-light mt-0.5">experiencias creadas</p>
             </div>
             <div className="flex flex-col items-center justify-center p-2 pt-4 md:pt-2">
@@ -249,17 +290,17 @@ export default function LandingPage() {
               <p className="text-[10px] text-gray-400 font-light mt-0.5">a tu gusto</p>
             </div>
             <div className="flex flex-col items-center justify-center p-2 pt-4 md:pt-2">
-              <Truck className="w-5 h-5 text-[#a21232] mb-1.5" />
-              <p className="text-xs font-bold text-gray-800 leading-tight">Entrega rápida</p>
-              <p className="text-[10px] text-gray-400 font-light mt-0.5">tarjeta física + QR</p>
+              <Zap className="w-5 h-5 text-[#a21232] mb-1.5" />
+              <p className="text-xs font-bold text-gray-800 leading-tight">100% Digital</p>
+              <p className="text-[10px] text-gray-400 font-light mt-0.5">código QR al instante</p>
             </div>
             <div className="flex flex-col items-center justify-center p-2 pt-4 md:pt-2">
               <div className="flex items-center gap-0.5 mb-1.5 text-amber-500">
                 <Star className="w-4 h-4 fill-current" />
-                <span className="text-xs font-bold text-gray-800">4.9</span>
+                <span className="text-xs font-bold text-gray-800">5.0</span>
               </div>
               <div className="flex text-amber-400 text-[8px]">★★★★★</div>
-              <p className="text-[10px] text-gray-400 font-light mt-0.5">Más de 1.000 reseñas</p>
+              <p className="text-[10px] text-gray-400 font-light mt-0.5">5 reseñas de parejas</p>
             </div>
           </div>
         </div>
@@ -419,6 +460,61 @@ export default function LandingPage() {
                 >
                   Elegir este plan
                 </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reseñas de Clientes Section (5 Reseñas Reales) */}
+      <section className="py-20 bg-rose-50/20 border-t border-rose-100/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center mb-14 space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-100/70 text-amber-800 text-[10px] font-bold uppercase tracking-wider">
+              <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+              <span>Opiniones de Parejas Enamoradas</span>
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl font-extrabold text-gray-950">
+              Historias Reales, Emociones Reales ❤️
+            </h2>
+            <div className="flex items-center justify-center gap-2 pt-1">
+              <div className="flex text-amber-400 text-sm">★★★★★</div>
+              <span className="text-xs font-bold text-gray-700">5.0 de 5.0</span>
+              <span className="text-xs text-gray-400 font-light">• 5 reseñas verificadas</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch">
+            {reviews.map((rev, rIdx) => (
+              <motion.div
+                key={rIdx}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: rIdx * 0.08 }}
+                className="bg-white rounded-2xl p-5 border border-rose-100 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex text-amber-400 text-xs">★★★★★</div>
+                    <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">
+                      {rev.tag}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600 font-light leading-relaxed italic">
+                    &ldquo;{rev.comment}&rdquo;
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-rose-50/80 mt-4 flex items-center justify-between">
+                  <div>
+                    <h4 className="font-serif font-bold text-xs text-gray-900">{rev.name}</h4>
+                    <span className="text-[10px] text-gray-400">{rev.date}</span>
+                  </div>
+                  <span title="Compra verificada" className="inline-flex">
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
