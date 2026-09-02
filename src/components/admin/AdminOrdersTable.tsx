@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Eye,
   Edit3,
-  MessageCircle
+  MessageCircle,
+  Trash2,
+  RefreshCw
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
@@ -109,17 +111,38 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
     }
   };
 
+  const handleClearTestOrders = async () => {
+    if (!window.confirm('¿Estás seguro de vaciar todos los pedidos de prueba? La tabla quedará en $0 CLP lista para tus clientes reales.')) {
+      return;
+    }
+
+    const toastId = toast.loading('Limpiando pedidos de prueba...');
+    try {
+      await fetch('/api/admin/clear-test-orders', { method: 'POST' });
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('amor_qr_orders');
+      }
+      useAdminStore.getState().setOrders([]);
+      setSelectedOrder(null);
+      toast.dismiss(toastId);
+      toast.success('¡Pedidos de prueba eliminados! Tu tienda está en 0.');
+    } catch {
+      toast.dismiss(toastId);
+      toast.error('Error al limpiar pedidos de prueba');
+    }
+  };
+
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-6 text-left animate-fade-in">
       
-      {/* Controls Bar */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Top Filter Bar */}
+      <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         {/* Search */}
         <div className="relative w-full sm:w-72">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Buscar por cliente, email o ID..."
+            placeholder="Buscar por cliente, correo o ID..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -129,31 +152,45 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
           />
         </div>
 
-        {/* Status Filters */}
-        <div className="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          {[
-            { id: 'all', label: 'Todos' },
-            { id: 'pending', label: 'Pendientes' },
-            { id: 'paid', label: 'Pagados' },
-            { id: 'shipped', label: 'Enviados' },
-            { id: 'completed', label: 'Completados' },
-          ].map((f) => (
+        {/* Status Filters & Reset Button */}
+        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          <div className="flex gap-1">
+            {[
+              { id: 'all', label: 'Todos' },
+              { id: 'pending', label: 'Pendientes' },
+              { id: 'paid', label: 'Pagados' },
+              { id: 'shipped', label: 'Enviados' },
+              { id: 'completed', label: 'Completados' },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => {
+                  setStatusFilter(f.id);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1 rounded-xl text-[10px] font-bold whitespace-nowrap transition cursor-pointer ${
+                  statusFilter === f.id
+                    ? 'bg-[#a21232] text-white shadow-xs'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {orders.length > 0 && (
             <button
-              key={f.id}
               type="button"
-              onClick={() => {
-                setStatusFilter(f.id);
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1 rounded-xl text-[10px] font-bold whitespace-nowrap transition ${
-                statusFilter === f.id
-                  ? 'bg-[#a21232] text-white shadow-xs'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              onClick={handleClearTestOrders}
+              className="px-3 py-1 rounded-xl text-[10px] font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition flex items-center gap-1 cursor-pointer shrink-0 ml-2"
+              title="Borrar pedidos de prueba"
             >
-              {f.label}
+              <Trash2 className="w-3 h-3" />
+              <span>Limpiar Pruebas</span>
             </button>
-          ))}
+          )}
         </div>
       </div>
 

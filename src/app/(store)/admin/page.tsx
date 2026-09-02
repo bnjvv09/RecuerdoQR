@@ -14,14 +14,23 @@ import {
   Product, 
   Experience 
 } from '@/lib/db';
+import dynamic from 'next/dynamic';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminOrdersTable from '@/components/admin/AdminOrdersTable';
 import AdminThemesPanel from '@/components/admin/AdminThemesPanel';
-import AdminCreatorStudio from '@/components/admin/AdminCreatorStudio';
 import AdminPlansPanel from '@/components/admin/AdminPlansPanel';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel';
-import AdminEditExperienceModal from '@/components/admin/AdminEditExperienceModal';
-import PrintableGiftCardModal from '@/components/card/PrintableGiftCardModal';
+
+const AdminCreatorStudio = dynamic(() => import('@/components/admin/AdminCreatorStudio'), {
+  loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando estudio de creación...</div>,
+  ssr: false,
+});
+const AdminEditExperienceModal = dynamic(() => import('@/components/admin/AdminEditExperienceModal'), {
+  ssr: false,
+});
+const PrintableGiftCardModal = dynamic(() => import('@/components/card/PrintableGiftCardModal'), {
+  ssr: false,
+});
 import { 
   Lock, 
   Mail, 
