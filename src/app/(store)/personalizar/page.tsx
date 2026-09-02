@@ -148,7 +148,7 @@ function PersonalizarContent() {
         if (sec.type === 'pregunta') return { ...sec, content: { question: form.proposalQuestion } };
         if (sec.type === 'sorpresa') return { ...sec, content: { message: form.surpriseMessage } };
         if (sec.type === 'lugar') return { ...sec, content: { address: form.specialPlaceAddress } };
-        if (sec.type === 'secreto') return { ...sec, content: { passcode: form.secretPasscode, message: form.secretMessage } };
+        if (sec.type === 'secreto') return { ...sec, content: { passcode: form.secretPasscode, hint: form.secretHint, message: form.secretMessage } };
         if (sec.type === 'corazones') return { ...sec, content: { message: form.message } };
         return sec;
       });
@@ -455,6 +455,8 @@ function PersonalizarContent() {
             handleVideoUpload={form.handleVideoUpload}
             secretPasscode={form.secretPasscode}
             setSecretPasscode={form.setSecretPasscode}
+            secretHint={form.secretHint}
+            setSecretHint={form.setSecretHint}
             secretMessage={form.secretMessage}
             setSecretMessage={form.setSecretMessage}
             specialPlaceAddress={form.specialPlaceAddress}
@@ -497,6 +499,7 @@ function PersonalizarContent() {
             uploadedVideoUrl={form.uploadedVideoUrl}
             youtubeVideoUrl={form.youtubeVideoUrl}
             secretPasscode={form.secretPasscode}
+            secretHint={form.secretHint}
             secretMessage={form.secretMessage}
             birthdayWishMessage={form.birthdayWishMessage}
             birthdayBalloons={form.birthdayBalloons}

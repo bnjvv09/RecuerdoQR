@@ -209,6 +209,8 @@ export default function Step4Preview({
   const [heartUnited, setHeartUnited] = useState(false);
   const [isVoiceNotePlaying, setIsVoiceNotePlaying] = useState(false);
   const [isPreviewLetterOpen, setIsPreviewLetterOpen] = useState(false);
+  const [previewSecretUnlocked, setPreviewSecretUnlocked] = useState(false);
+  const [previewSecretInput, setPreviewSecretInput] = useState('');
 
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
@@ -1500,19 +1502,60 @@ export default function Step4Preview({
                   }
 
                   if (sec.type === 'secreto') {
+                    const targetCode = secretPasscode || '1234';
                     return (
                       <div key={sec.id} className="bg-amber-50/70 rounded-2xl p-4 border border-amber-200/80 shadow-xs text-center space-y-2.5" style={{ fontFamily: activeFontFamily }}>
                         <span className="text-xl block">🔒</span>
                         <h3 className="text-xs font-bold text-amber-950 font-serif">Rincón Secreto Protegido</h3>
+                        
                         {secretHint && (
                           <div className="bg-white/90 text-amber-900 border border-amber-200 px-2.5 py-1 rounded-xl text-[10px] font-medium inline-flex items-center gap-1 shadow-2xs">
                             <span>💡</span>
                             <span><strong>Pista:</strong> {secretHint}</span>
                           </div>
                         )}
-                        <p className="text-[10px] text-amber-800 italic">
-                          &quot;{secretMessage || 'Ingresa el PIN de 4 dígitos para revelar este mensaje secreto...'}&quot;
-                        </p>
+
+                        {!previewSecretUnlocked ? (
+                          <div className="space-y-2 pt-1">
+                            <p className="text-[9px] text-gray-500 font-light">
+                              Ingresa el PIN de 4 dígitos para desbloquear este mensaje oculto.
+                            </p>
+                            <div className="flex justify-center gap-2">
+                              <input
+                                type="password"
+                                maxLength={6}
+                                value={previewSecretInput}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPreviewSecretInput(val);
+                                  if (val.trim() === targetCode.trim()) {
+                                    setPreviewSecretUnlocked(true);
+                                    confetti({
+                                      particleCount: 80,
+                                      spread: 70,
+                                      colors: ['#f59e0b', '#fbbf24', '#ffffff', '#a21232']
+                                    });
+                                  }
+                                }}
+                                placeholder="PIN..."
+                                className="w-28 px-2.5 py-1.5 text-center text-xs font-mono tracking-widest border border-gray-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-amber-400"
+                              />
+                            </div>
+                            {previewSecretInput.length >= 4 && previewSecretInput.trim() !== targetCode.trim() && (
+                              <p className="text-[9px] text-red-500 font-medium animate-pulse">
+                                PIN incorrecto, intenta de nuevo 💡
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-white/95 rounded-xl border border-amber-300 space-y-1 text-amber-950 animate-fade-in shadow-xs">
+                            <span className="text-xl block">✨🔓</span>
+                            <h4 className="font-bold text-[10px] text-amber-900">Mensaje Revelado:</h4>
+                            <p className="font-serif italic text-xs leading-relaxed whitespace-pre-wrap text-amber-900">
+                              &quot;{secretMessage || '¡Te amo con todo mi corazón!'}&quot;
+                            </p>
+                          </div>
+                        )}
                       </div>
                     );
                   }
