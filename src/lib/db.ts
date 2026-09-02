@@ -97,41 +97,44 @@ const DEFAULT_PRODUCTS: Product[] = [
     id: 'basic',
     name: 'Plan Básico',
     price: 4990,
-    subtitle: 'Hasta 10 Fotos • Polaroid & Collage',
-    description: 'Página web con la interacción clave de Aniversario, 2 estilos de fotos y tarjeta física clásica con color libre.',
+    subtitle: 'Página web personalizada con hasta 10 fotos, contador de tiempo y tarjeta digital temática.',
+    description: 'Página web personalizada con hasta 10 fotos, contador de tiempo y tarjeta digital temática.',
     features: [
-      '⏱️ Contador de amor en tiempo real (años, días, segundos)',
-      '💖 Dedicatoria final con corazón palpitante',
-      '📸 Hasta 10 Fotos en Polaroid y Collage',
-      '🎨 Tarjeta física con color personalizado'
+      'Página web interactiva',
+      'Hasta 10 Fotos en HD',
+      'Contador de tiempo en vivo',
+      'Dedicatoria final con corazón',
+      'Tarjeta de Regalo Digital Temática',
+      'Código QR Digital HD'
     ]
   },
   {
     id: 'medium',
     name: 'Plan Medio',
     price: 5990,
-    badge: 'Más Recomendado',
-    subtitle: 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
-    description: 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta física con 145 personajes temáticos e interacciones adicionales.',
+    badge: 'Más Popular',
+    subtitle: 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
+    description: 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor interactiva.',
     features: [
-      '⏱️ Contador de amor en vivo + Corazones',
-      '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
-      '🎵 Canción especial de la pareja de fondo (YouTube)',
-      '💌 Carta de aniversario interactiva',
-      '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+      'Todo lo del Plan Básico',
+      'Hasta 20 Fotos',
+      'Música de fondo personalizada (YouTube)',
+      '6 Estilos de galería (Polaroid, Carrete)',
+      'Carta de amor interactiva'
     ]
   },
   {
     id: 'premium',
     name: 'Plan Máximo',
     price: 7990,
-    subtitle: '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
-    description: 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
+    subtitle: 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
+    description: 'La experiencia completa sin límites: hasta 30 fotos, video dedicado, línea de tiempo de hitos y todos los widgets.',
     features: [
-      '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
-      '✨ Línea de tiempo de hitos con fotos y fechas',
-      '📍 Mapa interactivo del lugar donde se conocieron',
-      '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
+      'Todo lo del Plan Medio',
+      'Hasta 30 Fotos',
+      'Video de YouTube dedicado',
+      'Línea de tiempo con fotos de hitos',
+      'Rincón secreto con PIN, Propuesta y Mapa'
     ]
   }
 ];

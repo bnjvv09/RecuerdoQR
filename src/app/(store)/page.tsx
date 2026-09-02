@@ -417,14 +417,14 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 className={`bg-white rounded-3xl p-8 border ${
-                  product.id === 'medium' || product.id === 'card'
+                  product.badge || product.id === 'medium' || product.id === 'card'
                     ? 'border-[#a21232] shadow-xl relative scale-105 md:-translate-y-1.5 z-10' 
                     : 'border-rose-100 shadow-md'
                 } flex flex-col justify-between`}
               >
-                {(product.id === 'medium' || product.id === 'card') && (
+                {(product.badge || product.id === 'medium' || product.id === 'card') && (
                   <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#a21232] text-white text-[9px] font-extrabold tracking-widest rounded-full uppercase shadow-md">
-                    Más elegido
+                    {product.badge || 'Más Popular'}
                   </span>
                 )}
 

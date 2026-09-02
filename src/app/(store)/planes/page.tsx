@@ -92,7 +92,7 @@ export default function PlanesPage() {
                     </div>
                   </div>
 
-                  {product.subtitle && (
+                  {product.subtitle && product.subtitle !== product.description && (
                     <p className="text-xs font-semibold text-rose-600 mb-3">
                       {product.subtitle}
                     </p>
