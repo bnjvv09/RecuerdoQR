@@ -14,8 +14,37 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'RecuerdoQR | Experiencias Románticas Personalizadas',
-  description: 'Convierte tus recuerdos en una experiencia que nunca olvidará. Crea una página personalizada con fotos, música, vuestra historia de amor y un contador de tiempo accesible mediante un código QR.',
+  metadataBase: new URL('https://recuerdo-qr.vercel.app'),
+  title: {
+    default: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
+    template: '%s | RecuerdoQR',
+  },
+  description: 'Transforma tus fotos, canción especial y carta en una experiencia digital inolvidable con contador de amor en vivo y código QR permanente. 🎁✨',
+  keywords: [
+    'recuerdo qr',
+    'regalo de aniversario',
+    'regalo para mi novia',
+    'regalo para mi novio',
+    'experiencia romantica digital',
+    'tarjeta qr amor',
+    'regalos personalizados chile'
+  ],
+  authors: [{ name: 'RecuerdoQR' }],
+  creator: 'RecuerdoQR',
+  publisher: 'RecuerdoQR',
+  openGraph: {
+    type: 'website',
+    locale: 'es_CL',
+    url: 'https://recuerdo-qr.vercel.app',
+    siteName: 'RecuerdoQR',
+    title: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
+    description: 'Transforma tus fotos, canción especial y carta en una experiencia digital inolvidable con contador de amor en vivo y código QR permanente. 🎁✨',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
+    description: 'Transforma tus fotos, canción especial y carta en una experiencia digital inolvidable con contador de amor en vivo y código QR permanente. 🎁✨',
+  },
 };
 
 export const viewport = {
