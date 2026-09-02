@@ -42,40 +42,31 @@ import { toast } from 'sonner';
 
 export const ROMANTIC_SONGS = [
   { 
-    id: 'perfect',
-    title: 'Perfect', 
-    artist: 'Ed Sheeran', 
-    url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
-    videoId: '2Vv-BfVoq4g',
+    id: 'dicelo',
+    title: 'Dícelo', 
+    artist: 'Jay Wheeler & Zhamira', 
+    url: 'https://www.youtube.com/watch?v=Fj-y5M5rPfg',
+    videoId: 'Fj-y5M5rPfg',
+    start: 40,
+    end: 60
+  },
+  { 
+    id: 'vida-de-rico',
+    title: 'Vida de Rico', 
+    artist: 'Camilo', 
+    url: 'https://www.youtube.com/watch?v=yP9vWj7R0xI',
+    videoId: 'yP9vWj7R0xI',
+    start: 45,
+    end: 65
+  },
+  { 
+    id: 'creo-en-ti',
+    title: 'Creo en Ti', 
+    artist: 'Reik', 
+    url: 'https://www.youtube.com/watch?v=K1j31Y8rU7I',
+    videoId: 'K1j31Y8rU7I',
     start: 48,
     end: 68
-  },
-  { 
-    id: 'entra-en-mi-vida',
-    title: 'Entra en mi vida', 
-    artist: 'Sin Bandera', 
-    url: 'https://www.youtube.com/watch?v=KzKk2rLzZ4A',
-    videoId: 'KzKk2rLzZ4A',
-    start: 62,
-    end: 82
-  },
-  { 
-    id: 'amor-completo',
-    title: 'Amor Completo', 
-    artist: 'Mon Laferte', 
-    url: 'https://www.youtube.com/watch?v=4jTfZp_yQdM',
-    videoId: '4jTfZp_yQdM',
-    start: 54,
-    end: 74
-  },
-  { 
-    id: 'favorito',
-    title: 'Favorito', 
-    artist: 'Camilo', 
-    url: 'https://www.youtube.com/watch?v=5rT8Q6uX7mY',
-    videoId: '5rT8Q6uX7mY',
-    start: 43,
-    end: 63
   },
   { 
     id: 'yellow',
@@ -87,31 +78,40 @@ export const ROMANTIC_SONGS = [
     end: 52
   },
   { 
-    id: 'sabes',
-    title: 'Sabes', 
-    artist: 'Reik', 
-    url: 'https://www.youtube.com/watch?v=b4f8L3C0cQc',
-    videoId: 'b4f8L3C0cQc',
-    start: 45,
-    end: 65
+    id: 'quiereme-mientras-se-pueda',
+    title: 'Quiéreme Mientras Se Pueda', 
+    artist: 'Manuel Turizo', 
+    url: 'https://www.youtube.com/watch?v=hKqN5fC60kU',
+    videoId: 'hKqN5fC60kU',
+    start: 42,
+    end: 62
   },
   { 
-    id: 'tacones-rojos',
-    title: 'Tacones Rojos', 
-    artist: 'Sebastián Yatra', 
-    url: 'https://www.youtube.com/watch?v=vV_A5O0_5jQ',
-    videoId: 'vV_A5O0_5jQ',
-    start: 28,
-    end: 48
+    id: 'todo-de-ti',
+    title: 'Todo de Ti', 
+    artist: 'Rauw Alejandro', 
+    url: 'https://www.youtube.com/watch?v=CFPLIaMpGrY',
+    videoId: 'CFPLIaMpGrY',
+    start: 35,
+    end: 55
   },
   { 
-    id: 'me-enamore-de-ti',
-    title: 'Me Enamoré de Ti', 
-    artist: 'Chayanne', 
-    url: 'https://www.youtube.com/watch?v=F0r4H3q4jYs',
-    videoId: 'F0r4H3q4jYs',
-    start: 68,
-    end: 88
+    id: 'perfect',
+    title: 'Perfect', 
+    artist: 'Ed Sheeran', 
+    url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
+    videoId: '2Vv-BfVoq4g',
+    start: 48,
+    end: 68
+  },
+  { 
+    id: 'un-ano',
+    title: 'Un Año', 
+    artist: 'Sebastián Yatra & Reik', 
+    url: 'https://www.youtube.com/watch?v=v2Xk_go2v3U',
+    videoId: 'v2Xk_go2v3U',
+    start: 44,
+    end: 64
   },
 ];
 
@@ -1506,7 +1506,7 @@ export default function Step2Personalizacion({
                                 return (
                                   <iframe
                                     key={activeSong.id}
-                                    src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=1&start=${activeSong.start}&end=${activeSong.end}&controls=0&modestbranding=1&rel=0`}
+                                    src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=1&start=${activeSong.start}&end=${activeSong.end}&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
                                     className="hidden w-0 h-0 pointer-events-none"
                                     allow="autoplay; encrypted-media"
                                   />
