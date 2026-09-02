@@ -45,7 +45,7 @@ export const ROMANTIC_SONGS = [
     id: 'dicelo',
     title: 'Dícelo', 
     artist: 'Jay Wheeler & Zhamira', 
-    url: 'https://www.youtube.com/watch?v=Fj-y5M5rPfg',
+    url: 'https://www.youtube.com/watch?v=sHj49o05jQI',
     previewAudio: '/audio/previews/dicelo.m4a'
   },
   { 
@@ -80,7 +80,7 @@ export const ROMANTIC_SONGS = [
     id: 'beso',
     title: 'Beso', 
     artist: 'ROSALÍA & Rauw Alejandro', 
-    url: 'https://www.youtube.com/watch?v=CFPLIaMpGrY',
+    url: 'https://www.youtube.com/watch?v=9g0n6cO552g',
     previewAudio: '/audio/previews/beso.m4a'
   },
   { 
