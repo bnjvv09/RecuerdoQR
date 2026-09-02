@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { sanitizeText } from '@/lib/sanitize';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
-    const rateCheck = checkRateLimit(`checkout-${ip}`, 15, 60 * 1000);
+    const rateCheck = checkRateLimit(`checkout-${ip}`, 10, 60 * 1000);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: 'Demasiadas solicitudes. Por favor espera un minuto antes de reintentar.' },
@@ -15,27 +16,50 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const orderId = sanitizeText(body.orderId);
-    const productName = sanitizeText(body.productName);
-    const total = Number(body.total);
     const customerEmail = sanitizeText(body.customerEmail).toLowerCase();
 
-    if (!orderId || !productName || !total || total <= 0) {
-      return NextResponse.json({ error: 'Parámetros del pedido inválidos o incompletos' }, { status: 400 });
+    if (!orderId) {
+      return NextResponse.json({ error: 'ID de pedido requerido' }, { status: 400 });
+    }
+
+    // 🔒 SEGURIDAD: Verificar el precio real en la base de datos (NUNCA confiar en body.total)
+    const supabase = createServerSupabaseClient();
+    
+    // 1. Buscar la orden real en la base de datos
+    const { data: order } = await supabase
+      .from('orders')
+      .select('*, products(*)')
+      .eq('id', orderId)
+      .single();
+
+    let verifiedPrice = 7990;
+    let verifiedProductName = 'Plan Básico RecuerdoQR';
+
+    if (order && order.products) {
+      verifiedPrice = Number(order.products.price);
+      verifiedProductName = order.products.name;
+    } else if (order && order.total && order.total > 0) {
+      verifiedPrice = Number(order.total);
+    } else {
+      // Fallback a precios oficiales verificados por el servidor
+      const planPrices: Record<string, number> = { basic: 7990, medium: 12990, premium: 17990 };
+      const fallbackPlan = body.productName?.toLowerCase().includes('máximo') || body.productName?.toLowerCase().includes('premium') ? 'premium'
+        : body.productName?.toLowerCase().includes('medio') ? 'medium' : 'basic';
+      verifiedPrice = planPrices[fallbackPlan] || 7990;
+      verifiedProductName = `RecuerdoQR - ${fallbackPlan.toUpperCase()}`;
     }
 
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
 
     // Si no hay token de Mercado Pago configurado o es de prueba, simular la redirección
     if (!accessToken || accessToken.includes('MOCK') || accessToken === 'APP_USR-xxxxxx-xxxxxx-xxxxxx') {
-      console.log('Using simulated Mercado Pago checkout for order:', orderId);
-      
-      // Creamos una URL local de simulación de pago
-      const mockCheckoutUrl = `${appUrl}/checkout/simulate-payment?orderId=${orderId}&productName=${encodeURIComponent(productName)}&total=${total}`;
+      console.log('Using simulated Mercado Pago checkout for order:', orderId, 'Verified Price:', verifiedPrice);
+      const mockCheckoutUrl = `${appUrl}/checkout/simulate-payment?orderId=${orderId}&productName=${encodeURIComponent(verifiedProductName)}&total=${verifiedPrice}`;
       return NextResponse.json({ init_point: mockCheckoutUrl, isMock: true });
     }
 
-    // Integración real con Mercado Pago
+    // Integración real con Mercado Pago con PRECIO VERIFICADO POR EL SERVIDOR
     const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
       headers: {
@@ -45,9 +69,9 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         items: [
           {
-            title: `RecuerdoQR - ${productName}`,
+            title: `RecuerdoQR - ${verifiedProductName}`,
             quantity: 1,
-            unit_price: Number(total),
+            unit_price: verifiedPrice,
             currency_id: 'CLP',
           },
         ],
@@ -59,7 +83,7 @@ export async function POST(request: Request) {
         auto_return: 'approved',
         external_reference: orderId,
         payer: {
-          email: customerEmail,
+          email: customerEmail || order?.customer_email || 'cliente@recuerdoqr.cl',
         },
       }),
     });

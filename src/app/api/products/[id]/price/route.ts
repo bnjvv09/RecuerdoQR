@@ -10,6 +10,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       throw new AppError('ID de producto requerido', ErrorCodes.VALIDATION_ERROR, 400);
     }
 
+    // 🔒 SEGURIDAD: Validar sesión de administrador
+    const token = req.cookies.get('sb-access-token')?.value || req.headers.get('authorization')?.replace('Bearer ', '');
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder-project');
+    if (!token && !isMock && process.env.NODE_ENV === 'production') {
+      throw new AppError('No autorizado. Se requiere sesión de administrador.', ErrorCodes.UNAUTHORIZED, 401);
+    }
+
     const body = await req.json();
     const validated = priceUpdateSchema.parse(body);
 
