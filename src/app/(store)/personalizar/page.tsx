@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { usePersonalizarForm } from '@/components/personalizar/usePersonalizarForm';
 import Step1Tematica from '@/components/personalizar/Step1Tematica';
@@ -23,6 +23,21 @@ function PersonalizarContent() {
     searchParams.get('plan') || undefined,
     searchParams.get('theme') || undefined
   );
+
+  const stepParam = searchParams.get('step');
+  const statusParam = searchParams.get('status');
+
+  useEffect(() => {
+    if (stepParam) {
+      const numStep = Number(stepParam);
+      if (numStep >= 1 && numStep <= 6) {
+        form.setStep(numStep);
+      }
+    }
+    if (statusParam === 'failure' || statusParam === 'pending') {
+      toast.info('Regresaste al resumen de pago. Puedes modificar lo que desees o volver a pagar cuando estés listo.');
+    }
+  }, [stepParam, statusParam]);
 
   const handleNextStep = () => {
     if (form.step === 1) {

@@ -94,8 +94,8 @@ export async function POST(request: Request) {
         },
         back_urls: {
           success: `${appUrl}/gracias?orderId=${orderId}&status=success`,
-          failure: `${appUrl}/checkout?orderId=${orderId}&status=failure`,
-          pending: `${appUrl}/checkout?orderId=${orderId}&status=pending`,
+          failure: `${appUrl}/personalizar?step=6&orderId=${orderId}&status=failure`,
+          pending: `${appUrl}/personalizar?step=6&orderId=${orderId}&status=pending`,
         },
         auto_return: 'approved',
         external_reference: orderId,
