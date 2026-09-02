@@ -35,11 +35,17 @@ export async function POST(request: Request) {
     let verifiedPrice = 4990;
     let verifiedProductName = 'Plan Básico RecuerdoQR';
 
-    if (order && order.products) {
-      verifiedPrice = Number(order.products.price);
-      verifiedProductName = order.products.name;
-    } else if (order && order.total && order.total > 0) {
-      verifiedPrice = Number(order.total);
+    if (order) {
+      // 🎟️ Priorizar el total real de la orden (con cupón de descuento aplicado)
+      if (order.total !== undefined && order.total !== null && Number(order.total) > 0) {
+        verifiedPrice = Math.round(Number(order.total));
+      } else if (order.products && order.products.price) {
+        verifiedPrice = Number(order.products.price);
+      }
+
+      if (order.products && order.products.name) {
+        verifiedProductName = order.products.name;
+      }
     } else {
       // Fallback a precios oficiales verificados por el servidor
       const planPrices: Record<string, number> = { basic: 4990, digital: 4990, medium: 6990, card: 6990, premium: 7990 };
