@@ -22,6 +22,7 @@ export interface SiteSettings {
   instagram_url?: string;
   tiktok_url?: string;
   whatsapp_url?: string;
+  whatsapp_message?: string;
 }
 
 export interface Order {
@@ -213,6 +214,7 @@ Tus fotos, audios, videos y dedicatorias son 100% privadas y seguras. No compart
   guarantee_content: `### Garantía de Amor 100%
 Si por alguna razón tu experiencia digital no te enamora al 100% o tienes cualquier inconveniente técnico, nuestro equipo de soporte te atenderá de inmediato para resolverlo o reembolsarte.`,
   whatsapp_url: 'https://wa.me/56912345678',
+  whatsapp_message: '¡Hola! ❤️ Vengo de RecuerdoQR y tengo una consulta sobre cómo crear mi recuerdo.',
   instagram_url: 'https://instagram.com',
   tiktok_url: 'https://tiktok.com',
 };

@@ -136,7 +136,7 @@ export default function Footer() {
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                 <a 
-                  href={settings.whatsapp_url || `https://wa.me/${settings.support_phone.replace(/\D/g, '')}`} 
+                  href={settings.whatsapp_url ? `${settings.whatsapp_url}?text=${encodeURIComponent(settings.whatsapp_message || '¡Hola! ❤️ Vengo de RecuerdoQR.')}` : `https://wa.me/${settings.support_phone.replace(/\D/g, '')}?text=${encodeURIComponent(settings.whatsapp_message || '¡Hola! ❤️ Vengo de RecuerdoQR.')}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="hover:text-rose-400 transition-colors flex items-center gap-1.5"

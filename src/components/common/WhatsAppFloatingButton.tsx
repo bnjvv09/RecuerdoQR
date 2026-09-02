@@ -1,12 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
+import { getSiteSettings, DEFAULT_SETTINGS } from '@/lib/db';
 
 export default function WhatsAppFloatingButton() {
-  const whatsappNumber = '56912345678';
-  const defaultMessage = encodeURIComponent('¡Hola! ❤️ Tengo una consulta sobre cómo crear mi experiencia en RecuerdoQR.');
-  const whatsappUrl = 'https://wa.me/' + whatsappNumber + '?text=' + defaultMessage;
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings).catch(console.error);
+  }, []);
+
+  const rawPhone = settings.support_phone ? settings.support_phone.replace(/\D/g, '') : '56912345678';
+  const customMessage = settings.whatsapp_message || '¡Hola! ❤️ Vengo de RecuerdoQR y tengo una consulta sobre cómo crear mi experiencia.';
+  const whatsappUrl = `https://wa.me/${rawPhone}?text=${encodeURIComponent(customMessage)}`;
 
   return (
     <aside aria-label="Contacto de soporte" className="fixed bottom-5 right-5 z-40">
