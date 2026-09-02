@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Product } from '@/lib/db';
 import { ShieldCheck, Lock, RefreshCw, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
 import { toast } from 'sonner';
 
 interface Step4CheckoutProps {
@@ -53,14 +54,40 @@ export default function Step4Checkout({
   };
 
   const [phoneDigits, setPhoneDigits] = useState(() => extractRawDigits(customerPhone));
-  const [emailStatus, setEmailStatus] = useState<{
+  const [touched, setTouched] = useState({ name: false, email: false, phone: false });
+  const [serverEmailStatus, setServerEmailStatus] = useState<{
     loading: boolean;
     valid?: boolean;
     error?: string;
     suggestion?: string;
   }>({ loading: false });
 
-  // Sincronizar el teléfono formateado hacia el estado principal
+  // Validaciones instantáneas del lado del cliente
+  const phoneValidation = useMemo(() => {
+    if (!phoneDigits) return { valid: false, error: 'Ingresa los 8 dígitos de tu celular' };
+    return validateChileanPhone(phoneDigits);
+  }, [phoneDigits]);
+
+  const clientEmailValidation = useMemo(() => {
+    if (!customerEmail.trim()) return { valid: false, error: 'Ingresa tu correo electrónico' };
+    return validateEmailSyntaxAndDomain(customerEmail);
+  }, [customerEmail]);
+
+  const nameValidation = useMemo(() => {
+    const trimmed = customerName.trim();
+    if (!trimmed) return { valid: false, error: 'Ingresa tu nombre y apellido' };
+    if (trimmed.length < 3) return { valid: false, error: 'El nombre debe tener al menos 3 caracteres' };
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúñÑüÜ\s'-]+$/.test(trimmed)) {
+      return { valid: false, error: 'El nombre solo puede contener letras' };
+    }
+    const words = trimmed.split(/\s+/).filter(Boolean);
+    if (words.length < 2) {
+      return { valid: false, error: 'Por favor ingresa al menos Nombre y Apellido' };
+    }
+    return { valid: true };
+  }, [customerName]);
+
+  // Manejador del cambio de teléfono
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 8);
     setPhoneDigits(raw);
@@ -74,15 +101,34 @@ export default function Step4Checkout({
     }
   };
 
+  // Bloqueo directo de teclas no numéricas en teléfono
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      !/^\d$/.test(e.key) &&
+      !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  // Bloqueo de números en nombre
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    // Filtrar caracteres que no sean letras o espacios
+    const cleaned = val.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑüÜ\s'-]/g, '');
+    setCustomerName(cleaned);
+  };
+
   // Validar email en el servidor con registros MX y typos
   const validateEmailServer = useCallback(async (emailToTest: string) => {
     const trimmed = emailToTest.trim();
-    if (!trimmed || !trimmed.includes('@') || !trimmed.includes('.')) {
-      setEmailStatus({ loading: false, valid: undefined });
+    const localCheck = validateEmailSyntaxAndDomain(trimmed);
+    if (!localCheck.valid) {
+      setServerEmailStatus({ loading: false, valid: false, error: localCheck.error });
       return;
     }
 
-    setEmailStatus({ loading: true });
+    setServerEmailStatus({ loading: true });
     try {
       const res = await fetch('/api/validate-email', {
         method: 'POST',
@@ -92,33 +138,33 @@ export default function Step4Checkout({
 
       const data = await res.json();
       if (!res.ok || data.valid === false) {
-        setEmailStatus({
+        setServerEmailStatus({
           loading: false,
           valid: false,
           error: data.error || 'Correo no válido',
           suggestion: data.suggestion,
         });
       } else {
-        setEmailStatus({
+        setServerEmailStatus({
           loading: false,
           valid: true,
           suggestion: data.suggestion,
         });
       }
     } catch {
-      setEmailStatus({ loading: false, valid: true });
+      setServerEmailStatus({ loading: false, valid: true });
     }
   }, []);
 
   // Debounce para validación de email
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (customerEmail.trim().length > 4 && customerEmail.includes('@')) {
+      if (customerEmail.trim().length > 3 && customerEmail.includes('@')) {
         validateEmailServer(customerEmail);
       } else {
-        setEmailStatus({ loading: false });
+        setServerEmailStatus({ loading: false });
       }
-    }, 600);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [customerEmail, validateEmailServer]);
@@ -129,21 +175,32 @@ export default function Step4Checkout({
     toast.success('Correo corregido automáticamente');
   };
 
+  // Estado final de email (combina cliente + servidor)
+  const isEmailValid = clientEmailValidation.valid && serverEmailStatus.valid !== false;
+  const emailErrorMessage = !clientEmailValidation.valid 
+    ? clientEmailValidation.error 
+    : serverEmailStatus.valid === false 
+    ? serverEmailStatus.error 
+    : undefined;
+
+  const isFormValid = nameValidation.valid && isEmailValid && phoneValidation.valid;
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ name: true, email: true, phone: true });
 
-    if (!customerName.trim() || customerName.trim().length < 2) {
-      toast.error('Por favor ingresa tu nombre completo');
+    if (!nameValidation.valid) {
+      toast.error(nameValidation.error);
       return;
     }
 
-    if (phoneDigits.length !== 8) {
-      toast.error('El número de teléfono chileno debe tener exactamente 8 dígitos tras el +56 9');
+    if (!phoneValidation.valid) {
+      toast.error(phoneValidation.error);
       return;
     }
 
-    if (emailStatus.valid === false && emailStatus.error) {
-      toast.error(emailStatus.error);
+    if (!isEmailValid) {
+      toast.error(emailErrorMessage || 'Ingresa un correo electrónico real');
       return;
     }
 
@@ -158,7 +215,7 @@ export default function Step4Checkout({
           <span>Finalizar Pedido y Datos de Entrega</span>
         </h2>
         <p className="text-xs text-gray-500 font-light mt-1">
-          Ingresa tus datos de contacto para enviarte el código QR, la tarjeta de regalo y el enlace de acceso permanente.
+          Ingresa tus datos reales de contacto para enviarte el código QR, la tarjeta de regalo y el enlace de acceso permanente.
         </p>
       </div>
 
@@ -171,23 +228,42 @@ export default function Step4Checkout({
                 Tus Datos de Contacto y Entrega
               </h3>
               <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold border border-emerald-200">
-                🔒 Datos Protegidos
+                🔒 Validación Estricta
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Nombre Completo */}
               <div className="sm:col-span-2">
-                <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
-                  Tu Nombre y Apellido *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[10px] font-bold text-gray-600 uppercase">
+                    Tu Nombre y Apellido *
+                  </label>
+                  {customerName.length > 0 && nameValidation.valid && (
+                    <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Válido
+                    </span>
+                  )}
+                  {customerName.length > 0 && !nameValidation.valid && (
+                    <span className="text-[10px] text-red-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" /> {nameValidation.error}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
                   required
                   value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+                  onChange={handleNameChange}
                   placeholder="Ej. Matías Silva"
-                  className="w-full px-3.5 py-2.5 border border-gray-250 rounded-xl text-xs focus:outline-none focus:border-[#a21232] transition"
+                  className={`w-full px-3.5 py-2.5 border rounded-xl text-xs focus:outline-none transition ${
+                    customerName.length > 0 && !nameValidation.valid
+                      ? 'border-red-400 bg-red-50/20 text-red-900 focus:border-red-500'
+                      : customerName.length > 0 && nameValidation.valid
+                      ? 'border-emerald-400 bg-emerald-50/10 focus:border-emerald-500'
+                      : 'border-gray-250 focus:border-[#a21232]'
+                  }`}
                 />
               </div>
 
@@ -197,19 +273,19 @@ export default function Step4Checkout({
                   <label className="block text-[10px] font-bold text-gray-600 uppercase">
                     Correo Electrónico (Donde recibirás tu QR) *
                   </label>
-                  {emailStatus.loading && (
+                  {serverEmailStatus.loading && (
                     <span className="text-[10px] text-gray-400 flex items-center gap-1">
                       <RefreshCw className="w-2.5 h-2.5 animate-spin" /> Verificando dominio...
                     </span>
                   )}
-                  {!emailStatus.loading && emailStatus.valid === true && (
+                  {!serverEmailStatus.loading && customerEmail.length > 0 && isEmailValid && (
                     <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Correo verificado
                     </span>
                   )}
-                  {!emailStatus.loading && emailStatus.valid === false && (
+                  {!serverEmailStatus.loading && customerEmail.length > 0 && !isEmailValid && (
                     <span className="text-[10px] text-red-600 font-bold flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" /> {emailStatus.error}
+                      <AlertCircle className="w-3 h-3" /> {emailErrorMessage}
                     </span>
                   )}
                 </div>
@@ -218,28 +294,29 @@ export default function Step4Checkout({
                   type="email"
                   required
                   value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+                  onChange={(e) => setCustomerEmail(e.target.value.toLowerCase().trim())}
                   placeholder="ejemplo@gmail.com"
                   className={`w-full px-3.5 py-2.5 border rounded-xl text-xs focus:outline-none transition ${
-                    emailStatus.valid === false
+                    customerEmail.length > 0 && !isEmailValid
                       ? 'border-red-400 bg-red-50/20 text-red-900 focus:border-red-500'
-                      : emailStatus.valid === true
+                      : customerEmail.length > 0 && isEmailValid
                       ? 'border-emerald-400 bg-emerald-50/10 focus:border-emerald-500'
                       : 'border-gray-250 focus:border-[#a21232]'
                   }`}
                 />
 
                 {/* Sugerencia de Typo */}
-                {emailStatus.suggestion && (
+                {serverEmailStatus.suggestion && (
                   <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-900">
                     <span className="flex items-center gap-1.5 text-[11px]">
                       <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      ¿Quisiste escribir <strong>{emailStatus.suggestion}</strong>?
+                      ¿Quisiste escribir <strong>{serverEmailStatus.suggestion}</strong>?
                     </span>
                     <button
                       type="button"
-                      onClick={() => handleApplySuggestion(emailStatus.suggestion!)}
-                      className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold rounded-lg transition"
+                      onClick={() => handleApplySuggestion(serverEmailStatus.suggestion!)}
+                      className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold rounded-lg transition cursor-pointer"
                     >
                       Corregir
                     </button>
@@ -253,25 +330,31 @@ export default function Step4Checkout({
                   <label className="block text-[10px] font-bold text-gray-600 uppercase">
                     Teléfono Móvil / WhatsApp (Chile 🇨🇱) *
                   </label>
-                  {phoneDigits.length === 8 ? (
+                  {phoneDigits.length > 0 && phoneValidation.valid ? (
                     <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Número válido (+56 9)
                     </span>
                   ) : phoneDigits.length > 0 ? (
-                    <span className="text-[10px] text-amber-600 font-medium">
-                      Faltan {8 - phoneDigits.length} dígitos
+                    <span className="text-[10px] text-red-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" /> {phoneValidation.error}
                     </span>
                   ) : null}
                 </div>
 
-                <div className="flex items-center rounded-xl border border-gray-250 focus-within:border-[#a21232] overflow-hidden transition bg-white">
+                <div className={`flex items-center rounded-xl border overflow-hidden transition bg-white ${
+                  phoneDigits.length > 0 && !phoneValidation.valid
+                    ? 'border-red-400 focus-within:border-red-500'
+                    : phoneDigits.length > 0 && phoneValidation.valid
+                    ? 'border-emerald-400 focus-within:border-emerald-500'
+                    : 'border-gray-250 focus-within:border-[#a21232]'
+                }`}>
                   {/* Prefijo Fijo */}
                   <div className="bg-gray-50 px-3 py-2.5 border-r border-gray-200 flex items-center gap-1.5 text-gray-700 select-none">
                     <span className="text-base leading-none">🇨🇱</span>
                     <span className="font-mono text-xs font-bold text-gray-800">+56 9</span>
                   </div>
 
-                  {/* Input de 8 dígitos */}
+                  {/* Input de 8 dígitos con bloqueo de teclado */}
                   <input
                     type="tel"
                     required
@@ -279,13 +362,15 @@ export default function Step4Checkout({
                     pattern="[0-9]*"
                     value={phoneDigits.length > 4 ? `${phoneDigits.slice(0, 4)} ${phoneDigits.slice(4, 8)}` : phoneDigits}
                     onChange={handlePhoneChange}
-                    placeholder="1234 5678"
+                    onKeyDown={handlePhoneKeyDown}
+                    onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
+                    placeholder="8765 4321"
                     maxLength={9}
                     className="w-full px-3.5 py-2.5 text-xs font-mono tracking-wider focus:outline-none bg-transparent"
                   />
                 </div>
                 <p className="text-[10px] text-gray-400 font-light mt-1">
-                  Formato de 8 dígitos para tu número celular en Chile (ej. 8765 4321).
+                  Escribe los 8 dígitos reales de tu número celular (no se permiten letras ni secuencias como 12345678).
                 </p>
               </div>
             </div>
@@ -336,8 +421,12 @@ export default function Step4Checkout({
 
             <button
               type="submit"
-              disabled={loading || phoneDigits.length !== 8 || emailStatus.valid === false}
-              className="w-full py-4 bg-gradient-to-r from-rose-600 to-[#a21232] hover:from-rose-700 hover:to-[#880e28] text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading || !isFormValid}
+              className={`w-full py-4 font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm ${
+                !isFormValid || loading
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 shadow-none'
+                  : 'bg-gradient-to-r from-rose-600 to-[#a21232] hover:from-rose-700 hover:to-[#880e28] text-white shadow-rose-900/20 cursor-pointer'
+              }`}
             >
               {loading ? (
                 <>
@@ -351,6 +440,12 @@ export default function Step4Checkout({
                 </>
               )}
             </button>
+
+            {!isFormValid && (
+              <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded-xl text-center font-medium">
+                ⚠️ Completa tus datos reales (Nombre, Correo verificado y Teléfono móvil válido) para activar el pago.
+              </p>
+            )}
 
             <p className="text-[9px] text-gray-400 text-center font-light">
               Pago 100% seguro y encriptado con MercadoPago y WebPay.

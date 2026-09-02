@@ -6,6 +6,7 @@ import { Product, Theme, getProducts, getThemes } from '@/lib/db';
 import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
 import { PhotoStyle } from '@/types/gallery';
 import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
+import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
 import { toast } from 'sonner';
 
 function getDefaultSectionsForPlan(plan: string): ExperienceSection[] {
@@ -442,18 +443,20 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   };
 
   const validateStep4 = (): boolean => {
-    if (!customerName.trim() || customerName.trim().length < 2) {
-      toast.error('Por favor ingresa tu nombre completo');
+    if (!customerName.trim() || customerName.trim().length < 3) {
+      toast.error('Por favor ingresa tu nombre y apellido');
       return false;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!customerEmail.trim() || !emailRegex.test(customerEmail.trim())) {
-      toast.error('Por favor ingresa un correo electrónico válido');
+    const emailCheck = validateEmailSyntaxAndDomain(customerEmail);
+    if (!emailCheck.valid) {
+      toast.error(emailCheck.error || 'Por favor ingresa un correo electrónico real');
       return false;
     }
     const cleanDigits = customerPhone.replace(/\D/g, '');
-    if (cleanDigits.length < 8) {
-      toast.error('Por favor ingresa un número móvil chileno válido de 8 dígitos (+56 9)');
+    const phoneDigitsOnly = cleanDigits.startsWith('569') ? cleanDigits.slice(3) : cleanDigits.startsWith('9') ? cleanDigits.slice(1) : cleanDigits;
+    const phoneCheck = validateChileanPhone(phoneDigitsOnly);
+    if (!phoneCheck.valid) {
+      toast.error(phoneCheck.error || 'Por favor ingresa un número móvil chileno válido de 8 dígitos (+56 9)');
       return false;
     }
     return true;

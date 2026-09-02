@@ -1,24 +1,7 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns/promises';
 import { checkRateLimit } from '@/lib/rateLimit';
-
-// Lista de dominios de correos temporales/desechables conocidos
-const DISPOSABLE_DOMAINS = new Set([
-  'mailinator.com',
-  'yopmail.com',
-  'tempmail.com',
-  '10minutemail.com',
-  'guerrillamail.com',
-  'sharklasers.com',
-  'trashmail.com',
-  'dispostable.com',
-  'getairmail.com',
-  'throwawaymail.com',
-  'mytemp.email',
-  'fakeinbox.com',
-  'temp-mail.org',
-  'mohmal.com',
-]);
+import { validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
 
 // Errores tipograficos comunes en dominios populares
 const TYPO_MAP: Record<string, string> = {
@@ -59,29 +42,17 @@ export async function POST(request: Request) {
 
     const trimmedEmail = email.trim().toLowerCase();
 
-    // 1. Validacion de formato estandar (RFC 5322 simplificado)
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-    if (!emailRegex.test(trimmedEmail)) {
+    // 1. Validacion sintactica, dominios y usuarios falsos
+    const syntaxCheck = validateEmailSyntaxAndDomain(trimmedEmail);
+    if (!syntaxCheck.valid) {
       return NextResponse.json({
         valid: false,
-        error: 'El formato del correo electrónico no es válido',
+        error: syntaxCheck.error,
       });
     }
 
     const parts = trimmedEmail.split('@');
-    if (parts.length !== 2) {
-      return NextResponse.json({ valid: false, error: 'Correo no válido' });
-    }
-
     const [user, domain] = parts;
-
-    // 2. Verificar si es un dominio desechable
-    if (DISPOSABLE_DOMAINS.has(domain)) {
-      return NextResponse.json({
-        valid: false,
-        error: 'No se permiten correos electrónicos temporales o desechables',
-      });
-    }
 
     // 3. Verificar si hay un error tipografico evidente
     let suggestion = '';
