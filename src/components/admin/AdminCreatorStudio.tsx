@@ -749,7 +749,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
                 className="w-full py-2.5 bg-rose-50 border border-rose-200 text-[#a21232] font-bold rounded-xl text-xs hover:bg-rose-100 transition flex items-center justify-center gap-2"
               >
                 <span>🎁</span>
-                <span>Ver / Imprimir Tarjeta Física de Regalo</span>
+                <span>Ver / Imprimir Tarjeta Digital de Regalo</span>
               </button>
 
               <div className="flex gap-2">

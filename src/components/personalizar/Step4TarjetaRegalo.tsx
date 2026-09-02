@@ -83,10 +83,10 @@ export default function Step4TarjetaRegalo({
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
             <span>🎁</span>
-            <span>5. Personaliza tu Tarjeta Física de Regalo</span>
+            <span>5. Personaliza tu Tarjeta Digital de Regalo con Código QR</span>
           </h2>
           <p className="text-xs text-gray-500 font-light mt-1">
-            Elige orientación (Horizontal o Vertical), personajes temáticos, colores y textos a imprimir.
+            Elige orientación (Horizontal o Vertical), personajes temáticos, colores y dedicatoria para tu tarjeta digital imprimible o para compartir.
           </p>
         </div>
 

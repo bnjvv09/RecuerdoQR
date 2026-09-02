@@ -31,7 +31,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎂 Torta virtual interactiva con velas encendidas para soplar',
         '🎉 Animación de confeti de colores festivo',
         '📸 Hasta 10 Fotos con dedicatorias',
-        '🎨 Tarjeta física con Color 100% Personalizado',
+        '🎨 Tarjeta Digital con Color 100% Personalizado',
         '📱 Código QR de alta resolución'
       ],
       medium: [
@@ -39,7 +39,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎈 Globos flotantes interactivos para reventar sorpresas',
         '🎵 Canción de Cumpleaños / Mañanitas de fondo (YouTube)',
         '📸 Hasta 20 Fotos en galería (6 estilos)',
-        '✨ Tarjeta física con 145 Personajes Temáticos a elección',
+        '✨ Tarjeta Digital con 145 Personajes Temáticos a elección',
         '💌 Mensaje largo y carta de dedicatoria'
       ],
       premium: [
@@ -48,7 +48,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '✨ Línea de tiempo de fotos de su vida y mejores momentos',
         '📸 Hasta 35 Fotos en HD (combina 2 estilos juntos)',
         '🔒 Rincón Secreto con PIN de 4 dígitos',
-        '👑 Tarjeta de Regalo Premium con personajes'
+        '👑 Tarjeta de Regalo Digital Premium con personajes'
       ]
     }
   },
@@ -63,7 +63,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💖 Lluvia de corazones y confeti al aceptar',
         '⏱️ Contador de tiempo de amor en vivo',
         '📸 Hasta 10 Fotos de sus salidas',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '💍 Pregunta interactiva con botón "¡Sí, Acepto! ❤️"',
@@ -71,7 +71,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎵 Canción romántica de fondo (YouTube)',
         '💌 Carta de declaración interactiva',
         '📸 Hasta 20 Fotos (6 estilos de galería)',
-        '✨ Tarjeta con 145 personajes temáticos'
+        '✨ Tarjeta Digital con 145 personajes temáticos'
       ],
       premium: [
         '💍 Pregunta + Botón escapista + 🎵 Música + 💌 Carta',
@@ -92,14 +92,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💍 Pregunta solemne "¿Te casas conmigo? 💍" con botón "¡Sí!"',
         '✨ Lluvia dorada de fuegos artificiales y confeti',
         '📸 Hasta 10 Fotos memorables',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '💍 Pregunta de propuesta con botón "¡Sí, Acepto!"',
         '🏃 Botón travieso "No" que se escapa por la pantalla',
         '🎵 Música solemne y romántica de fondo',
         '💌 Carta de amor para toda la vida',
-        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
       ],
       premium: [
         '💍 Pregunta + Botón escapista + Música + Carta',
@@ -119,14 +119,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🍼 Tarjeta "Rasca y Gana" digital (raspar para revelar ecografía)',
         '✨ Anuncio de la fecha estimada de llegada del bebé',
         '📸 Hasta 10 Fotos de la familia y test',
-        '🎨 Tarjeta física personalizada con color a elección'
+        '🎨 Tarjeta Digital personalizada con color a elección'
       ],
       medium: [
         '🍼 Tarjeta Rasca y Gana interactiva',
         '📊 Encuesta familiar en vivo: ¿Crees que es Niño 💙 o Niña 💖?',
         '🎵 Música tierna y emotiva de fondo',
         '📸 Hasta 20 Fotos de la dulce espera',
-        '✨ Tarjeta física con personajes (Disney, etc.)'
+        '✨ Tarjeta Digital con personajes (Disney, etc.)'
       ],
       premium: [
         '🍼 Rasca y Gana + 📊 Encuesta familiar + 🎵 Música',
@@ -146,13 +146,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎁 Caja de regalo 3D animada que tiembla y se abre al tocar',
         '🎟️ Mensaje con el regalo o sorpresa revelada',
         '📸 Hasta 10 Fotos de pistas o recuerdos',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '🎁 Caja de regalo 3D que se abre con destellos',
         '🎟️ Ticket Dorado VIP personalizado con código de barras',
         '🎵 Música de fondo misteriosa o festiva',
-        '📸 Hasta 20 Fotos + Tarjeta con personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
       ],
       premium: [
         '🎁 Caja + Ticket Dorado VIP + 🎵 Música',
@@ -172,13 +172,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '💌 Sobre vintage con sello de cera que se abre al tocar',
         '📜 Despliegue de la carta en formato pergamino elegante',
         '📸 Hasta 10 Fotos especiales',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '💌 Sobre con sello de cera + Pergamino',
         '🖋️ Efecto de escritura en vivo (las letras se van escribiendo)',
         '🎵 Música acústica de piano/guitarra de fondo',
-        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
       ],
       premium: [
         '💌 Sobre + Pergamino + Escritura en vivo + Música',
@@ -198,14 +198,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '⏱️ Contador de amor en tiempo real (años, días, segundos)',
         '💖 Dedicatoria final con corazón palpitante',
         '📸 Hasta 10 Fotos en Polaroid y Collage',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '⏱️ Contador de amor en vivo + Corazones',
         '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
         '🎵 Canción especial de la pareja de fondo (YouTube)',
         '💌 Carta de aniversario interactiva',
-        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
       ],
       premium: [
         '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
@@ -225,13 +225,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🌹 Lluvia de corazones y rosas flotantes',
         '⏱️ Contador de tiempo de novios en vivo',
         '📸 Hasta 10 Fotos románticas',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '🌹 Lluvia de rosas + Contador de amor',
         '🎵 Canción romántica de San Valentín de fondo',
         '💌 Carta de amor apasionada',
-        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
       ],
       premium: [
         '🌹 Todo lo de San Valentín + 🎵 Música + 💌 Carta',
@@ -251,13 +251,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🎆 Lluvia de fuegos artificiales dorados digitales',
         '🏆 Mensaje de orgullo y felicitaciones',
         '📸 Hasta 10 Fotos de logros y recuerdos',
-        '🎨 Tarjeta física con color personalizado'
+        '🎨 Tarjeta Digital con color personalizado'
       ],
       medium: [
         '🎆 Fuegos artificiales + Mensaje especial',
         '🎵 Música de celebración o triunfo de fondo',
         '📜 Diploma digital de honor interactivo',
-        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
       ],
       premium: [
         '🎆 Fuegos artificiales + Música + Diploma',
@@ -276,12 +276,12 @@ export const THEME_HIGHLIGHTS: Record<string, {
       basic: [
         '🌟 Mensaje emotivo de gratitud sincera',
         '📸 Hasta 10 Fotos de momentos compartidos',
-        '🎨 Tarjeta física personalizada'
+        '🎨 Tarjeta Digital personalizada'
       ],
       medium: [
         '🌟 Mensaje de gratitud + 🎵 Música relajante de fondo',
         '💌 Carta de agradecimiento extendida',
-        '📸 Hasta 20 Fotos + Tarjeta con personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
       ],
       premium: [
         '🌟 Carta de gratitud + 🎵 Música + 🎬 Video dedicado',
@@ -300,13 +300,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '🕊️ Mensaje sincero de disculpas y reencuentro',
         '🤝 Botón interactivo "¿Hacemos las paces? ❤️"',
         '📸 Hasta 10 Fotos de sus mejores recuerdos',
-        '🎨 Tarjeta física personalizada'
+        '🎨 Tarjeta Digital personalizada'
       ],
       medium: [
         '🕊️ Mensaje + Botón "¿Hacemos las paces?"',
         '🎵 Canción suave y reconfortante de fondo',
         '💌 Carta abierta del corazón',
-        '📸 Hasta 20 Fotos + Tarjeta con personajes'
+        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
       ],
       premium: [
         '🕊️ Todo lo anterior + 🎵 Música + 💌 Carta',
