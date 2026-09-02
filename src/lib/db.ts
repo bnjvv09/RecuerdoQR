@@ -248,10 +248,15 @@ const DATA_VERSION = 'v4_digital_clean_normal';
 
 // 1. PRODUCTS
 export async function getProducts(): Promise<Product[]> {
+  let localCustomProducts: Product[] | null = null;
+  if (typeof window !== 'undefined') {
+    localCustomProducts = getLocalData<Product[] | null>('custom_admin_products', null);
+  }
+
   if (isMockMode) {
     if (typeof window !== 'undefined') {
       const savedVersion = localStorage.getItem('amor_qr_data_version');
-      if (savedVersion !== DATA_VERSION) {
+      if (savedVersion !== DATA_VERSION && !localCustomProducts) {
         localStorage.setItem('amor_qr_data_version', DATA_VERSION);
         setLocalData('products', DEFAULT_PRODUCTS);
         return DEFAULT_PRODUCTS;
@@ -272,11 +277,21 @@ export async function getProducts(): Promise<Product[]> {
       .select('*')
       .order('price', { ascending: true });
 
-    if (error || !data || data.length === 0) return DEFAULT_PRODUCTS;
+    if (error || !data || data.length === 0) {
+      return localCustomProducts || DEFAULT_PRODUCTS;
+    }
+
+    if (localCustomProducts && localCustomProducts.length > 0) {
+      return data.map((sp: any) => {
+        const local = localCustomProducts!.find(lp => lp.id === sp.id);
+        return local ? { ...sp, ...local } : sp;
+      });
+    }
+
     return data;
   } catch (err) {
     console.error('Error fetching products from Supabase, using mock products:', err);
-    return DEFAULT_PRODUCTS;
+    return localCustomProducts || DEFAULT_PRODUCTS;
   }
 }
 
@@ -284,6 +299,7 @@ export async function updateProduct(product: Product): Promise<boolean> {
   if (typeof window !== 'undefined') {
     const products = await getProducts();
     const updated = products.map(p => p.id === product.id ? product : p);
+    setLocalData('custom_admin_products', updated);
     setLocalData('products', updated);
   }
   const idx = serverMemoryStore.products.findIndex(p => p.id === product.id);
@@ -307,12 +323,21 @@ export async function updateProduct(product: Product): Promise<boolean> {
       });
 
     if (error) {
-      console.warn(`Supabase products table update warning: ${error.message}. Local storage updated successfully.`);
+      console.warn(`Supabase products table update with badge failed (${error.message}). Attempting base schema update...`);
+      await supabase
+        .from('products')
+        .upsert({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          description: product.description,
+          features: product.features,
+        });
     }
     return true;
   } catch (err) {
     console.error(`Error updating product ${product.id}:`, err);
-    return true; // Still return true because localStorage is updated
+    return true;
   }
 }
 
@@ -883,6 +908,11 @@ const DEFAULT_THEMES: Theme[] = [
 ];
 
 export async function getThemes(): Promise<Theme[]> {
+  let localCustomThemes: Theme[] | null = null;
+  if (typeof window !== 'undefined') {
+    localCustomThemes = getLocalData<Theme[] | null>('custom_admin_themes', null);
+  }
+
   if (isMockMode) {
     if (typeof window !== 'undefined') {
       const stored = getLocalData<Theme[]>('themes', []);
@@ -901,31 +931,43 @@ export async function getThemes(): Promise<Theme[]> {
       .select('*')
       .order('name', { ascending: true });
 
-    if (error) throw error;
-    return data || DEFAULT_THEMES;
+    if (error || !data || data.length === 0) {
+      return localCustomThemes || DEFAULT_THEMES;
+    }
+
+    if (localCustomThemes && localCustomThemes.length > 0) {
+      return data.map((st: any) => {
+        const local = localCustomThemes!.find(lt => lt.id === st.id);
+        return local ? { ...st, ...local } : st;
+      });
+    }
+
+    return data;
   } catch (err) {
     console.error('Error fetching themes from Supabase:', err);
-    return DEFAULT_THEMES;
+    return localCustomThemes || DEFAULT_THEMES;
   }
 }
 
 export async function updateTheme(id: string, is_active: boolean, name?: string, description?: string): Promise<boolean> {
+  if (typeof window !== 'undefined') {
+    const current = await getThemes();
+    const updated = current.map(t => {
+      if (t.id === id) {
+        return {
+          ...t,
+          is_active,
+          name: name || t.name,
+          description: description || t.description
+        };
+      }
+      return t;
+    });
+    setLocalData('custom_admin_themes', updated);
+    setLocalData('themes', updated);
+  }
+
   if (isMockMode) {
-    if (typeof window !== 'undefined') {
-      const current = await getThemes();
-      const updated = current.map(t => {
-        if (t.id === id) {
-          return {
-            ...t,
-            is_active,
-            name: name || t.name,
-            description: description || t.description
-          };
-        }
-        return t;
-      });
-      setLocalData('themes', updated);
-    }
     return true;
   }
 
@@ -939,11 +981,13 @@ export async function updateTheme(id: string, is_active: boolean, name?: string,
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Supabase updateTheme warning:', error);
+    }
     return true;
   } catch (err) {
     console.error('Error updating theme in Supabase:', err);
-    return false;
+    return true;
   }
 }
 
