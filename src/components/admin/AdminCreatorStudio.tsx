@@ -33,7 +33,10 @@ import {
   Search,
   Layers,
   Palette,
-  Type
+  Type,
+  Play,
+  Pause,
+  Volume2
 } from 'lucide-react';
 import PhotoStyleSelector from '@/components/gallery/PhotoStyleSelector';
 import PhotoGallery from '@/components/gallery/PhotoGallery';
@@ -225,6 +228,31 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
       mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
       setIsRecording(false);
       clearInterval(timerRef.current);
+    }
+  };
+
+  // Romantic Songs Audio Preview Player
+  const [playingSongUrl, setPlayingSongUrl] = useState<string | null>(null);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+
+  const togglePreview = (songPreviewUrl: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (playingSongUrl === songPreviewUrl) {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
+      setPlayingSongUrl(null);
+    } else {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
+      const audio = new Audio(songPreviewUrl);
+      audioPreviewRef.current = audio;
+      audio.volume = 0.65;
+      audio.play().catch(() => toast.info('Haz clic para reproducir la muestra de audio'));
+      audio.onended = () => setPlayingSongUrl(null);
+      setPlayingSongUrl(songPreviewUrl);
+      toast.success('Reproduciendo fragmento romántico (15s) 🎵');
     }
   };
 
@@ -706,26 +734,60 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
 
                 {/* 🎵 ROMANTIC SONGS QUICK PICKER */}
                 <div className="pt-3 border-t space-y-2">
-                  <label className="block text-[10px] font-bold text-gray-700 uppercase">
-                    ⚡ Música de Fondo (Elige en 1 Clic o Pega YouTube)
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase">
+                      ⚡ Música de Fondo (Elige en 1 Clic o Pega YouTube)
+                    </label>
+                    <span className="text-[9px] text-gray-400 font-light">
+                      🎧 Toca «Muestra» para escuchar el estribillo
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {ROMANTIC_SONGS.map((song, sIdx) => {
                       const isSel = songUrl === song.url;
+                      const isPlaying = playingSongUrl === song.previewUrl;
                       return (
-                        <button
+                        <div
                           key={sIdx}
-                          type="button"
                           onClick={() => setSongUrl(song.url)}
-                          className={`p-2 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                          className={`p-2.5 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer relative ${
                             isSel
                               ? 'bg-[#a21232] text-white border-[#a21232] shadow-xs'
                               : 'bg-white hover:bg-rose-50/70 text-gray-800 border-gray-200'
                           }`}
                         >
-                          <p className={`text-xs font-bold truncate ${isSel ? 'text-white' : 'text-gray-900'}`}>{song.title}</p>
-                          <p className={`text-[9px] truncate ${isSel ? 'text-rose-100' : 'text-gray-500'}`}>{song.artist}</p>
-                        </button>
+                          <div className="flex items-center justify-between gap-1 mb-1.5">
+                            <Music className={`w-3.5 h-3.5 ${isSel ? 'text-white' : 'text-rose-500'}`} />
+                            <button
+                              type="button"
+                              onClick={(e) => togglePreview(song.previewUrl, e)}
+                              className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer ${
+                                isPlaying
+                                  ? 'bg-emerald-500 text-white animate-pulse'
+                                  : isSel
+                                  ? 'bg-white/20 hover:bg-white/30 text-white'
+                                  : 'bg-rose-100 hover:bg-rose-200 text-rose-800'
+                              }`}
+                              title={isPlaying ? 'Pausar muestra' : 'Escuchar fragmento romántico'}
+                            >
+                              {isPlaying ? (
+                                <>
+                                  <Pause className="w-2.5 h-2.5 fill-current" />
+                                  <span>Pausa</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Play className="w-2.5 h-2.5 fill-current" />
+                                  <span>Muestra</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                          <div>
+                            <p className={`text-xs font-bold truncate ${isSel ? 'text-white' : 'text-gray-900'}`}>{song.title}</p>
+                            <p className={`text-[9px] truncate ${isSel ? 'text-rose-100' : 'text-gray-500'}`}>{song.artist}</p>
+                          </div>
+                        </div>
                       );
                     })}
                   </div>

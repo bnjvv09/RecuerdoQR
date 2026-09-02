@@ -30,7 +30,10 @@ import {
   Star,
   Handshake,
   Gem,
-  Pin
+  Pin,
+  Play,
+  Pause,
+  Volume2
 } from 'lucide-react';
 import PhotoStyleSelector from '@/components/gallery/PhotoStyleSelector';
 import { PhotoStyle } from '@/types/gallery';
@@ -38,14 +41,54 @@ import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './t
 import { toast } from 'sonner';
 
 export const ROMANTIC_SONGS = [
-  { title: 'Perfect', artist: 'Ed Sheeran', url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g' },
-  { title: 'Entra en mi vida', artist: 'Sin Bandera', url: 'https://www.youtube.com/watch?v=KzKk2rLzZ4A' },
-  { title: 'Amor Completo', artist: 'Mon Laferte', url: 'https://www.youtube.com/watch?v=4jTfZp_yQdM' },
-  { title: 'Favorito', artist: 'Camilo', url: 'https://www.youtube.com/watch?v=5rT8Q6uX7mY' },
-  { title: 'Yellow', artist: 'Coldplay', url: 'https://www.youtube.com/watch?v=yKNxeF4KMsY' },
-  { title: 'Sabes', artist: 'Reik', url: 'https://www.youtube.com/watch?v=b4f8L3C0cQc' },
-  { title: 'Tacones Rojos', artist: 'Sebastián Yatra', url: 'https://www.youtube.com/watch?v=vV_A5O0_5jQ' },
-  { title: 'Me Enamoré de Ti', artist: 'Chayanne', url: 'https://www.youtube.com/watch?v=F0r4H3q4jYs' },
+  { 
+    title: 'Perfect', 
+    artist: 'Ed Sheeran', 
+    url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-guitar-112197.mp3'
+  },
+  { 
+    title: 'Entra en mi vida', 
+    artist: 'Sin Bandera', 
+    url: 'https://www.youtube.com/watch?v=KzKk2rLzZ4A',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=piano-moment-9835.mp3'
+  },
+  { 
+    title: 'Amor Completo', 
+    artist: 'Mon Laferte', 
+    url: 'https://www.youtube.com/watch?v=4jTfZp_yQdM',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3?filename=romantic-love-123498.mp3'
+  },
+  { 
+    title: 'Favorito', 
+    artist: 'Camilo', 
+    url: 'https://www.youtube.com/watch?v=5rT8Q6uX7mY',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=sweet-love-11132.mp3'
+  },
+  { 
+    title: 'Yellow', 
+    artist: 'Coldplay', 
+    url: 'https://www.youtube.com/watch?v=yKNxeF4KMsY',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=warm-memories-romantic-piano-10702.mp3'
+  },
+  { 
+    title: 'Sabes', 
+    artist: 'Reik', 
+    url: 'https://www.youtube.com/watch?v=b4f8L3C0cQc',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2023/04/18/audio_276a445499.mp3?filename=acoustic-love-story-145265.mp3'
+  },
+  { 
+    title: 'Tacones Rojos', 
+    artist: 'Sebastián Yatra', 
+    url: 'https://www.youtube.com/watch?v=vV_A5O0_5jQ',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c976939525.mp3?filename=cheerful-acoustic-guitar-125439.mp3'
+  },
+  { 
+    title: 'Me Enamoré de Ti', 
+    artist: 'Chayanne', 
+    url: 'https://www.youtube.com/watch?v=F0r4H3q4jYs',
+    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/08/02/audio_884fe92c21.mp3?filename=sweet-passion-117565.mp3'
+  },
 ];
 
 interface Step2PersonalizacionProps {
@@ -359,6 +402,31 @@ export default function Step2Personalizacion({
     }
   };
 
+  // Romantic Songs Audio Preview Player
+  const [playingSongUrl, setPlayingSongUrl] = useState<string | null>(null);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+
+  const togglePreview = (songPreviewUrl: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (playingSongUrl === songPreviewUrl) {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
+      setPlayingSongUrl(null);
+    } else {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
+      const audio = new Audio(songPreviewUrl);
+      audioPreviewRef.current = audio;
+      audio.volume = 0.65;
+      audio.play().catch(() => toast.info('Haz clic para reproducir la muestra de audio'));
+      audio.onended = () => setPlayingSongUrl(null);
+      setPlayingSongUrl(songPreviewUrl);
+      toast.success('Reproduciendo fragmento romántico (15s) 🎵');
+    }
+  };
+
   const isBasic = selectedPlan === 'basic';
   const isMedium = selectedPlan === 'medium' || selectedPlan === 'card';
   const isPremium = selectedPlan === 'premium';
@@ -624,30 +692,6 @@ export default function Step2Personalizacion({
                               className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs font-serif"
                             />
                           </div>
-                        </div>
-                      )}
-
-                      {/* 2. MUSICA DE FONDO (YouTube) - BLOQUE FIJO #2 */}
-                      {sec.type === 'musica' && (
-                        <div className="space-y-3 bg-pink-50/40 p-4 rounded-2xl border border-pink-200">
-                          <div className="flex items-center justify-between">
-                            <label className="block text-[9px] font-bold text-pink-900 uppercase">
-                              🎵 Enlace de Canción de Fondo (YouTube)
-                            </label>
-                            <span className="text-[8px] bg-pink-100 text-pink-800 px-2 py-0.5 rounded-full font-bold">
-                              📌 Fijo en la Cabecera
-                            </span>
-                          </div>
-                          <input
-                            type="url"
-                            value={songUrl}
-                            onChange={(e) => setSongUrl(e.target.value)}
-                            placeholder="https://www.youtube.com/watch?v=..."
-                            className="w-full px-3 py-2 border border-pink-250 rounded-xl text-xs bg-white font-mono"
-                          />
-                          <p className="text-[9px] text-pink-700 font-light">
-                            ✨ Sonará automáticamente de fondo para acompañar la lectura de la experiencia.
-                          </p>
                         </div>
                       )}
 
@@ -1370,34 +1414,68 @@ export default function Step2Personalizacion({
                             </span>
                           </div>
 
-                          {/* Selector Rápido de Canciones en 1 Clic */}
+                          {/* Selector Rápido de Canciones en 1 Clic con Muestra de Audio */}
                           <div className="space-y-2">
-                            <label className="block text-[10px] font-bold text-gray-700 uppercase">
-                              ⚡ Elige una Canción Romántica en 1 Clic:
-                            </label>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <div className="flex items-center justify-between">
+                              <label className="block text-[10px] font-bold text-gray-700 uppercase">
+                                ⚡ Elige una Canción Romántica en 1 Clic:
+                              </label>
+                              <span className="text-[9px] text-gray-400 font-light">
+                                🎧 Toca «Muestra» para escuchar el estribillo
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                               {ROMANTIC_SONGS.map((song, sIdx) => {
                                 const isSelected = songUrl === song.url;
+                                const isPlaying = playingSongUrl === song.previewUrl;
                                 return (
-                                  <button
+                                  <div
                                     key={sIdx}
-                                    type="button"
                                     onClick={() => setSongUrl(song.url)}
-                                    className={`p-2 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                                    className={`p-2.5 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer relative ${
                                       isSelected
                                         ? 'bg-[#a21232] text-white border-[#a21232] shadow-sm ring-2 ring-rose-300'
                                         : 'bg-white hover:bg-rose-50/80 text-gray-800 border-gray-200'
                                     }`}
                                   >
-                                    <div className="flex items-center justify-between gap-1 mb-1">
-                                      <Music className={`w-3 h-3 ${isSelected ? 'text-white' : 'text-rose-500'}`} />
-                                      {isSelected && <span className="text-[9px] font-bold">✓ Activa</span>}
+                                    <div className="flex items-center justify-between gap-1 mb-1.5">
+                                      <div className="flex items-center gap-1">
+                                        <Music className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-rose-500'}`} />
+                                        {isSelected && <span className="text-[9px] font-bold">✓ Activa</span>}
+                                      </div>
+
+                                      {/* Mini Play / Pause Button for 15s Sample */}
+                                      <button
+                                        type="button"
+                                        onClick={(e) => togglePreview(song.previewUrl, e)}
+                                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer ${
+                                          isPlaying
+                                            ? 'bg-emerald-500 text-white animate-pulse'
+                                            : isSelected
+                                            ? 'bg-white/20 hover:bg-white/30 text-white'
+                                            : 'bg-rose-100 hover:bg-rose-200 text-rose-800'
+                                        }`}
+                                        title={isPlaying ? 'Pausar muestra' : 'Escuchar fragmento romántico'}
+                                      >
+                                        {isPlaying ? (
+                                          <>
+                                            <Pause className="w-2.5 h-2.5 fill-current" />
+                                            <span>Pausa</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Play className="w-2.5 h-2.5 fill-current" />
+                                            <span>Muestra</span>
+                                          </>
+                                        )}
+                                      </button>
                                     </div>
+
                                     <div>
                                       <p className={`text-xs font-bold truncate ${isSelected ? 'text-white' : 'text-gray-900'}`}>{song.title}</p>
                                       <p className={`text-[10px] truncate ${isSelected ? 'text-rose-100' : 'text-gray-500'}`}>{song.artist}</p>
                                     </div>
-                                  </button>
+                                  </div>
                                 );
                               })}
                             </div>
