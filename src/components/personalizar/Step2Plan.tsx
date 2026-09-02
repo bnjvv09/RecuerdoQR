@@ -28,7 +28,7 @@ export default function Step2Plan({
       price: products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990,
       description: `Página web con la interacción clave de ${themeInfo.name}, 2 estilos de fotos y tarjeta digital con color personalizado.`,
       features: themeInfo.plans.basic,
-      popular: false,
+      badge: null,
     },
     {
       id: 'medium',
@@ -37,7 +37,7 @@ export default function Step2Plan({
       price: products.find(p => p.id === 'medium' || p.id === 'card')?.price || 5990,
       description: `Nuestra opción más recomendada para ${themeInfo.name}. Incluye música de fondo, tarjeta digital con 145 personajes temáticos e interacciones adicionales.`,
       features: themeInfo.plans.medium,
-      popular: true,
+      badge: 'Más Recomendado',
     },
     {
       id: 'premium',
@@ -46,7 +46,7 @@ export default function Step2Plan({
       price: products.find(p => p.id === 'premium')?.price || 7990,
       description: `La experiencia definitiva de ${themeInfo.name}: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.`,
       features: themeInfo.plans.premium,
-      popular: false,
+      badge: 'Pro',
     },
   ];
 
@@ -82,9 +82,9 @@ export default function Step2Plan({
                   : 'border border-gray-200 bg-white/80 hover:border-rose-300 hover:shadow-md'
               }`}
             >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#a21232] text-white text-[10px] font-extrabold uppercase px-3 py-0.5 rounded-full shadow-xs tracking-wider">
-                  Más Recomendado
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#a21232] text-white text-[10px] font-extrabold uppercase px-3 py-0.5 rounded-full shadow-xs tracking-wider whitespace-nowrap">
+                  {plan.badge}
                 </div>
               )}
 
