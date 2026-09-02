@@ -46,72 +46,56 @@ export const ROMANTIC_SONGS = [
     title: 'Dícelo', 
     artist: 'Jay Wheeler & Zhamira', 
     url: 'https://www.youtube.com/watch?v=Fj-y5M5rPfg',
-    videoId: 'Fj-y5M5rPfg',
-    start: 40,
-    end: 60
+    previewAudio: '/audio/previews/dicelo.m4a'
   },
   { 
     id: 'vida-de-rico',
     title: 'Vida de Rico', 
     artist: 'Camilo', 
     url: 'https://www.youtube.com/watch?v=yP9vWj7R0xI',
-    videoId: 'yP9vWj7R0xI',
-    start: 45,
-    end: 65
+    previewAudio: '/audio/previews/vida-de-rico.m4a'
   },
   { 
     id: 'creo-en-ti',
     title: 'Creo en Ti', 
     artist: 'Reik', 
     url: 'https://www.youtube.com/watch?v=K1j31Y8rU7I',
-    videoId: 'K1j31Y8rU7I',
-    start: 48,
-    end: 68
+    previewAudio: '/audio/previews/creo-en-ti.m4a'
   },
   { 
     id: 'yellow',
     title: 'Yellow', 
     artist: 'Coldplay', 
     url: 'https://www.youtube.com/watch?v=yKNxeF4KMsY',
-    videoId: 'yKNxeF4KMsY',
-    start: 32,
-    end: 52
+    previewAudio: '/audio/previews/yellow.m4a'
   },
   { 
     id: 'quiereme-mientras-se-pueda',
     title: 'Quiéreme Mientras Se Pueda', 
     artist: 'Manuel Turizo', 
     url: 'https://www.youtube.com/watch?v=hKqN5fC60kU',
-    videoId: 'hKqN5fC60kU',
-    start: 42,
-    end: 62
+    previewAudio: '/audio/previews/quiereme-mientras-se-pueda.m4a'
   },
   { 
-    id: 'todo-de-ti',
-    title: 'Todo de Ti', 
-    artist: 'Rauw Alejandro', 
+    id: 'beso',
+    title: 'Beso', 
+    artist: 'ROSALÍA & Rauw Alejandro', 
     url: 'https://www.youtube.com/watch?v=CFPLIaMpGrY',
-    videoId: 'CFPLIaMpGrY',
-    start: 35,
-    end: 55
+    previewAudio: '/audio/previews/beso.m4a'
   },
   { 
     id: 'perfect',
     title: 'Perfect', 
     artist: 'Ed Sheeran', 
     url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
-    videoId: '2Vv-BfVoq4g',
-    start: 48,
-    end: 68
+    previewAudio: '/audio/previews/perfect.m4a'
   },
   { 
     id: 'un-ano',
     title: 'Un Año', 
     artist: 'Sebastián Yatra & Reik', 
     url: 'https://www.youtube.com/watch?v=v2Xk_go2v3U',
-    videoId: 'v2Xk_go2v3U',
-    start: 44,
-    end: 64
+    previewAudio: '/audio/previews/un-ano.m4a'
   },
 ];
 
@@ -427,21 +411,28 @@ export default function Step2Personalizacion({
   };
 
   // Romantic Songs Real YouTube Chorus Audio Preview
+  // Romantic Songs Real Audio Preview (HTML5 Audio with 100% reliability)
   const [playingSongId, setPlayingSongId] = useState<string | null>(null);
-  const previewTimerRef = useRef<any>(null);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
 
-  const togglePreview = (songId: string, e: React.MouseEvent) => {
+  const togglePreview = (song: typeof ROMANTIC_SONGS[0], e: React.MouseEvent) => {
     e.stopPropagation();
-    if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
-
-    if (playingSongId === songId) {
+    if (playingSongId === song.id) {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
       setPlayingSongId(null);
     } else {
-      setPlayingSongId(songId);
-      toast.success('Reproduciendo fragmento oficial de la canción (15s) 🎵');
-      previewTimerRef.current = setTimeout(() => {
-        setPlayingSongId(null);
-      }, 20000);
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+      }
+      const audio = new Audio(song.previewAudio);
+      audioPreviewRef.current = audio;
+      audio.volume = 0.85;
+      audio.play().catch(() => toast.info('Haz clic para reproducir la muestra de audio'));
+      audio.onended = () => setPlayingSongId(null);
+      setPlayingSongId(song.id);
+      toast.success(`Reproduciendo «${song.title}» 🎵`);
     }
   };
 
@@ -1465,7 +1456,7 @@ export default function Step2Personalizacion({
                                       {/* Mini Play / Pause Button for 15s Sample */}
                                       <button
                                         type="button"
-                                        onClick={(e) => togglePreview(song.id, e)}
+                                        onClick={(e) => togglePreview(song, e)}
                                         className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer ${
                                           isPlaying
                                             ? 'bg-emerald-500 text-white animate-pulse'
@@ -1497,22 +1488,6 @@ export default function Step2Personalizacion({
                                 );
                               })}
                             </div>
-
-                            {/* Active YouTube Chorus Player (Hidden Iframe) */}
-                            {playingSongId && (
-                              (() => {
-                                const activeSong = ROMANTIC_SONGS.find(s => s.id === playingSongId);
-                                if (!activeSong) return null;
-                                return (
-                                  <iframe
-                                    key={activeSong.id}
-                                    src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=1&start=${activeSong.start}&end=${activeSong.end}&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
-                                    className="hidden w-0 h-0 pointer-events-none"
-                                    allow="autoplay; encrypted-media"
-                                  />
-                                );
-                              })()
-                            )}
                           </div>
 
                           {/* Input de URL Personalizada */}
