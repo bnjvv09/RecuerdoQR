@@ -187,10 +187,18 @@ const serverMemoryStore: {
 
 // --- DATA ACCESS METHODS ---
 
+const DATA_VERSION = 'v2_digital_0902';
+
 // 1. PRODUCTS
 export async function getProducts(): Promise<Product[]> {
   if (isMockMode) {
     if (typeof window !== 'undefined') {
+      const savedVersion = localStorage.getItem('amor_qr_data_version');
+      if (savedVersion !== DATA_VERSION) {
+        localStorage.setItem('amor_qr_data_version', DATA_VERSION);
+        setLocalData('products', DEFAULT_PRODUCTS);
+        return DEFAULT_PRODUCTS;
+      }
       const stored = getLocalData<Product[]>('products', []);
       if (stored.length === 0) {
         setLocalData('products', DEFAULT_PRODUCTS);
@@ -207,8 +215,8 @@ export async function getProducts(): Promise<Product[]> {
       .select('*')
       .order('price', { ascending: true });
 
-    if (error) throw error;
-    return data || DEFAULT_PRODUCTS;
+    if (error || !data || data.length === 0) return DEFAULT_PRODUCTS;
+    return data;
   } catch (err) {
     console.error('Error fetching products from Supabase, using mock products:', err);
     return DEFAULT_PRODUCTS;
