@@ -45,7 +45,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp (Grabada con micrófono en vivo)',
         '🎬 Video Dedicado en HD (Subida directa de video)',
         '⏳ Línea de Tiempo Histórica (Hitos con fotos y fechas especiales)',
@@ -78,7 +78,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con saludos y risas',
         '🎬 Video Dedicado en HD (Saludos en video de amigos/familia)',
         '⏳ Línea de Tiempo con fotos de su vida y mejores momentos',
@@ -111,7 +111,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp declarando tus sentimientos',
         '🎬 Video Dedicado en HD de su historia',
         '⏳ Línea de Tiempo Histórica de cómo se conocieron',
@@ -144,7 +144,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con tu propuesta grabada',
         '🎬 Video Dedicado en HD para la gran sorpresa',
         '💎 Caja de anillo 3D animada que se abre al tocarla',
@@ -177,7 +177,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con los latidos o anuncio',
         '🎬 Video Dedicado en HD de la ecografía o reacción familiar',
         '👣 Contador de semanas al parto con tamaño del bebé',
@@ -210,7 +210,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con pistas o saludo',
         '🎬 Video Dedicado en HD revelando la gran sorpresa',
         '📍 Mapa Interactivo con la ubicación secreta de la sorpresa',
@@ -243,7 +243,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp leyendo tu carta con tu voz',
         '🎬 Video Dedicado en HD con dedicatoria especial',
         '⏳ Línea de Tiempo de todos los capítulos de su historia',
@@ -276,7 +276,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp confesando lo que sientes',
         '🎬 Video Dedicado en HD especial para ella/él',
         '⏳ Línea de Tiempo de cómo empezó a nacer este sentimiento',
@@ -309,7 +309,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp de San Valentín',
         '🎬 Video Dedicado en HD de su amor',
         '⏳ Línea de Tiempo con sus momentos más bellos',
@@ -342,7 +342,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con felicitaciones',
         '🎬 Video Dedicado en HD con saludos de orgullo',
         '⏳ Línea de Tiempo de todo el esfuerzo hasta la meta',
@@ -375,7 +375,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp dando las gracias de corazón',
         '🎬 Video Dedicado en HD con dedicatoria especial',
         '⏳ Línea de Tiempo de los momentos en que estuvo a tu lado',
@@ -408,7 +408,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       premium: [
         '✓ Todo lo incluido en el Plan Medio',
-        '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+        '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con tu mensaje de perdón',
         '🎬 Video Dedicado en HD recordando por qué vale la pena luchar',
         '⏳ Línea de Tiempo de los momentos más felices juntos',

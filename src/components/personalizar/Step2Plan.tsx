@@ -40,7 +40,7 @@ export default function Step2Plan({
 
   const premiumFeatures = themeInfo?.plans?.premium || [
     '✓ Todo lo incluido en el Plan Medio',
-    '📸 Hasta 35 Fotos en HD (Combina 2 galerías distintas juntas)',
+    '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
     '🎙️ Nota de Voz Real de WhatsApp (Grabada con micrófono en vivo)',
     '🎬 Video Dedicado en HD (Subida directa de video)',
     '⏳ Línea de Tiempo Histórica (Hitos con fotos y fechas especiales)',
@@ -72,8 +72,8 @@ export default function Step2Plan({
     {
       id: 'premium',
       name: 'Plan Máximo',
-      subtitle: 'Nota de Voz + Video + 35 Fotos 👑',
-      photoBadge: '35 Fotos Dual',
+      subtitle: 'Nota de Voz + Video + 40 Fotos 👑',
+      photoBadge: '40 Fotos Dual',
       price: products.find(p => p.id === 'premium')?.price || 7990,
       description: `La experiencia definitiva: nota de voz grabada estilo WhatsApp, video HD, línea de tiempo y rincón secreto.`,
       features: premiumFeatures,
