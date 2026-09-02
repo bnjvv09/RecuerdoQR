@@ -1435,12 +1435,12 @@ export default function Step2Personalizacion({
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                               {ROMANTIC_SONGS.map((song, sIdx) => {
-                                const isSelected = songUrl === song.url;
+                                const isSelected = songUrl === song.previewAudio || songUrl === song.url || songUrl === song.id;
                                 const isPlaying = playingSongId === song.id;
                                 return (
                                   <div
                                     key={sIdx}
-                                    onClick={() => setSongUrl(song.url)}
+                                    onClick={() => setSongUrl(song.previewAudio)}
                                     className={`p-2.5 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer relative ${
                                       isSelected
                                         ? 'bg-[#a21232] text-white border-[#a21232] shadow-sm ring-2 ring-rose-300'
