@@ -225,16 +225,74 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hasDraft, setHasDraft] = useState(false);
 
-  // Check saved draft on mount
+  // 💾 Auto-load and auto-restore draft on mount
   useEffect(() => {
     try {
       const savedDraftStr = localStorage.getItem('amor_qr_user_draft');
-      if (savedDraftStr) {
-        const parsed = JSON.parse(savedDraftStr);
-        if (parsed && (parsed.partnerName || parsed.title || parsed.message || parsed.customerName)) {
-          setHasDraft(true);
-        }
-      }
+      if (!savedDraftStr) return;
+      const d = JSON.parse(savedDraftStr);
+      if (!d) return;
+
+      if (d.partnerName) setPartnerName(d.partnerName);
+      if (d.userName) setUserName(d.userName);
+      if (d.title) setTitle(d.title);
+      if (d.message) setMessage(d.message);
+      if (d.historyText) setHistoryText(d.historyText);
+      if (d.specialDate) setSpecialDate(d.specialDate);
+      if (d.specialPlaceAddress) setSpecialPlaceAddress(d.specialPlaceAddress);
+      if (d.songUrl) setSongUrl(d.songUrl);
+      if (d.customerName) setCustomerName(d.customerName);
+      if (d.customerEmail) setCustomerEmail(d.customerEmail);
+      if (d.customerPhone) setCustomerPhone(d.customerPhone);
+      if (d.deliveryAddress) setDeliveryAddress(d.deliveryAddress);
+      if (d.customFont) setCustomFont(d.customFont);
+      if (d.selectedPlan) setSelectedPlanState(d.selectedPlan);
+      if (d.selectedTheme) setSelectedTheme(d.selectedTheme);
+      if (d.selectedCharacter) setSelectedCharacter(d.selectedCharacter);
+      if (d.cardOrientation) setCardOrientation(d.cardOrientation);
+      if (d.cardPalette) setCardPalette(d.cardPalette);
+      if (d.cardFont) setCardFont(d.cardFont);
+      if (d.cardTitle) setCardTitle(d.cardTitle);
+      if (d.cardFrom) setCardFrom(d.cardFrom);
+      if (d.cardMessage) setCardMessage(d.cardMessage);
+      if (d.customColors) setCustomColors(d.customColors);
+      if (d.photoStyle) setPhotoStyle(d.photoStyle);
+      if (d.secondaryPhotoStyle) setSecondaryPhotoStyle(d.secondaryPhotoStyle);
+      if (typeof d.enableDualPhotoStyle === 'boolean') setEnableDualPhotoStyle(d.enableDualPhotoStyle);
+      if (d.photos && Array.isArray(d.photos) && d.photos.length > 0) setPhotos(d.photos);
+      if (d.secondaryPhotos && Array.isArray(d.secondaryPhotos) && d.secondaryPhotos.length > 0) setSecondaryPhotos(d.secondaryPhotos);
+      if (d.milestones && Array.isArray(d.milestones) && d.milestones.length > 0) setMilestones(d.milestones);
+      if (d.sections && Array.isArray(d.sections) && d.sections.length > 0) setSections(d.sections);
+      if (d.birthdayWishMessage) setBirthdayWishMessage(d.birthdayWishMessage);
+      if (d.birthdayBalloons) setBirthdayBalloons(d.birthdayBalloons);
+      if (d.proposalQuestion) setProposalQuestion(d.proposalQuestion);
+      if (d.proposalYesText) setProposalYesText(d.proposalYesText);
+      if (d.proposalCelebrationText) setProposalCelebrationText(d.proposalCelebrationText);
+      if (d.ringBoxMessage) setRingBoxMessage(d.ringBoxMessage);
+      if (d.scratchPrompt) setScratchPrompt(d.scratchPrompt);
+      if (d.scratchSecretMessage) setScratchSecretMessage(d.scratchSecretMessage);
+      if (d.pollQuestion) setPollQuestion(d.pollQuestion);
+      if (d.pollOptionA) setPollOptionA(d.pollOptionA);
+      if (d.pollOptionB) setPollOptionB(d.pollOptionB);
+      if (d.surpriseMessage) setSurpriseMessage(d.surpriseMessage);
+      if (d.ticketTitle) setTicketTitle(d.ticketTitle);
+      if (d.ticketConditions) setTicketConditions(d.ticketConditions);
+      if (d.waxSealSender) setWaxSealSender(d.waxSealSender);
+      if (d.crystalHeartTitle) setCrystalHeartTitle(d.crystalHeartTitle);
+      if (d.crystalHeartSecret) setCrystalHeartSecret(d.crystalHeartSecret);
+      if (d.valentineBoxTitle) setValentineBoxTitle(d.valentineBoxTitle);
+      if (d.valentineCoupon) setValentineCoupon(d.valentineCoupon);
+      if (d.trophyTitle) setTrophyTitle(d.trophyTitle);
+      if (d.trophyCategory) setTrophyCategory(d.trophyCategory);
+      if (d.diplomaText) setDiplomaText(d.diplomaText);
+      if (d.gratitudeStar1) setGratitudeStar1(d.gratitudeStar1);
+      if (d.gratitudeStar2) setGratitudeStar2(d.gratitudeStar2);
+      if (d.gratitudeStar3) setGratitudeStar3(d.gratitudeStar3);
+      if (d.reconciliationQuestion) setReconciliationQuestion(d.reconciliationQuestion);
+      if (d.reconciliationPromise) setReconciliationPromise(d.reconciliationPromise);
+      if (d.secretPasscode) setSecretPasscode(d.secretPasscode);
+      if (d.secretHint) setSecretHint(d.secretHint);
+      if (d.secretMessage) setSecretMessage(d.secretMessage);
     } catch {
       // ignore
     }
@@ -251,6 +309,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       if (d.message) setMessage(d.message);
       if (d.historyText) setHistoryText(d.historyText);
       if (d.specialDate) setSpecialDate(d.specialDate);
+      if (d.specialPlaceAddress) setSpecialPlaceAddress(d.specialPlaceAddress);
       if (d.songUrl) setSongUrl(d.songUrl);
       if (d.customerName) setCustomerName(d.customerName);
       if (d.customerEmail) setCustomerEmail(d.customerEmail);
@@ -259,10 +318,21 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       if (d.customFont) setCustomFont(d.customFont);
       if (d.selectedPlan) setSelectedPlanState(d.selectedPlan);
       if (d.selectedTheme) setSelectedTheme(d.selectedTheme);
+      if (d.selectedCharacter) setSelectedCharacter(d.selectedCharacter);
+      if (d.cardOrientation) setCardOrientation(d.cardOrientation);
       if (d.cardPalette) setCardPalette(d.cardPalette);
+      if (d.cardFont) setCardFont(d.cardFont);
       if (d.cardTitle) setCardTitle(d.cardTitle);
       if (d.cardFrom) setCardFrom(d.cardFrom);
       if (d.cardMessage) setCardMessage(d.cardMessage);
+      if (d.customColors) setCustomColors(d.customColors);
+      if (d.photoStyle) setPhotoStyle(d.photoStyle);
+      if (d.secondaryPhotoStyle) setSecondaryPhotoStyle(d.secondaryPhotoStyle);
+      if (typeof d.enableDualPhotoStyle === 'boolean') setEnableDualPhotoStyle(d.enableDualPhotoStyle);
+      if (d.photos && Array.isArray(d.photos) && d.photos.length > 0) setPhotos(d.photos);
+      if (d.secondaryPhotos && Array.isArray(d.secondaryPhotos) && d.secondaryPhotos.length > 0) setSecondaryPhotos(d.secondaryPhotos);
+      if (d.milestones && Array.isArray(d.milestones) && d.milestones.length > 0) setMilestones(d.milestones);
+      if (d.sections && Array.isArray(d.sections) && d.sections.length > 0) setSections(d.sections);
       if (d.birthdayWishMessage) setBirthdayWishMessage(d.birthdayWishMessage);
       if (d.proposalQuestion) setProposalQuestion(d.proposalQuestion);
       if (d.proposalYesText) setProposalYesText(d.proposalYesText);
@@ -270,7 +340,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       if (d.secretHint) setSecretHint(d.secretHint);
       if (d.secretMessage) setSecretMessage(d.secretMessage);
       setHasDraft(false);
-      toast.success('¡Borrador recuperado con éxito! ✨');
+      toast.success('¡Datos recuperados con éxito! ✨');
     } catch {
       toast.error('No se pudo recuperar el borrador');
     }
@@ -316,10 +386,10 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
   }, [selectedPlan, songUrl]);
 
-  // Debounced auto-save
+  // 💾 Debounced full auto-save on any change
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (partnerName || userName || title || message || customerName) {
+      if (partnerName || userName || title || message || customerName || customerEmail) {
         try {
           const draftPayload = {
             partnerName,
@@ -328,6 +398,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
             message,
             historyText,
             specialDate,
+            specialPlaceAddress,
             songUrl,
             customerName,
             customerEmail,
@@ -336,13 +407,48 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
             customFont,
             selectedPlan,
             selectedTheme,
+            selectedCharacter,
+            cardOrientation,
             cardPalette,
+            cardFont,
             cardTitle,
             cardFrom,
             cardMessage,
+            customColors,
+            photoStyle,
+            secondaryPhotoStyle,
+            enableDualPhotoStyle,
+            photos: photos.map(p => ({ previewUrl: p.previewUrl, caption: p.caption })),
+            secondaryPhotos: secondaryPhotos.map(p => ({ previewUrl: p.previewUrl, caption: p.caption })),
+            milestones: milestones.map(m => ({ title: m.title, date: m.date, description: m.description, previewUrl: m.previewUrl })),
+            sections,
             birthdayWishMessage,
+            birthdayBalloons,
             proposalQuestion,
             proposalYesText,
+            proposalCelebrationText,
+            ringBoxMessage,
+            scratchPrompt,
+            scratchSecretMessage,
+            pollQuestion,
+            pollOptionA,
+            pollOptionB,
+            surpriseMessage,
+            ticketTitle,
+            ticketConditions,
+            waxSealSender,
+            crystalHeartTitle,
+            crystalHeartSecret,
+            valentineBoxTitle,
+            valentineCoupon,
+            trophyTitle,
+            trophyCategory,
+            diplomaText,
+            gratitudeStar1,
+            gratitudeStar2,
+            gratitudeStar3,
+            reconciliationQuestion,
+            reconciliationPromise,
             secretPasscode,
             secretHint,
             secretMessage,
@@ -352,7 +458,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
           // ignore
         }
       }
-    }, 1500);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [
@@ -362,6 +468,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     message,
     historyText,
     specialDate,
+    specialPlaceAddress,
     songUrl,
     customerName,
     customerEmail,
@@ -370,13 +477,48 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     customFont,
     selectedPlan,
     selectedTheme,
+    selectedCharacter,
+    cardOrientation,
     cardPalette,
+    cardFont,
     cardTitle,
     cardFrom,
     cardMessage,
+    customColors,
+    photoStyle,
+    secondaryPhotoStyle,
+    enableDualPhotoStyle,
+    photos,
+    secondaryPhotos,
+    milestones,
+    sections,
     birthdayWishMessage,
+    birthdayBalloons,
     proposalQuestion,
     proposalYesText,
+    proposalCelebrationText,
+    ringBoxMessage,
+    scratchPrompt,
+    scratchSecretMessage,
+    pollQuestion,
+    pollOptionA,
+    pollOptionB,
+    surpriseMessage,
+    ticketTitle,
+    ticketConditions,
+    waxSealSender,
+    crystalHeartTitle,
+    crystalHeartSecret,
+    valentineBoxTitle,
+    valentineCoupon,
+    trophyTitle,
+    trophyCategory,
+    diplomaText,
+    gratitudeStar1,
+    gratitudeStar2,
+    gratitudeStar3,
+    reconciliationQuestion,
+    reconciliationPromise,
     secretPasscode,
     secretHint,
     secretMessage,

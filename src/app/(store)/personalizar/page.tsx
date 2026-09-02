@@ -314,9 +314,8 @@ function PersonalizarContent() {
                 key={s.num}
                 type="button"
                 onClick={() => {
-                  if (s.num <= 2 || (s.num >= 3 && form.step >= 3 && form.validateStep2())) {
-                    form.setStep(s.num);
-                  }
+                  form.setStep(s.num);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className={`py-2 px-1.5 rounded-2xl text-[9px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                   isActive
