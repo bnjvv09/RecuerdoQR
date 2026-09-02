@@ -137,6 +137,50 @@ export default function AmorExperiencePage() {
   const [secretInputPin, setSecretInputPin] = useState('');
   const [surpriseRevealed, setSurpriseRevealed] = useState(false);
 
+  // Background Audio State (Direct native audio player)
+  const [audioFileUrl, setAudioFileUrl] = useState<string | null>(null);
+  const bgAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Map of preset YouTube video IDs & IDs to local direct audio files
+  const PRESET_AUDIO_MAP: Record<string, string> = {
+    'sHj49o05jQI': '/audio/previews/dicelo.m4a',
+    'Fj-y5M5rPfg': '/audio/previews/dicelo.m4a',
+    'dicelo': '/audio/previews/dicelo.m4a',
+    'yP9vWj7R0xI': '/audio/previews/vida-de-rico.m4a',
+    'vida-de-rico': '/audio/previews/vida-de-rico.m4a',
+    'K1j31Y8rU7I': '/audio/previews/creo-en-ti.m4a',
+    'creo-en-ti': '/audio/previews/creo-en-ti.m4a',
+    'yKNxeF4KMsY': '/audio/previews/yellow.m4a',
+    'yellow': '/audio/previews/yellow.m4a',
+    'hKqN5fC60kU': '/audio/previews/quiereme-mientras-se-pueda.m4a',
+    'quiereme-mientras-se-pueda': '/audio/previews/quiereme-mientras-se-pueda.m4a',
+    '9g0n6cO552g': '/audio/previews/beso.m4a',
+    'CFPLIaMpGrY': '/audio/previews/beso.m4a',
+    'beso': '/audio/previews/beso.m4a',
+    '2Vv-BfVoq4g': '/audio/previews/perfect.m4a',
+    'perfect': '/audio/previews/perfect.m4a',
+    'v2Xk_go2v3U': '/audio/previews/un-ano.m4a',
+    'un-ano': '/audio/previews/un-ano.m4a',
+  };
+
+  const resolveMusicSource = (url: string) => {
+    if (!url) return;
+    let directPath = '';
+    for (const [key, path] of Object.entries(PRESET_AUDIO_MAP)) {
+      if (url.toLowerCase().includes(key.toLowerCase())) {
+        directPath = path;
+        break;
+      }
+    }
+
+    if (url.startsWith('/audio/') || url.endsWith('.m4a') || url.endsWith('.mp3') || directPath) {
+      setAudioFileUrl(directPath || url);
+      setVideoCode('');
+    } else {
+      extractYoutubeCode(url);
+    }
+  };
+
   // Load experience
   useEffect(() => {
     if (!slug) return;
@@ -146,12 +190,12 @@ export default function AmorExperiencePage() {
       if (lowerSlug === 'ejemplo-digital') {
         const fullExp = ensureExperienceSections(DEMO_DIGITAL);
         setExperience(fullExp);
-        extractYoutubeCode(DEMO_DIGITAL.song_url || '');
+        resolveMusicSource(DEMO_DIGITAL.song_url || '');
         setLoading(false);
       } else if (lowerSlug === 'ejemplo-premium') {
         const fullExp = ensureExperienceSections(DEMO_PREMIUM);
         setExperience(fullExp);
-        extractYoutubeCode(DEMO_PREMIUM.song_url || '');
+        resolveMusicSource(DEMO_PREMIUM.song_url || '');
         setLoading(false);
       } else {
         const res = await getExperienceBySlug(slug.toString());
@@ -159,7 +203,7 @@ export default function AmorExperiencePage() {
           setExperience(res);
           const musicSec = res.sections?.find((s: any) => s.type === 'musica');
           const songUrlToUse = res.song_url || musicSec?.content?.url || '';
-          extractYoutubeCode(songUrlToUse);
+          resolveMusicSource(songUrlToUse);
         }
         setLoading(false);
       }
@@ -234,7 +278,20 @@ export default function AmorExperiencePage() {
     setWelcomeOpened(true);
     setEntered(true);
     setIsPlaying(true);
+    if (bgAudioRef.current) {
+      bgAudioRef.current.play().catch(() => {});
+    }
     triggerCelebrationConfetti();
+  };
+
+  const toggleMusic = () => {
+    if (isPlaying) {
+      if (bgAudioRef.current) bgAudioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      if (bgAudioRef.current) bgAudioRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
   };
 
   const triggerCelebrationConfetti = () => {
@@ -478,8 +535,17 @@ export default function AmorExperiencePage() {
         .experience-font-root, .experience-font-root h1, .experience-font-root h2, .experience-font-root h3, .experience-font-root h4, .experience-font-root p, .experience-font-root span, .experience-font-root button { font-family: ${selectedFontFamily} !important; }
       `}</style>
       
-      {/* 1. Youtube background player */}
-      {videoCode && isPlaying && (
+      {/* 1. Background Music Player (Direct Native Audio or YouTube Fallback) */}
+      {audioFileUrl && (
+        <audio
+          ref={bgAudioRef}
+          src={audioFileUrl}
+          loop
+          className="hidden"
+        />
+      )}
+
+      {!audioFileUrl && videoCode && isPlaying && (
         <div className="w-0 h-0 overflow-hidden absolute">
           <iframe
             src={`https://www.youtube.com/embed/${videoCode}?autoplay=1&loop=1&playlist=${videoCode}&controls=0`}
@@ -524,7 +590,7 @@ export default function AmorExperiencePage() {
       )}
 
       {/* 4. Elegant Floating Corner Music Widget */}
-      {entered && videoCode && (
+      {entered && (audioFileUrl || videoCode) && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -535,7 +601,7 @@ export default function AmorExperiencePage() {
             {/* Spinning Mini Vinyl / Disc */}
             <motion.button
               type="button"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={toggleMusic}
               animate={{ rotate: isPlaying ? 360 : 0 }}
               transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
               className="w-8 h-8 rounded-full bg-gradient-to-tr from-zinc-900 via-zinc-800 to-zinc-900 border-2 border-zinc-700 flex items-center justify-center shadow-md relative group cursor-pointer"
@@ -552,7 +618,7 @@ export default function AmorExperiencePage() {
             {/* Song Label & Sound Equalizer Waves */}
             <div 
               className="flex flex-col cursor-pointer"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={toggleMusic}
             >
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-bold text-gray-900 font-serif leading-none tracking-tight">
@@ -577,8 +643,8 @@ export default function AmorExperiencePage() {
             {/* Play/Pause Button */}
             <button
               type="button"
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="p-1.5 rounded-full text-white transition shadow-xs"
+              onClick={toggleMusic}
+              className="p-1.5 rounded-full text-white transition shadow-xs cursor-pointer"
               style={{ backgroundColor: isPlaying ? primaryColor : '#9ca3af' }}
             >
               {isPlaying ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
