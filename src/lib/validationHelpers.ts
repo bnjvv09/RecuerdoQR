@@ -30,37 +30,39 @@ export const FAKE_PHONE_PATTERNS = [
 ];
 
 /**
- * Valida si un número de teléfono chileno (los 8 dígitos tras el +56 9) es real y válido
+ * Valida si un número de teléfono móvil chileno (los 9 dígitos incluyendo el 9) es real y válido
  */
 export function validateChileanPhone(digitsStr: string): { valid: boolean; error?: string } {
-  const clean = digitsStr.replace(/\D/g, '');
+  let clean = digitsStr.replace(/\D/g, '');
+
+  // Si incluye el 56 inicial, removerlo para evaluar los 9 dígitos
+  if (clean.startsWith('56') && clean.length === 11) {
+    clean = clean.slice(2);
+  }
 
   if (!clean) {
-    return { valid: false, error: 'El número de teléfono es obligatorio' };
+    return { valid: false, error: 'Ingresa tu número celular móvil' };
   }
 
-  if (clean.length < 8) {
-    return { valid: false, error: 'Faltan ' + (8 - clean.length) + ' dígitos (deben ser 8 dígitos tras el +56 9)' };
+  if (clean.length < 9) {
+    return { valid: false, error: 'Faltan ' + (9 - clean.length) + ' dígitos (deben ser 9 dígitos empezando con 9)' };
   }
 
-  if (clean.length > 8) {
-    return { valid: false, error: 'El número no puede tener más de 8 dígitos' };
+  if (clean.length > 9) {
+    return { valid: false, error: 'El número no puede tener más de 9 dígitos' };
   }
 
-  // Detectar números secuenciales o repetidos
-  if (FAKE_PHONE_PATTERNS.includes(clean)) {
+  if (clean[0] !== '9') {
+    return { valid: false, error: 'El número celular en Chile debe empezar con 9 (ej. 9 4452 6132)' };
+  }
+
+  const afterNine = clean.slice(1);
+  if (FAKE_PHONE_PATTERNS.includes(afterNine) || FAKE_PHONE_PATTERNS.includes(clean.slice(0, 8))) {
     return { valid: false, error: 'Ingresa un número de teléfono real (no se permiten números secuenciales o repetidos)' };
   }
 
-  // Verificar que todos los dígitos no sean iguales (ej: 00000000)
-  if (/^(\d)\1{7}$/.test(clean)) {
+  if (/^(\d)\1{8}$/.test(clean)) {
     return { valid: false, error: 'Ingresa un número de teléfono real' };
-  }
-
-  // En Chile los celulares tras el 9 no empiezan con 0 ni con 1
-  const firstDigit = clean[0];
-  if (firstDigit === '0' || firstDigit === '1') {
-    return { valid: false, error: 'El número móvil chileno no puede comenzar con 0 o 1 tras el +56 9' };
   }
 
   return { valid: true };

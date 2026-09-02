@@ -453,10 +453,9 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       return false;
     }
     const cleanDigits = customerPhone.replace(/\D/g, '');
-    const phoneDigitsOnly = cleanDigits.startsWith('569') ? cleanDigits.slice(3) : cleanDigits.startsWith('9') ? cleanDigits.slice(1) : cleanDigits;
-    const phoneCheck = validateChileanPhone(phoneDigitsOnly);
+    const phoneCheck = validateChileanPhone(cleanDigits);
     if (!phoneCheck.valid) {
-      toast.error(phoneCheck.error || 'Por favor ingresa un número móvil chileno válido de 8 dígitos (+56 9)');
+      toast.error(phoneCheck.error || 'Por favor ingresa un número móvil chileno válido de 9 dígitos (+56 9 XXXX XXXX)');
       return false;
     }
     return true;

@@ -41,16 +41,13 @@ export default function Step4Checkout({
   loading,
   onSubmit,
 }: Step4CheckoutProps) {
-  // Extraer los 8 dígitos tras el "+56 9"
+  // Extraer los 9 dígitos tras el "+56" (ej: 9XXXXXXXX)
   const extractRawDigits = (phoneStr: string) => {
-    const onlyDigits = phoneStr.replace(/\D/g, '');
-    if (onlyDigits.startsWith('569')) {
-      return onlyDigits.slice(3, 11);
+    let onlyDigits = phoneStr.replace(/\D/g, '');
+    if (onlyDigits.startsWith('56') && onlyDigits.length >= 11) {
+      onlyDigits = onlyDigits.slice(2);
     }
-    if (onlyDigits.startsWith('9')) {
-      return onlyDigits.slice(1, 9);
-    }
-    return onlyDigits.slice(0, 8);
+    return onlyDigits.slice(0, 9);
   };
 
   const [phoneDigits, setPhoneDigits] = useState(() => extractRawDigits(customerPhone));
@@ -64,7 +61,7 @@ export default function Step4Checkout({
 
   // Validaciones instantáneas del lado del cliente
   const phoneValidation = useMemo(() => {
-    if (!phoneDigits) return { valid: false, error: 'Ingresa los 8 dígitos de tu celular' };
+    if (!phoneDigits) return { valid: false, error: 'Ingresa los 9 dígitos de tu celular (ej. 9 4452 6132)' };
     return validateChileanPhone(phoneDigits);
   }, [phoneDigits]);
 
@@ -87,17 +84,19 @@ export default function Step4Checkout({
     return { valid: true };
   }, [customerName]);
 
-  // Manejador del cambio de teléfono
+  // Manejador del cambio de teléfono (9 dígitos)
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, '').slice(0, 8);
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 9);
     setPhoneDigits(raw);
 
     if (raw.length === 0) {
       setCustomerPhone('');
-    } else if (raw.length <= 4) {
-      setCustomerPhone(`+56 9 ${raw}`);
+    } else if (raw.length <= 1) {
+      setCustomerPhone(`+56 ${raw}`);
+    } else if (raw.length <= 5) {
+      setCustomerPhone(`+56 ${raw.slice(0, 1)} ${raw.slice(1)}`);
     } else {
-      setCustomerPhone(`+56 9 ${raw.slice(0, 4)} ${raw.slice(4, 8)}`);
+      setCustomerPhone(`+56 ${raw.slice(0, 1)} ${raw.slice(1, 5)} ${raw.slice(5, 9)}`);
     }
   };
 
@@ -291,7 +290,9 @@ export default function Step4Checkout({
                 </div>
 
                 <input
-                  type="email"
+                  type="text"
+                  inputMode="email"
+                  autoComplete="email"
                   required
                   value={customerEmail}
                   onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
@@ -324,7 +325,7 @@ export default function Step4Checkout({
                 )}
               </div>
 
-              {/* Teléfono Móvil con Máscara Chilena */}
+              {/* Teléfono Móvil con Máscara Chilena (+56) */}
               <div className="sm:col-span-2">
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-[10px] font-bold text-gray-600 uppercase">
@@ -332,7 +333,7 @@ export default function Step4Checkout({
                   </label>
                   {phoneDigits.length > 0 && phoneValidation.valid ? (
                     <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Número válido (+56 9)
+                      <CheckCircle2 className="w-3 h-3" /> Número válido (+56)
                     </span>
                   ) : phoneDigits.length > 0 ? (
                     <span className="text-[10px] text-red-600 font-medium flex items-center gap-1">
@@ -348,28 +349,34 @@ export default function Step4Checkout({
                     ? 'border-emerald-400 focus-within:border-emerald-500'
                     : 'border-gray-250 focus-within:border-[#a21232]'
                 }`}>
-                  {/* Prefijo Fijo */}
+                  {/* Prefijo Fijo (+56) */}
                   <div className="bg-gray-50 px-3 py-2.5 border-r border-gray-200 flex items-center gap-1.5 text-gray-700 select-none">
                     <span className="text-base leading-none">🇨🇱</span>
-                    <span className="font-mono text-xs font-bold text-gray-800">+56 9</span>
+                    <span className="font-mono text-xs font-bold text-gray-800">+56</span>
                   </div>
 
-                  {/* Input de 8 dígitos con bloqueo de teclado */}
+                  {/* Input de 9 dígitos con bloqueo de teclado */}
                   <input
                     type="tel"
                     required
                     inputMode="numeric"
-                    value={phoneDigits.length > 4 ? `${phoneDigits.slice(0, 4)} ${phoneDigits.slice(4, 8)}` : phoneDigits}
+                    value={
+                      phoneDigits.length > 5
+                        ? `${phoneDigits.slice(0, 1)} ${phoneDigits.slice(1, 5)} ${phoneDigits.slice(5, 9)}`
+                        : phoneDigits.length > 1
+                        ? `${phoneDigits.slice(0, 1)} ${phoneDigits.slice(1)}`
+                        : phoneDigits
+                    }
                     onChange={handlePhoneChange}
                     onKeyDown={handlePhoneKeyDown}
                     onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
-                    placeholder="8765 4321"
-                    maxLength={9}
+                    placeholder="9 4452 6132"
+                    maxLength={11}
                     className="w-full px-3.5 py-2.5 text-xs font-mono tracking-wider focus:outline-none bg-transparent"
                   />
                 </div>
                 <p className="text-[10px] text-gray-400 font-light mt-1">
-                  Escribe los 8 dígitos reales de tu número celular (no se permiten letras ni secuencias como 12345678).
+                  Escribe los 9 dígitos de tu celular comenzando con 9 (ej. 9 4452 6132).
                 </p>
               </div>
             </div>

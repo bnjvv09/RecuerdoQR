@@ -31,8 +31,7 @@ export const orderCreateSchema = z.object({
     .refine(
       (val) => {
         const clean = val.replace(/\D/g, '');
-        const digits = clean.startsWith('569') ? clean.slice(3) : clean.startsWith('9') ? clean.slice(1) : clean;
-        return validateChileanPhone(digits).valid;
+        return validateChileanPhone(clean).valid;
       },
       { message: 'Ingresa un número móvil chileno válido (+56 9 XXXX XXXX)' }
     ),
