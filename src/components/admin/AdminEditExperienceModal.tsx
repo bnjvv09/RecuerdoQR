@@ -32,53 +32,88 @@ export default function AdminEditExperienceModal({
   onClose,
   onSaved,
 }: AdminEditExperienceModalProps) {
-  if (!isOpen || !experience) return null;
-
   const [saving, setSaving] = useState(false);
 
   // Form State
-  const [partnerName, setPartnerName] = useState(experience.partner_name || '');
-  const [userName, setUserName] = useState(experience.user_name || '');
-  const [title, setTitle] = useState(experience.title || '');
-  const [specialDate, setSpecialDate] = useState(experience.special_date ? experience.special_date.split('T')[0] : '');
-  const [theme, setTheme] = useState(experience.theme || 'anniversary');
-  const [songUrl, setSongUrl] = useState(experience.song_url || '');
-  const [message, setMessage] = useState(experience.message || '');
-  const [historyText, setHistoryText] = useState(experience.history_text || '');
+  const [partnerName, setPartnerName] = useState('');
+  const [userName, setUserName] = useState('');
+  const [title, setTitle] = useState('');
+  const [specialDate, setSpecialDate] = useState('');
+  const [theme, setTheme] = useState('anniversary');
+  const [songUrl, setSongUrl] = useState('');
+  const [message, setMessage] = useState('');
+  const [historyText, setHistoryText] = useState('');
 
   // Photos State
-  const [photos, setPhotos] = useState<Array<{ url: string; caption?: string; id?: string }>>(
-    (experience.photos || experience.config?.photos || []).map((p: any) => ({
-      url: p.url || p.previewUrl,
-      caption: p.caption || '',
-      id: p.id || Math.random().toString(36).substring(2, 9)
-    }))
-  );
+  const [photos, setPhotos] = useState<Array<{ url: string; caption?: string; id?: string }>>([]);
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
 
   // Config fields
+  const [birthdayWishMessage, setBirthdayWishMessage] = useState('');
+  const [birthdayBalloons, setBirthdayBalloons] = useState<[string, string, string]>([
+    '¡Mucho Éxito y Alegría!',
+    '¡Salud y Risas Siempre!',
+    '¡Te Queremos Infinito!'
+  ]);
+  const [scratchSecretMessage, setScratchSecretMessage] = useState('');
+  const [scratchUltrasoundUrl, setScratchUltrasoundUrl] = useState('');
+  const [pollQuestion, setPollQuestion] = useState('¿Qué crees que será? 🍼');
+  const [pollOptionA, setPollOptionA] = useState('Team Niño 💙');
+  const [pollOptionB, setPollOptionB] = useState('Team Niña 💖');
+  const [proposalQuestion, setProposalQuestion] = useState('');
+  const [proposalYesText, setProposalYesText] = useState('¡Sí, Acepto! ❤️');
+  const [proposalCelebrationText, setProposalCelebrationText] = useState('');
+  const [ringBoxMessage, setRingBoxMessage] = useState('');
+  const [surpriseMessage, setSurpriseMessage] = useState('');
+  const [ticketTitle, setTicketTitle] = useState('');
+  const [ticketConditions, setTicketConditions] = useState('');
+  const [uploadedVideoUrl, setUploadedVideoUrl] = useState('');
+  const [uploadedVoiceNoteUrl, setUploadedVoiceNoteUrl] = useState('');
+  const [secretPasscode, setSecretPasscode] = useState('1234');
+  const [secretMessage, setSecretMessage] = useState('');
+
+  useEffect(() => {
+    if (experience) {
+      setPartnerName(experience.partner_name || '');
+      setUserName(experience.user_name || '');
+      setTitle(experience.title || '');
+      setSpecialDate(experience.special_date ? experience.special_date.split('T')[0] : '');
+      setTheme(experience.theme || 'anniversary');
+      setSongUrl(experience.song_url || '');
+      setMessage(experience.message || '');
+      setHistoryText(experience.history_text || '');
+      setPhotos(
+        (experience.photos || experience.config?.photos || []).map((p: any) => ({
+          url: p.url || p.previewUrl,
+          caption: p.caption || '',
+          id: p.id || Math.random().toString(36).substring(2, 9)
+        }))
+      );
+      const conf = experience.config || {};
+      setBirthdayWishMessage(conf.birthdayWishMessage || '');
+      setBirthdayBalloons(conf.birthdayBalloons || ['¡Mucho Éxito y Alegría!', '¡Salud y Risas Siempre!', '¡Te Queremos Infinito!']);
+      setScratchSecretMessage(conf.scratchSecretMessage || '');
+      setScratchUltrasoundUrl(conf.scratchUltrasoundUrl || '');
+      setPollQuestion(conf.pollQuestion || '¿Qué crees que será? 🍼');
+      setPollOptionA(conf.pollOptionA || 'Team Niño 💙');
+      setPollOptionB(conf.pollOptionB || 'Team Niña 💖');
+      setProposalQuestion(conf.proposalQuestion || '');
+      setProposalYesText(conf.proposalYesText || '¡Sí, Acepto! ❤️');
+      setProposalCelebrationText(conf.proposalCelebrationText || '');
+      setRingBoxMessage(conf.ringBoxMessage || '');
+      setSurpriseMessage(conf.surpriseMessage || '');
+      setTicketTitle(conf.ticketTitle || '');
+      setTicketConditions(conf.ticketConditions || '');
+      setUploadedVideoUrl(conf.uploadedVideoUrl || '');
+      setUploadedVoiceNoteUrl(conf.uploadedVoiceNoteUrl || '');
+      setSecretPasscode(conf.secretPasscode || '1234');
+      setSecretMessage(conf.secretMessage || '');
+    }
+  }, [experience]);
+
+  if (!isOpen || !experience) return null;
   const config = experience.config || {};
-  const [birthdayWishMessage, setBirthdayWishMessage] = useState(config.birthdayWishMessage || '');
-  const [birthdayBalloons, setBirthdayBalloons] = useState<[string, string, string]>(
-    config.birthdayBalloons || ['¡Mucho Éxito y Alegría!', '¡Salud y Risas Siempre!', '¡Te Queremos Infinito!']
-  );
-  const [scratchSecretMessage, setScratchSecretMessage] = useState(config.scratchSecretMessage || '');
-  const [scratchUltrasoundUrl, setScratchUltrasoundUrl] = useState(config.scratchUltrasoundUrl || '');
-  const [pollQuestion, setPollQuestion] = useState(config.pollQuestion || '¿Qué crees que será? 🍼');
-  const [pollOptionA, setPollOptionA] = useState(config.pollOptionA || 'Team Niño 💙');
-  const [pollOptionB, setPollOptionB] = useState(config.pollOptionB || 'Team Niña 💖');
-  const [proposalQuestion, setProposalQuestion] = useState(config.proposalQuestion || '');
-  const [proposalYesText, setProposalYesText] = useState(config.proposalYesText || '¡Sí, Acepto! ❤️');
-  const [proposalCelebrationText, setProposalCelebrationText] = useState(config.proposalCelebrationText || '');
-  const [ringBoxMessage, setRingBoxMessage] = useState(config.ringBoxMessage || '');
-  const [surpriseMessage, setSurpriseMessage] = useState(config.surpriseMessage || '');
-  const [ticketTitle, setTicketTitle] = useState(config.ticketTitle || '');
-  const [ticketConditions, setTicketConditions] = useState(config.ticketConditions || '');
-  const [uploadedVideoUrl, setUploadedVideoUrl] = useState(config.uploadedVideoUrl || '');
-  const [uploadedVoiceNoteUrl, setUploadedVoiceNoteUrl] = useState(config.uploadedVoiceNoteUrl || '');
-  const [secretPasscode, setSecretPasscode] = useState(config.secretPasscode || '1234');
-  const [secretMessage, setSecretMessage] = useState(config.secretMessage || '');
 
   const handleAddPhoto = () => {
     if (!newPhotoUrl.trim()) {
