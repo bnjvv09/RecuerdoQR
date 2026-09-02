@@ -208,7 +208,7 @@ export default function Step4Checkout({
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-8 animate-fade-in text-left">
+    <form onSubmit={handleFormSubmit} noValidate className="space-y-8 animate-fade-in text-left">
       <div className="border-b border-rose-100 pb-3">
         <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
           <span>💳</span>
@@ -359,7 +359,6 @@ export default function Step4Checkout({
                     type="tel"
                     required
                     inputMode="numeric"
-                    pattern="[0-9]*"
                     value={phoneDigits.length > 4 ? `${phoneDigits.slice(0, 4)} ${phoneDigits.slice(4, 8)}` : phoneDigits}
                     onChange={handlePhoneChange}
                     onKeyDown={handlePhoneKeyDown}

@@ -76,34 +76,42 @@ export function validateEmailSyntaxAndDomain(emailStr: string): { valid: boolean
     return { valid: false, error: 'El correo electrónico es obligatorio' };
   }
 
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-  if (!emailRegex.test(email)) {
-    return { valid: false, error: 'Ingresa un formato de correo válido (ej. tu_nombre@gmail.com)' };
+  if (!email.includes('@')) {
+    return { valid: false, error: "Falta el símbolo '@' en el correo (ej. nombre@gmail.com)" };
   }
 
   const parts = email.split('@');
-  if (parts.length !== 2) {
-    return { valid: false, error: 'Correo no válido' };
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    return { valid: false, error: 'El formato del correo es inválido. Debe ser usuario@proveedor.com' };
   }
 
   const [user, domain] = parts;
 
   if (user.length < 2) {
-    return { valid: false, error: 'El nombre de usuario del correo es demasiado corto' };
+    return { valid: false, error: 'El nombre antes del @ es demasiado corto' };
   }
 
-  if (FAKE_EMAIL_USERS.has(user)) {
-    return { valid: false, error: '"' + user + '" parece un correo de prueba. Ingresa tu correo real para enviarte el QR.' };
+  if (FAKE_EMAIL_USERS.has(user) || /^([a-z])\1{4,}$/.test(user)) {
+    return { valid: false, error: 'Ingresa un correo real con tu nombre (no se permiten correos de prueba o spam)' };
   }
 
   if (FAKE_EMAIL_DOMAINS.has(domain)) {
-    return { valid: false, error: 'El dominio "@' + domain + '" es de prueba o temporal. Ingresa tu correo real (Gmail, Outlook, etc.).' };
+    return { valid: false, error: 'El dominio "@' + domain + '" es de prueba. Usa un correo real (Gmail, Hotmail, Outlook, .cl, etc.).' };
+  }
+
+  if (!domain.includes('.')) {
+    return { valid: false, error: 'Al dominio le falta la extensión .com o .cl (ej. @gmail.com, @hotmail.com, @outlook.com)' };
   }
 
   const domainParts = domain.split('.');
   const tld = domainParts[domainParts.length - 1];
   if (!tld || tld.length < 2) {
-    return { valid: false, error: 'La extensión del dominio (.com, .cl, etc.) es inválida' };
+    return { valid: false, error: 'El correo debe terminar en .com, .cl, .net, etc. (ej. @gmail.com)' };
+  }
+
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  if (!emailRegex.test(email)) {
+    return { valid: false, error: 'Formato de correo no válido. Usa un correo estándar (ej. nombre@gmail.com)' };
   }
 
   return { valid: true };
