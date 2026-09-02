@@ -20,37 +20,33 @@ export default function Step2Plan({
 }: Step2PlanProps) {
   const themeInfo = THEME_HIGHLIGHTS[selectedTheme] || THEME_HIGHLIGHTS['anniversary'];
 
-  const basicProd = products.find(p => p.id === 'basic' || p.id === 'digital');
-  const mediumProd = products.find(p => p.id === 'medium' || p.id === 'card');
-  const premiumProd = products.find(p => p.id === 'premium');
-
   const planItems = [
     {
       id: 'basic',
-      name: basicProd?.name || 'Plan Básico',
-      subtitle: basicProd?.subtitle || 'Hasta 10 Fotos • Polaroid & Collage',
-      price: basicProd?.price || 4990,
-      description: basicProd?.description || `Página web con la interacción clave de ${themeInfo.name}, 2 estilos de fotos y tarjeta digital con color personalizado.`,
-      features: basicProd?.features && basicProd.features.length > 0 ? basicProd.features : themeInfo.plans.basic,
-      badge: basicProd?.badge || null,
+      name: 'Plan Básico',
+      subtitle: 'Hasta 10 Fotos • Polaroid & Collage',
+      price: products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990,
+      description: `Página web con la interacción clave de ${themeInfo.name}, 2 estilos de fotos y tarjeta digital con color personalizado.`,
+      features: themeInfo.plans.basic,
+      popular: false,
     },
     {
       id: 'medium',
-      name: mediumProd?.name || 'Plan Medio',
-      subtitle: mediumProd?.subtitle || 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
-      price: mediumProd?.price || 5990,
-      description: mediumProd?.description || `Nuestra opción más recomendada para ${themeInfo.name}. Incluye música de fondo, tarjeta digital con 145 personajes temáticos e interacciones adicionales.`,
-      features: mediumProd?.features && mediumProd.features.length > 0 ? mediumProd.features : themeInfo.plans.medium,
-      badge: mediumProd?.badge || 'Más Recomendado',
+      name: 'Plan Medio',
+      subtitle: 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
+      price: products.find(p => p.id === 'medium' || p.id === 'card')?.price || 5990,
+      description: `Nuestra opción más recomendada para ${themeInfo.name}. Incluye música de fondo, tarjeta digital con 145 personajes temáticos e interacciones adicionales.`,
+      features: themeInfo.plans.medium,
+      popular: true,
     },
     {
       id: 'premium',
-      name: premiumProd?.name || 'Plan Máximo',
-      subtitle: premiumProd?.subtitle || '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
-      price: premiumProd?.price || 7990,
-      description: premiumProd?.description || `La experiencia definitiva de ${themeInfo.name}: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.`,
-      features: premiumProd?.features && premiumProd.features.length > 0 ? premiumProd.features : themeInfo.plans.premium,
-      badge: premiumProd?.badge || '👑 PRO',
+      name: 'Plan Máximo',
+      subtitle: '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
+      price: products.find(p => p.id === 'premium')?.price || 7990,
+      description: `La experiencia definitiva de ${themeInfo.name}: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.`,
+      features: themeInfo.plans.premium,
+      popular: false,
     },
   ];
 
@@ -76,50 +72,32 @@ export default function Step2Plan({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {planItems.map((plan) => {
           const isSelected = selectedPlan === plan.id;
-          const isProOrPremium = plan.id === 'premium' || (plan.badge && plan.badge.toLowerCase().includes('pro'));
           return (
             <div
               key={plan.id}
               onClick={() => setSelectedPlan(plan.id)}
               className={`relative rounded-3xl p-6 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                 isSelected
-                  ? isProOrPremium
-                    ? 'border-2 border-amber-500 bg-white shadow-xl shadow-amber-950/10 scale-[1.02] ring-2 ring-amber-400/30'
-                    : 'border-2 border-[#a21232] bg-white shadow-xl shadow-rose-950/5 scale-[1.02]'
-                  : isProOrPremium
-                  ? 'border border-amber-200/80 bg-gradient-to-b from-amber-50/20 to-white hover:border-amber-400 hover:shadow-md'
+                  ? 'border-2 border-[#a21232] bg-white shadow-xl shadow-rose-950/5 scale-[1.02]'
                   : 'border border-gray-200 bg-white/80 hover:border-rose-300 hover:shadow-md'
               }`}
             >
-              {plan.badge && (
-                <div className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-extrabold uppercase px-3.5 py-0.5 rounded-full shadow-md tracking-wider flex items-center gap-1 whitespace-nowrap z-10 ${
-                  isProOrPremium
-                    ? 'bg-gradient-to-r from-amber-600 via-rose-600 to-[#a21232] text-white border border-amber-200'
-                    : 'bg-[#a21232] text-white'
-                }`}>
-                  {isProOrPremium && <Sparkles className="w-3 h-3 text-amber-200" />}
-                  <span>{plan.badge}</span>
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#a21232] text-white text-[10px] font-extrabold uppercase px-3 py-0.5 rounded-full shadow-xs tracking-wider">
+                  Más Recomendado
                 </div>
               )}
 
               <div className="space-y-3.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
-                    <h3 className="font-serif font-bold text-lg text-gray-900 flex items-center gap-1.5">
-                      <span>{plan.name}</span>
-                    </h3>
-                    <p className={`text-xs font-semibold leading-snug ${
-                      isProOrPremium ? 'text-amber-800' : 'text-[#a21232]'
-                    }`}>
-                      {plan.subtitle}
-                    </p>
+                    <h3 className="font-serif font-bold text-lg text-gray-900">{plan.name}</h3>
+                    <p className="text-xs text-[#a21232] font-semibold leading-snug">{plan.subtitle}</p>
                   </div>
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center border shrink-0 mt-0.5 transition ${
                       isSelected
-                        ? isProOrPremium
-                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
-                          : 'border-[#a21232] bg-[#a21232] text-white shadow-xs'
+                        ? 'border-[#a21232] bg-[#a21232] text-white shadow-xs'
                         : 'border-gray-300 bg-gray-50'
                     }`}
                   >
@@ -128,9 +106,7 @@ export default function Step2Plan({
                 </div>
 
                 <div className="py-2 border-y border-gray-100 flex items-baseline gap-1">
-                  <span className={`font-serif text-2xl sm:text-3xl font-black ${
-                    isProOrPremium ? 'text-amber-950' : 'text-gray-900'
-                  }`}>
+                  <span className="font-serif text-2xl sm:text-3xl font-black text-gray-900">
                     ${Number(plan.price).toLocaleString('es-CL')}
                   </span>
                   <span className="text-[11px] text-gray-500 font-medium uppercase">CLP</span>
@@ -146,9 +122,7 @@ export default function Step2Plan({
                       key={fIdx} 
                       className="text-xs text-gray-700 flex items-start gap-2 leading-snug py-0.5"
                     >
-                      <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${
-                        isProOrPremium ? 'text-amber-600' : 'text-emerald-600'
-                      }`} />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
                       <span>{f}</span>
                     </li>
                   ))}
