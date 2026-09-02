@@ -42,52 +42,76 @@ import { toast } from 'sonner';
 
 export const ROMANTIC_SONGS = [
   { 
+    id: 'perfect',
     title: 'Perfect', 
     artist: 'Ed Sheeran', 
     url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-guitar-112197.mp3'
+    videoId: '2Vv-BfVoq4g',
+    start: 48,
+    end: 68
   },
   { 
+    id: 'entra-en-mi-vida',
     title: 'Entra en mi vida', 
     artist: 'Sin Bandera', 
     url: 'https://www.youtube.com/watch?v=KzKk2rLzZ4A',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=piano-moment-9835.mp3'
+    videoId: 'KzKk2rLzZ4A',
+    start: 62,
+    end: 82
   },
   { 
+    id: 'amor-completo',
     title: 'Amor Completo', 
     artist: 'Mon Laferte', 
     url: 'https://www.youtube.com/watch?v=4jTfZp_yQdM',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3?filename=romantic-love-123498.mp3'
+    videoId: '4jTfZp_yQdM',
+    start: 54,
+    end: 74
   },
   { 
+    id: 'favorito',
     title: 'Favorito', 
     artist: 'Camilo', 
     url: 'https://www.youtube.com/watch?v=5rT8Q6uX7mY',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=sweet-love-11132.mp3'
+    videoId: '5rT8Q6uX7mY',
+    start: 43,
+    end: 63
   },
   { 
+    id: 'yellow',
     title: 'Yellow', 
     artist: 'Coldplay', 
     url: 'https://www.youtube.com/watch?v=yKNxeF4KMsY',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=warm-memories-romantic-piano-10702.mp3'
+    videoId: 'yKNxeF4KMsY',
+    start: 32,
+    end: 52
   },
   { 
+    id: 'sabes',
     title: 'Sabes', 
     artist: 'Reik', 
     url: 'https://www.youtube.com/watch?v=b4f8L3C0cQc',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2023/04/18/audio_276a445499.mp3?filename=acoustic-love-story-145265.mp3'
+    videoId: 'b4f8L3C0cQc',
+    start: 45,
+    end: 65
   },
   { 
+    id: 'tacones-rojos',
     title: 'Tacones Rojos', 
     artist: 'Sebastián Yatra', 
     url: 'https://www.youtube.com/watch?v=vV_A5O0_5jQ',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c976939525.mp3?filename=cheerful-acoustic-guitar-125439.mp3'
+    videoId: 'vV_A5O0_5jQ',
+    start: 28,
+    end: 48
   },
   { 
+    id: 'me-enamore-de-ti',
     title: 'Me Enamoré de Ti', 
     artist: 'Chayanne', 
     url: 'https://www.youtube.com/watch?v=F0r4H3q4jYs',
-    previewUrl: 'https://cdn.pixabay.com/download/audio/2022/08/02/audio_884fe92c21.mp3?filename=sweet-passion-117565.mp3'
+    videoId: 'F0r4H3q4jYs',
+    start: 68,
+    end: 88
   },
 ];
 
@@ -402,28 +426,22 @@ export default function Step2Personalizacion({
     }
   };
 
-  // Romantic Songs Audio Preview Player
-  const [playingSongUrl, setPlayingSongUrl] = useState<string | null>(null);
-  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+  // Romantic Songs Real YouTube Chorus Audio Preview
+  const [playingSongId, setPlayingSongId] = useState<string | null>(null);
+  const previewTimerRef = useRef<any>(null);
 
-  const togglePreview = (songPreviewUrl: string, e: React.MouseEvent) => {
+  const togglePreview = (songId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (playingSongUrl === songPreviewUrl) {
-      if (audioPreviewRef.current) {
-        audioPreviewRef.current.pause();
-      }
-      setPlayingSongUrl(null);
+    if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+
+    if (playingSongId === songId) {
+      setPlayingSongId(null);
     } else {
-      if (audioPreviewRef.current) {
-        audioPreviewRef.current.pause();
-      }
-      const audio = new Audio(songPreviewUrl);
-      audioPreviewRef.current = audio;
-      audio.volume = 0.65;
-      audio.play().catch(() => toast.info('Haz clic para reproducir la muestra de audio'));
-      audio.onended = () => setPlayingSongUrl(null);
-      setPlayingSongUrl(songPreviewUrl);
-      toast.success('Reproduciendo fragmento romántico (15s) 🎵');
+      setPlayingSongId(songId);
+      toast.success('Reproduciendo fragmento oficial de la canción (15s) 🎵');
+      previewTimerRef.current = setTimeout(() => {
+        setPlayingSongId(null);
+      }, 20000);
     }
   };
 
@@ -1427,7 +1445,7 @@ export default function Step2Personalizacion({
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                               {ROMANTIC_SONGS.map((song, sIdx) => {
                                 const isSelected = songUrl === song.url;
-                                const isPlaying = playingSongUrl === song.previewUrl;
+                                const isPlaying = playingSongId === song.id;
                                 return (
                                   <div
                                     key={sIdx}
@@ -1447,7 +1465,7 @@ export default function Step2Personalizacion({
                                       {/* Mini Play / Pause Button for 15s Sample */}
                                       <button
                                         type="button"
-                                        onClick={(e) => togglePreview(song.previewUrl, e)}
+                                        onClick={(e) => togglePreview(song.id, e)}
                                         className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer ${
                                           isPlaying
                                             ? 'bg-emerald-500 text-white animate-pulse'
@@ -1479,6 +1497,22 @@ export default function Step2Personalizacion({
                                 );
                               })}
                             </div>
+
+                            {/* Active YouTube Chorus Player (Hidden Iframe) */}
+                            {playingSongId && (
+                              (() => {
+                                const activeSong = ROMANTIC_SONGS.find(s => s.id === playingSongId);
+                                if (!activeSong) return null;
+                                return (
+                                  <iframe
+                                    key={activeSong.id}
+                                    src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=1&start=${activeSong.start}&end=${activeSong.end}&controls=0&modestbranding=1&rel=0`}
+                                    className="hidden w-0 h-0 pointer-events-none"
+                                    allow="autoplay; encrypted-media"
+                                  />
+                                );
+                              })()
+                            )}
                           </div>
 
                           {/* Input de URL Personalizada */}
