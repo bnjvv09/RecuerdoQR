@@ -61,13 +61,14 @@ export default function Navbar() {
               Panel
             </Link>
             
-            {/* Shopping Cart Icon with Red Badge */}
-            <div className="relative cursor-pointer p-1.5 hover:bg-gray-50 rounded-full transition-colors text-gray-500 hover:text-rose-600">
+            {/* Shopping Cart Icon */}
+            <Link
+              href="/personalizar"
+              className="relative cursor-pointer p-1.5 hover:bg-gray-50 rounded-full transition-colors text-gray-500 hover:text-rose-600"
+              title="Carrito de compras"
+            >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#a21232] text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border border-white">
-                1
-              </span>
-            </div>
+            </Link>
 
             <Link
               href="/personalizar"
@@ -79,13 +80,14 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
-            {/* Cart on mobile too */}
-            <div className="relative p-1.5 text-gray-500">
+            {/* Cart on mobile */}
+            <Link
+              href="/personalizar"
+              className="relative p-1.5 text-gray-500 hover:text-[#a21232]"
+              title="Carrito de compras"
+            >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#a21232] text-white text-[8px] font-bold rounded-full flex items-center justify-center">
-                1
-              </span>
-            </div>
+            </Link>
             
             <button
               onClick={() => setIsOpen(!isOpen)}
