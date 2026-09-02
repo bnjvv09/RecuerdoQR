@@ -1071,6 +1071,21 @@ export const DEFAULT_COUPONS: Coupon[] = [
 ];
 
 export async function getCoupons(): Promise<Coupon[]> {
+  try {
+    if (!isMockMode) {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        return data as Coupon[];
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch coupons from Supabase, using local:', err);
+  }
+
   if (typeof window !== 'undefined') {
     const local = getLocalData<Coupon[]>('custom_coupons', []);
     if (local.length > 0) return local;
@@ -1093,6 +1108,14 @@ export async function createCoupon(code: string, discount_type: 'percent' | 'fix
     created_at: new Date().toISOString(),
   };
 
+  try {
+    if (!isMockMode) {
+      await supabase.from('coupons').upsert([newCoupon]);
+    }
+  } catch (err) {
+    console.warn('Error saving coupon to Supabase:', err);
+  }
+
   const filtered = current.filter(c => c.code.toUpperCase() !== newCoupon.code);
   const updated = [newCoupon, ...filtered];
 
@@ -1103,6 +1126,14 @@ export async function createCoupon(code: string, discount_type: 'percent' | 'fix
 }
 
 export async function deleteCoupon(id: string): Promise<boolean> {
+  try {
+    if (!isMockMode) {
+      await supabase.from('coupons').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.warn('Error deleting coupon in Supabase:', err);
+  }
+
   const current = await getCoupons();
   const updated = current.filter(c => c.id !== id);
   if (typeof window !== 'undefined') {
@@ -1113,7 +1144,18 @@ export async function deleteCoupon(id: string): Promise<boolean> {
 
 export async function toggleCoupon(id: string): Promise<boolean> {
   const current = await getCoupons();
-  const updated = current.map(c => c.id === id ? { ...c, is_active: !c.is_active } : c);
+  const found = current.find(c => c.id === id);
+  const updatedActive = found ? !found.is_active : true;
+
+  try {
+    if (!isMockMode) {
+      await supabase.from('coupons').update({ is_active: updatedActive }).eq('id', id);
+    }
+  } catch (err) {
+    console.warn('Error toggling coupon in Supabase:', err);
+  }
+
+  const updated = current.map(c => c.id === id ? { ...c, is_active: updatedActive } : c);
   if (typeof window !== 'undefined') {
     setLocalData('custom_coupons', updated);
   }
