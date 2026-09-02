@@ -451,6 +451,8 @@ export default function Step4TarjetaRegalo({
           cardOrientation={cardOrientation}
           cardPalette={cardPalette}
           cardFont={cardFont}
+          cardTitle={cardTitle}
+          cardFrom={cardFrom}
         />
       )}
     </div>

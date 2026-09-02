@@ -21,6 +21,8 @@ interface PrintableGiftCardModalProps {
   cardPalette?: string;
   cardOrientation?: 'vertical' | 'horizontal';
   cardFont?: string;
+  cardTitle?: string;
+  cardFrom?: string;
 }
 
 export default function PrintableGiftCardModal({
@@ -36,7 +38,9 @@ export default function PrintableGiftCardModal({
   selectedCharacter,
   cardPalette = '#a21232',
   cardOrientation = 'vertical',
-  cardFont = 'great-vibes'
+  cardFont = 'great-vibes',
+  cardTitle,
+  cardFrom
 }: PrintableGiftCardModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const formattedDate = date || new Date().toISOString().split('T')[0];
@@ -44,8 +48,10 @@ export default function PrintableGiftCardModal({
   const primaryColor = selectedCharacter ? selectedCharacter.primary : cardPalette;
   const accentColor = selectedCharacter ? selectedCharacter.accent : primaryColor;
   const activeFontFamily = getFontFamily(cardFont);
-  const quoteText = selectedCharacter ? selectedCharacter.quote : (message || 'Hoy es el día más especial con mi persona favorita 🎂');
+  const quoteText = message || (selectedCharacter ? selectedCharacter.quote : 'Hoy es el día más especial con mi persona favorita ❤️');
   const isHorizontal = cardOrientation === 'horizontal';
+  const displayTitle = cardTitle || `Para ${partnerName || 'Mi Amor'}`;
+  const displayFrom = cardFrom || userName || 'Alguien que te ama';
 
   const handlePrint = () => {
     window.print();
@@ -148,10 +154,10 @@ export default function PrintableGiftCardModal({
                       )}
                       <div>
                         <h2 className="font-serif text-lg sm:text-xl font-extrabold text-gray-900 leading-tight">
-                          Para {partnerName || 'Mi Amor'}
+                          {displayTitle}
                         </h2>
                         <p className="text-[11px] text-gray-500 italic font-serif">
-                          De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{userName || 'Alguien que te ama'}</span>
+                          De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{displayFrom}</span>
                         </p>
                       </div>
                     </div>
@@ -229,10 +235,10 @@ export default function PrintableGiftCardModal({
                   {/* Names */}
                   <div className="space-y-0.5">
                     <h2 className="font-serif text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight">
-                      Para {partnerName || 'Mi Amor'}
+                      {displayTitle}
                     </h2>
                     <p className="text-[11px] text-gray-500 italic font-serif">
-                      De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{userName || 'Alguien que te ama'}</span>
+                      De parte de: <span className="font-semibold" style={{ color: primaryColor }}>{displayFrom}</span>
                     </p>
                   </div>
 

@@ -86,6 +86,12 @@ export default function AdminPage() {
     date?: string;
     slug?: string;
     theme?: string;
+    selectedCharacter?: any;
+    cardPalette?: string;
+    cardOrientation?: 'vertical' | 'horizontal';
+    cardFont?: string;
+    cardTitle?: string;
+    cardFrom?: string;
   } | null>(null);
 
   // Pricing editing states
@@ -506,6 +512,12 @@ export default function AdminPage() {
           date={printableCardData.date}
           slug={printableCardData.slug}
           theme={printableCardData.theme}
+          selectedCharacter={printableCardData.selectedCharacter}
+          cardPalette={printableCardData.cardPalette}
+          cardOrientation={printableCardData.cardOrientation}
+          cardFont={printableCardData.cardFont}
+          cardTitle={printableCardData.cardTitle}
+          cardFrom={printableCardData.cardFrom}
         />
       )}
 

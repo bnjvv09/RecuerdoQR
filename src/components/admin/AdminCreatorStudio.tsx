@@ -28,7 +28,21 @@ import QRCode from 'qrcode';
 import { toast } from 'sonner';
 
 interface AdminCreatorStudioProps {
-  onOpenPrintableModal: (data: { partnerName: string; userName: string; message?: string; qrDataUrl: string; date?: string; slug?: string; theme?: string }) => void;
+  onOpenPrintableModal: (data: {
+    partnerName: string;
+    userName: string;
+    message?: string;
+    qrDataUrl: string;
+    date?: string;
+    slug?: string;
+    theme?: string;
+    selectedCharacter?: any;
+    cardPalette?: string;
+    cardOrientation?: 'vertical' | 'horizontal';
+    cardFont?: string;
+    cardTitle?: string;
+    cardFrom?: string;
+  }) => void;
 }
 
 export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreatorStudioProps) {
@@ -724,11 +738,17 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
                   onOpenPrintableModal({
                     partnerName: createdResult.partnerName,
                     userName: createdResult.customerName,
-                    message: form.message,
+                    message: form.cardMessage || form.message,
                     qrDataUrl: createdResult.qrDataUrl,
                     date: form.specialDate,
                     slug: createdResult.slug,
-                    theme: form.selectedTheme
+                    theme: form.selectedTheme,
+                    selectedCharacter: form.selectedCharacter,
+                    cardPalette: form.cardPalette,
+                    cardOrientation: form.cardOrientation,
+                    cardFont: form.cardFont,
+                    cardTitle: form.cardTitle,
+                    cardFrom: form.cardFrom,
                   });
                 }}
                 className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-[#a21232] font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-rose-200 transition cursor-pointer"

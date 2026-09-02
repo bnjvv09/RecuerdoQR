@@ -22,9 +22,24 @@ import {
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
+import { CHARACTERS_DATABASE } from '@/data/charactersData';
 
 interface AdminOrdersTableProps {
-  onOpenPrintableModal: (data: { partnerName: string; userName: string; message?: string; qrDataUrl: string; date?: string; slug?: string; theme?: string }) => void;
+  onOpenPrintableModal: (data: {
+    partnerName: string;
+    userName: string;
+    message?: string;
+    qrDataUrl: string;
+    date?: string;
+    slug?: string;
+    theme?: string;
+    selectedCharacter?: any;
+    cardPalette?: string;
+    cardOrientation?: 'vertical' | 'horizontal';
+    cardFont?: string;
+    cardTitle?: string;
+    cardFrom?: string;
+  }) => void;
   onEditExperience?: (exp: Experience) => void;
 }
 
@@ -394,14 +409,23 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                           const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.cl';
                           const liveUrl = `${origin}/amor/${selectedExp.slug}`;
                           const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2, color: { dark: '#a21232', light: '#ffffff' } });
+                          const expConfig = (selectedExp.config as any) || {};
+                          const foundChar = expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null;
+
                           onOpenPrintableModal({
                             partnerName: selectedExp.partner_name,
                             userName: selectedExp.user_name,
-                            message: selectedExp.message,
+                            message: expConfig.cardMessage || selectedExp.message,
                             qrDataUrl,
                             date: selectedExp.special_date,
                             slug: selectedExp.slug,
                             theme: selectedExp.theme,
+                            selectedCharacter: foundChar,
+                            cardPalette: expConfig.cardPalette || '#a21232',
+                            cardOrientation: expConfig.cardOrientation || 'vertical',
+                            cardFont: expConfig.cardFont || 'great-vibes',
+                            cardTitle: expConfig.cardTitle,
+                            cardFrom: expConfig.cardFrom,
                           });
                         }}
                         className="w-full py-2.5 bg-rose-50 border border-rose-200 text-[#a21232] font-bold rounded-xl text-xs hover:bg-rose-100 transition flex items-center justify-center gap-1.5"
