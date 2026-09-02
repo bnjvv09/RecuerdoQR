@@ -8,15 +8,18 @@ import {
   getExperiences, 
   getThemes, 
   getProducts, 
+  getSiteSettings,
   deleteExperience,
   updateProductPrice,
-  Product,
+  Product, 
   Experience 
 } from '@/lib/db';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminOrdersTable from '@/components/admin/AdminOrdersTable';
 import AdminThemesPanel from '@/components/admin/AdminThemesPanel';
 import AdminCreatorStudio from '@/components/admin/AdminCreatorStudio';
+import AdminPlansPanel from '@/components/admin/AdminPlansPanel';
+import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel';
 import AdminEditExperienceModal from '@/components/admin/AdminEditExperienceModal';
 import PrintableGiftCardModal from '@/components/card/PrintableGiftCardModal';
 import { 
@@ -46,6 +49,7 @@ export default function AdminPage() {
     setThemes,
     products,
     setProducts,
+    setSettings,
     deleteExperienceLocal,
     updateExperienceLocal,
     updateProductPriceLocal,
@@ -94,16 +98,18 @@ export default function AdminPage() {
 
   const loadInitialData = async () => {
     try {
-      const [orderList, expList, themeList, prodList] = await Promise.all([
+      const [orderList, expList, themeList, prodList, settingsData] = await Promise.all([
         getOrders(),
         getExperiences(),
         getThemes(),
         getProducts(),
+        getSiteSettings(),
       ]);
       setOrders(orderList);
       setExperiences(expList);
       setThemes(themeList);
       setProducts(prodList);
+      setSettings(settingsData);
     } catch (err: any) {
       console.error('Data loading error:', err);
       toast.error('Error al cargar los datos del panel');
@@ -367,77 +373,22 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Tab 3: Creator Studio */}
-        {activeTab === 'creator' && (
-          <AdminCreatorStudio onOpenPrintableModal={setPrintableCardData} />
+        {/* Tab 3: Planes y Precios (Gestor Completo) */}
+        {(activeTab === 'plans' || (activeTab as string) === 'pricing') && (
+          <AdminPlansPanel />
         )}
 
-        {/* Tab 4: Themes */}
+        {/* Tab 4: Configuración & Footer */}
+        {activeTab === 'settings' && (
+          <AdminSettingsPanel />
+        )}
+
+        {/* Tab 5: Themes */}
         {activeTab === 'themes' && <AdminThemesPanel />}
 
-        {/* Tab 5: Pricing */}
-        {activeTab === 'pricing' && (
-          <div className="space-y-6 text-left animate-fade-in max-w-2xl">
-            <div className="border-b border-gray-200 pb-3">
-              <h2 className="font-serif text-lg font-bold text-gray-900 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#a21232]" />
-                <span>Gestión de Precios de Planes</span>
-              </h2>
-              <p className="text-xs text-gray-500 font-light mt-0.5">
-                Modifica los precios de los productos mostrados en la tienda.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {products.map((p) => {
-                const isEditing = editingPriceId === p.id;
-                return (
-                  <div key={p.id} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-xs flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-xs text-gray-900">{p.name}</h3>
-                      <p className="text-[10px] text-gray-500 font-light">{p.description}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {isEditing ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="number"
-                            value={tempPrice}
-                            onChange={(e) => setTempPrice(Number(e.target.value))}
-                            className="w-24 px-2 py-1 border border-gray-300 rounded-lg text-xs font-bold"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleSavePrice(p.id)}
-                            className="p-1.5 bg-[#a21232] text-white rounded-lg hover:bg-[#880e28]"
-                          >
-                            <Save className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3">
-                          <span className="font-serif font-bold text-base text-gray-900">
-                            ${Number(p.price).toLocaleString('es-CL')} CLP
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingPriceId(p.id);
-                              setTempPrice(p.price);
-                            }}
-                            className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg text-[10px]"
-                          >
-                            Cambiar
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        {/* Tab 6: Creator Studio */}
+        {activeTab === 'creator' && (
+          <AdminCreatorStudio onOpenPrintableModal={setPrintableCardData} />
         )}
 
       </main>

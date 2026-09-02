@@ -8,6 +8,7 @@ import {
   Plus, 
   Palette, 
   DollarSign, 
+  Settings,
   LogOut, 
   Heart,
   UserCheck
@@ -23,11 +24,12 @@ export default function AdminHeader({ onLogout, userEmail }: AdminHeaderProps) {
   const { activeTab, setActiveTab } = useAdminStore();
 
   const tabs: Array<{ id: AdminTab; label: string; icon: React.ReactNode }> = [
-    { id: 'orders', label: 'Pedidos & Despachos', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
+    { id: 'orders', label: 'Pedidos & Clientes', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
     { id: 'experiences', label: 'Experiencias QR', icon: <Sparkles className="w-3.5 h-3.5" /> },
-    { id: 'creator', label: 'Crear Experiencia (WhatsApp)', icon: <Plus className="w-3.5 h-3.5" /> },
+    { id: 'plans', label: 'Planes y Precios', icon: <DollarSign className="w-3.5 h-3.5" /> },
+    { id: 'settings', label: 'Configuración & Footer', icon: <Settings className="w-3.5 h-3.5" /> },
     { id: 'themes', label: 'Temáticas', icon: <Palette className="w-3.5 h-3.5" /> },
-    { id: 'pricing', label: 'Precios', icon: <DollarSign className="w-3.5 h-3.5" /> },
+    { id: 'creator', label: 'Crear Manual', icon: <Plus className="w-3.5 h-3.5" /> },
   ];
 
   return (

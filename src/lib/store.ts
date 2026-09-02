@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { Order, Experience, Theme, Product } from '@/lib/db';
+import { Order, Experience, Theme, Product, SiteSettings, DEFAULT_SETTINGS } from '@/lib/db';
 
-export type AdminTab = 'orders' | 'experiences' | 'creator' | 'themes' | 'pricing';
+export type AdminTab = 'orders' | 'experiences' | 'creator' | 'themes' | 'plans' | 'settings';
 
 interface AdminStore {
   // Auth & Navigation
@@ -15,10 +15,12 @@ interface AdminStore {
   experiences: Experience[];
   themes: Theme[];
   products: Product[];
+  settings: SiteSettings;
   setOrders: (orders: Order[]) => void;
   setExperiences: (experiences: Experience[]) => void;
   setThemes: (themes: Theme[]) => void;
   setProducts: (products: Product[]) => void;
+  setSettings: (settings: SiteSettings) => void;
 
   // Selection & UI Filters
   selectedOrder: Order | null;
@@ -38,7 +40,9 @@ interface AdminStore {
   updateOrderStatusLocal: (orderId: string, status: Order['status']) => void;
   deleteExperienceLocal: (expId: string) => void;
   updateExperienceLocal: (expId: string, updated: Partial<Experience>) => void;
+  updateProductLocal: (product: Product) => void;
   updateProductPriceLocal: (productId: string, price: number) => void;
+  updateSettingsLocal: (settings: Partial<SiteSettings>) => void;
 }
 
 export const useAdminStore = create<AdminStore>((set) => ({
@@ -51,10 +55,12 @@ export const useAdminStore = create<AdminStore>((set) => ({
   experiences: [],
   themes: [],
   products: [],
+  settings: { ...DEFAULT_SETTINGS },
   setOrders: (orders) => set({ orders }),
   setExperiences: (experiences) => set({ experiences }),
   setThemes: (themes) => set({ themes }),
   setProducts: (products) => set({ products }),
+  setSettings: (settings) => set({ settings }),
 
   selectedOrder: null,
   selectedExperience: null,
@@ -92,8 +98,18 @@ export const useAdminStore = create<AdminStore>((set) => ({
         state.selectedExperience?.id === expId ? { ...state.selectedExperience, ...updated } : state.selectedExperience,
     })),
 
+  updateProductLocal: (product) =>
+    set((state) => ({
+      products: state.products.map((p) => (p.id === product.id ? product : p)),
+    })),
+
   updateProductPriceLocal: (productId, price) =>
     set((state) => ({
       products: state.products.map((p) => (p.id === productId ? { ...p, price } : p)),
+    })),
+
+  updateSettingsLocal: (updated) =>
+    set((state) => ({
+      settings: { ...state.settings, ...updated },
     })),
 }));

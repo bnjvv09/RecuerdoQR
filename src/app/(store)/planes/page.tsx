@@ -58,76 +58,85 @@ export default function PlanesPage() {
 
         {/* Planes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
-          {products.map((product, idx) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className={`bg-white rounded-3xl p-8 border ${
-                product.id === 'card'
-                  ? 'border-rose-400 shadow-xl relative md:scale-105 z-10'
-                  : 'border-rose-100 shadow-md'
-              } flex flex-col justify-between text-left`}
-            >
-              {product.id === 'card' && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-rose-500 to-red-500 text-white text-[10px] font-extrabold tracking-widest rounded-full uppercase shadow-md">
-                  El más popular
-                </span>
-              )}
+          {products.map((product, idx) => {
+            const isFeatured = product.badge || product.id === 'medium';
+            return (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`bg-white rounded-3xl p-8 border ${
+                  isFeatured
+                    ? 'border-rose-400 shadow-xl relative md:scale-105 z-10'
+                    : 'border-rose-100 shadow-md'
+                } flex flex-col justify-between text-left`}
+              >
+                {product.badge && (
+                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-rose-500 to-red-500 text-white text-[10px] font-extrabold tracking-widest rounded-full uppercase shadow-md">
+                    {product.badge}
+                  </span>
+                )}
 
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-serif text-2xl font-bold text-gray-900">{product.name}</h3>
-                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500">
-                    {product.id === 'digital' ? (
-                      <Sparkles className="w-5 h-5" />
-                    ) : product.id === 'card' ? (
-                      <Heart className="w-5 h-5 fill-rose-500" />
-                    ) : (
-                      <Send className="w-5 h-5" />
-                    )}
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-serif text-2xl font-bold text-gray-900">{product.name}</h3>
+                    <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500">
+                      {product.id === 'basic' ? (
+                        <Sparkles className="w-5 h-5" />
+                      ) : product.id === 'medium' ? (
+                        <Heart className="w-5 h-5 fill-rose-500" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </div>
+                  </div>
+
+                  {product.subtitle && (
+                    <p className="text-xs font-semibold text-rose-600 mb-3">
+                      {product.subtitle}
+                    </p>
+                  )}
+
+                  <p className="text-gray-500 text-xs font-light mb-6 leading-relaxed">
+                    {product.description}
+                  </p>
+
+                  <div className="flex items-baseline gap-1.5 mb-8">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                      ${Number(product.price).toLocaleString('es-CL')}
+                    </span>
+                    <span className="text-xs text-gray-400 font-semibold uppercase">CLP</span>
+                  </div>
+
+                  <div className="border-t border-rose-50 pt-6 mb-8">
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+                      ¿Qué incluye?
+                    </h4>
+                    <ul className="space-y-3.5">
+                      {product.features.map((feature, fIdx) => (
+                        <li key={fIdx} className="flex items-start gap-2.5 text-sm text-gray-600">
+                          <CheckCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
 
-                <p className="text-gray-500 text-xs font-light mb-6 leading-relaxed">
-                  {product.description}
-                </p>
-
-                <div className="flex items-baseline gap-1.5 mb-8">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-                    ${Number(product.price).toLocaleString('es-CL')}
-                  </span>
-                  <span className="text-xs text-gray-400 font-semibold uppercase">CLP</span>
-                </div>
-
-                <div className="border-t border-rose-50 pt-6 mb-8">
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                    ¿Qué incluye?
-                  </h4>
-                  <ul className="space-y-3.5">
-                    {product.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-2.5 text-sm text-gray-600">
-                        <CheckCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <Link
-                href={`/personalizar?plan=${product.id}`}
-                className={`w-full py-4 text-center font-bold rounded-2xl transition shadow-md ${
-                  product.id === 'card'
-                    ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600 hover:shadow-lg'
-                    : 'bg-rose-50 text-rose-600 hover:bg-rose-100/70 border border-rose-200'
-                }`}
-              >
-                Comprar {product.name}
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  href={`/personalizar?plan=${product.id}`}
+                  className={`w-full py-4 text-center font-bold rounded-2xl transition shadow-md cursor-pointer ${
+                    isFeatured
+                      ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600 hover:shadow-lg'
+                      : 'bg-rose-50 text-rose-600 hover:bg-rose-100/70 border border-rose-200'
+                  }`}
+                >
+                  Comprar {product.name}
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Garantías adicionales */}

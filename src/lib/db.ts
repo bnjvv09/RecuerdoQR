@@ -5,7 +5,23 @@ export interface Product {
   name: string;
   price: number;
   description: string;
+  subtitle?: string;
+  badge?: string;
   features: string[];
+}
+
+export interface SiteSettings {
+  id?: string;
+  support_email: string;
+  support_phone: string;
+  support_address: string;
+  faq_content?: string;
+  terms_content?: string;
+  privacy_content?: string;
+  guarantee_content?: string;
+  instagram_url?: string;
+  tiktok_url?: string;
+  whatsapp_url?: string;
 }
 
 export interface Order {
@@ -80,25 +96,69 @@ const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 'basic',
     name: 'Plan Básico',
-    price: 7990,
-    description: 'Página personalizada para tu pareja con hasta 10 fotos, contador de tiempo y tarjeta digital temática.',
-    features: ['Página web personalizada', 'Hasta 10 Fotos', 'Contador de tiempo en vivo', 'Dedicatoria final con corazón palpitante', 'Tarjeta de Regalo Digital Temática', 'Código QR en alta calidad']
+    price: 4990,
+    subtitle: 'Hasta 10 Fotos • Polaroid & Collage',
+    description: 'Página web con la interacción clave de Aniversario, 2 estilos de fotos y tarjeta física clásica con color libre.',
+    features: [
+      '⏱️ Contador de amor en tiempo real (años, días, segundos)',
+      '💖 Dedicatoria final con corazón palpitante',
+      '📸 Hasta 10 Fotos en Polaroid y Collage',
+      '🎨 Tarjeta física con color personalizado'
+    ]
   },
   {
     id: 'medium',
     name: 'Plan Medio',
-    price: 12990,
-    description: 'Nuestra opción más popular. Añade hasta 20 fotos, música de fondo personalizada y carta de amor.',
-    features: ['Todo lo del Plan Básico', 'Hasta 20 Fotos', 'Música de fondo personalizada (YouTube)', '6 Estilos de galería (Polaroid, Carrete, Masonry)', 'Carta de amor interactiva', 'Diseño temático exclusivo']
+    price: 5990,
+    badge: 'Más Recomendado',
+    subtitle: 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
+    description: 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta física con 145 personajes temáticos e interacciones adicionales.',
+    features: [
+      '⏱️ Contador de amor en vivo + Corazones',
+      '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
+      '🎵 Canción especial de la pareja de fondo (YouTube)',
+      '💌 Carta de aniversario interactiva',
+      '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
+    ]
   },
   {
     id: 'premium',
     name: 'Plan Máximo',
-    price: 17990,
-    description: 'La experiencia completa sin límites: +40 fotos en HD, doble galería simultánea, línea de tiempo con fotos de hitos y todos los widgets interactivos.',
-    features: ['Todo lo del Plan Medio', '+40 Fotos en HD (hasta 40 en una galería o 20 en cada una)', 'Doble Galería de Fotos simultánea', 'Video dedicado en HD o YouTube', 'Línea de tiempo de hitos con fotos', 'Rincón secreto con PIN de 4 dígitos', 'Grabador de Nota de Voz de WhatsApp', 'Caja de regalo sorpresa y Mapa especial']
+    price: 7990,
+    subtitle: '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
+    description: 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
+    features: [
+      '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
+      '✨ Línea de tiempo de hitos con fotos y fechas',
+      '📍 Mapa interactivo del lugar donde se conocieron',
+      '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
+    ]
   }
 ];
+
+export const DEFAULT_SETTINGS: SiteSettings = {
+  support_email: 'soporte@recuerdoqr.cl',
+  support_phone: '+56 9 1234 5678',
+  support_address: 'Santiago, Región Metropolitana, Chile',
+  faq_content: `### ¿Cómo funciona el código QR?
+Al realizar tu pedido recibirás inmediatamente tu código QR en alta calidad y una tarjeta digital lista para imprimir o regalar. Al escanearlo con cualquier celular, se abrirá al instante tu experiencia interactiva personalizada sin necesidad de instalar ninguna aplicación.
+
+### ¿Cuánto tiempo dura la página web?
+El acceso es permanente de por vida. Tu página estará alojada en servidores de alta disponibilidad y protegida para siempre.
+
+### ¿Puedo editar las fotos o mensajes después de pagar?
+¡Sí! Puedes contactar a nuestro equipo de soporte con tu número de orden y te ayudaremos a actualizar cualquier detalle.`,
+  terms_content: `### Términos del Servicio
+Al adquirir una experiencia en RecuerdoQR, adquieres una licencia de uso permanente para tu experiencia digital interactiva personalizada. 
+Nos comprometemos a mantener el servicio activo 24/7 con disponibilidad garantizada.`,
+  privacy_content: `### Políticas de Privacidad
+Tus fotos, audios, videos y dedicatorias son 100% privadas y seguras. No compartimos tus recuerdos con terceros. Puedes proteger tu experiencia con contraseña o PIN secreto.`,
+  guarantee_content: `### Garantía de Amor 100%
+Si por alguna razón tu experiencia digital no te enamora al 100% o tienes cualquier inconveniente técnico, nuestro equipo de soporte te atenderá de inmediato para resolverlo o reembolsarte.`,
+  whatsapp_url: 'https://wa.me/56912345678',
+  instagram_url: 'https://instagram.com',
+  tiktok_url: 'https://tiktok.com',
+};
 
 // Helper to interact with Mock Data in LocalStorage (client-side only)
 const getLocalData = <T>(key: string, defaultValue: T): T => {
@@ -117,10 +177,12 @@ const serverMemoryStore: {
   products: Product[];
   orders: Order[];
   experiences: Experience[];
+  settings: SiteSettings;
 } = {
   products: [...DEFAULT_PRODUCTS],
   orders: [],
-  experiences: []
+  experiences: [],
+  settings: { ...DEFAULT_SETTINGS }
 };
 
 // --- DATA ACCESS METHODS ---
@@ -153,6 +215,35 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
+export async function updateProduct(product: Product): Promise<boolean> {
+  if (isMockMode) {
+    if (typeof window !== 'undefined') {
+      const products = await getProducts();
+      const updated = products.map(p => p.id === product.id ? product : p);
+      setLocalData('products', updated);
+    }
+    const idx = serverMemoryStore.products.findIndex(p => p.id === product.id);
+    if (idx >= 0) serverMemoryStore.products[idx] = product;
+    return true;
+  }
+
+  const { error } = await supabase
+    .from('products')
+    .upsert({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      features: product.features,
+    });
+
+  if (error) {
+    console.error(`Error updating product ${product.id} in Supabase:`, error);
+    return false;
+  }
+  return true;
+}
+
 export async function updateProductPrice(id: string, price: number): Promise<boolean> {
   if (isMockMode) {
     if (typeof window !== 'undefined') {
@@ -175,6 +266,58 @@ export async function updateProductPrice(id: string, price: number): Promise<boo
     return false;
   }
   return true;
+}
+
+// 1.1 SITE SETTINGS
+export async function getSiteSettings(): Promise<SiteSettings> {
+  if (isMockMode) {
+    if (typeof window !== 'undefined') {
+      const stored = getLocalData<SiteSettings>('site_settings', DEFAULT_SETTINGS);
+      return stored;
+    }
+    return serverMemoryStore.settings;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('*')
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) return DEFAULT_SETTINGS;
+    return { ...DEFAULT_SETTINGS, ...data };
+  } catch (err) {
+    console.error('Error fetching site_settings:', err);
+    return DEFAULT_SETTINGS;
+  }
+}
+
+export async function updateSiteSettings(settings: Partial<SiteSettings>): Promise<SiteSettings> {
+  const current = await getSiteSettings();
+  const merged = { ...current, ...settings };
+
+  if (isMockMode) {
+    if (typeof window !== 'undefined') {
+      setLocalData('site_settings', merged);
+    }
+    serverMemoryStore.settings = merged;
+    return merged;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('site_settings')
+      .upsert({ id: 'primary', ...merged })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data || merged;
+  } catch (err) {
+    console.error('Error updating site_settings:', err);
+    return merged;
+  }
 }
 
 // 2. ORDERS

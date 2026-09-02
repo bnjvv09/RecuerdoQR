@@ -15,60 +15,55 @@ export default function Step1Plan({
   selectedPlan,
   setSelectedPlan,
 }: Step1PlanProps) {
+  const basicProd = products.find(p => p.id === 'basic' || p.id === 'digital');
+  const mediumProd = products.find(p => p.id === 'medium' || p.id === 'card');
+  const premiumProd = products.find(p => p.id === 'premium');
+
   const planItems = [
     {
       id: 'basic',
-      name: 'Plan Básico',
-      subtitle: 'Hasta 10 Fotos • Polaroid & Collage',
-      price: products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 7990,
-      description: 'Página web personalizada con la interacción clave de tu temática, 2 estilos de fotos y tarjeta con color libre.',
-      features: [
-        'Hasta 10 Fotos en HD (con dedicatorias)',
-        '2 Estilos de galería (Polaroid & Collage)',
-        '🎯 Interacción clave de la temática (ej. Soplar velas)',
-        '💍 Propuesta Interactiva incluida ("¡Sí, Acepto!")',
-        '⏱️ Contador de tiempo juntos en vivo',
-        '🎨 Tarjeta Clásica con Color 100% Personalizado',
-        '✍️ Tipografía de Tarjeta a elección',
-        '📱 Código QR en alta resolución'
+      name: basicProd?.name || 'Plan Básico',
+      subtitle: basicProd?.subtitle || 'Hasta 10 Fotos • Polaroid & Collage',
+      price: basicProd?.price || 4990,
+      description: basicProd?.description || 'Página web con la interacción clave de Aniversario, 2 estilos de fotos y tarjeta física clásica con color libre.',
+      features: basicProd?.features || [
+        '⏱️ Contador de amor en tiempo real (años, días, segundos)',
+        '💖 Dedicatoria final con corazón palpitante',
+        '📸 Hasta 10 Fotos en Polaroid y Collage',
+        '🎨 Tarjeta física con color personalizado'
       ],
+      badge: basicProd?.badge,
       popular: false,
     },
     {
       id: 'medium',
-      name: 'Plan Medio',
-      subtitle: 'Hasta 20 Fotos + Tarjeta 145 Personajes + Música 🎵',
-      price: products.find(p => p.id === 'medium' || p.id === 'card')?.price || 12990,
-      description: 'Nuestra opción más popular. Añade tu canción de YouTube, tarjeta con 145 personajes temáticos y 6 estilos de fotos.',
-      features: [
-        'Todo lo del Plan Básico',
-        '✨ Tarjeta Temática Personalizada (145 Personajes a elección)',
-        'Hasta 20 Fotos en galería',
-        '🎵 Música de fondo personalizada (YouTube)',
-        '💌 Carta de amor interactiva',
-        '🖼️ Todos los 6 Estilos de galería a elección',
-        '🎈 Interacciones extra según temática (Globos sorpresa)',
-        '✍️ Tipografía de Tarjeta a elección'
+      name: mediumProd?.name || 'Plan Medio',
+      subtitle: mediumProd?.subtitle || 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
+      price: mediumProd?.price || 5990,
+      description: mediumProd?.description || 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta física con 145 personajes temáticos e interacciones adicionales.',
+      features: mediumProd?.features || [
+        '⏱️ Contador de amor en vivo + Corazones',
+        '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
+        '🎵 Canción especial de la pareja de fondo (YouTube)',
+        '💌 Carta de aniversario interactiva',
+        '📸 Hasta 20 Fotos + Tarjeta con 145 personajes'
       ],
+      badge: mediumProd?.badge || 'Más Recomendado',
       popular: true,
     },
     {
       id: 'premium',
-      name: 'Plan Máximo',
-      subtitle: '+40 Fotos • Doble Galería o 40 en Una • Video & Hitos 👑',
-      price: products.find(p => p.id === 'premium')?.price || 17990,
-      description: 'La experiencia multimedia definitiva: hasta 40 fotos en alta definición (o 2 galerías de 20), video, hitos históricos con fotos y rincón secreto.',
-      features: [
-        'Todo lo del Plan Medio (incluye Tarjeta 145 personajes y Música)',
-        '+40 Fotos en HD (hasta 40 en una galería o 20 en cada una)',
-        '✨ Doble Galería de Fotos simultánea con estilos independientes',
-        '🎬 Video dedicado en alta definición o YouTube',
-        '✨ Línea de Tiempo de Hitos con fotos y fechas',
-        '🔒 Rincón Secreto con PIN de 4 dígitos',
-        '🎙️ Grabador de Nota de Voz real estilo WhatsApp',
-        '🎁 Caja de Regalo Sorpresa animada',
-        '📍 Mapa de Nuestro Lugar Especial'
+      name: premiumProd?.name || 'Plan Máximo',
+      subtitle: premiumProd?.subtitle || '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
+      price: premiumProd?.price || 7990,
+      description: premiumProd?.description || 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
+      features: premiumProd?.features || [
+        '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
+        '✨ Línea de tiempo de hitos con fotos y fechas',
+        '📍 Mapa interactivo del lugar donde se conocieron',
+        '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
       ],
+      badge: premiumProd?.badge,
       popular: false,
     },
   ];
