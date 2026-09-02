@@ -208,6 +208,7 @@ export default function Step4Preview({
   const [starsRevealed, setStarsRevealed] = useState<number[]>([]);
   const [heartUnited, setHeartUnited] = useState(false);
   const [isVoiceNotePlaying, setIsVoiceNotePlaying] = useState(false);
+  const [isPreviewLetterOpen, setIsPreviewLetterOpen] = useState(false);
 
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
@@ -1285,6 +1286,91 @@ export default function Step4Preview({
                             <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{timeElapsed.minutes}</span>
                             <span className="text-[7px] text-gray-500">Min</span>
                           </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  {/* 💌 CARTA INTERACTIVA CON SOBRE Y CHAPITA */}
+                  if (sec.type === 'carta') {
+                    const letterText = historyText || message || 'Eres lo más hermoso que me ha pasado en la vida. Cada instante a tu lado es un regalo que atesoro en mi corazón...';
+                    return (
+                      <div key={sec.id} className="py-2 space-y-3" style={{ fontFamily: activeFontFamily }}>
+                        <div 
+                          className="relative overflow-hidden rounded-3xl border transition-all duration-300 shadow-md"
+                          style={{
+                            borderColor: `${customColors.primary}40`,
+                            backgroundColor: isPreviewLetterOpen ? '#fffefc' : `${customColors.primary}08`
+                          }}
+                        >
+                          {!isPreviewLetterOpen ? (
+                            /* SOBRE CERRADO CON LA CHAPITA PULSANTE */
+                            <div 
+                              onClick={() => {
+                                setIsPreviewLetterOpen(true);
+                                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 }, colors: [customColors.primary, '#f43f5e', '#ffffff'] });
+                              }}
+                              className="p-5 flex flex-col items-center justify-center text-center space-y-3 cursor-pointer group hover:bg-white/60 transition"
+                            >
+                              {/* Ilustración de Sobre */}
+                              <div className="relative w-32 h-20 bg-gradient-to-b from-rose-100 to-rose-200/90 rounded-2xl border-2 border-rose-300 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                                {/* Solapa del Sobre */}
+                                <div className="absolute top-0 inset-x-0 h-10 bg-rose-200/95 rounded-b-xl border-b border-rose-300 shadow-2xs"></div>
+                                
+                                {/* 🎖️ LA CHAPITA / SELLO DE CERA INTERACTIVO */}
+                                <div 
+                                  className="relative z-10 px-3.5 py-1.5 rounded-full text-white font-bold text-[10px] shadow-xl flex items-center gap-1.5 animate-bounce group-hover:animate-none group-hover:scale-110 transition-transform"
+                                  style={{ backgroundColor: customColors.primary }}
+                                >
+                                  <span className="text-xs">✨</span>
+                                  <span>¡Aprieta aquí!</span>
+                                </div>
+                              </div>
+
+                              <div className="space-y-0.5">
+                                <h4 className="font-serif font-bold text-xs" style={{ color: customColors.primary, fontFamily: activeFontFamily }}>
+                                  💌 Tienes una Carta de Dedicatoria
+                                </h4>
+                                <p className="text-[9px] text-gray-500 font-light">
+                                  Toca la chapita del sobre para abrirla
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            /* CARTA ABIERTA EN PERGAMINO */
+                            <div className="p-5 text-left space-y-3 bg-gradient-to-b from-amber-50/40 via-white to-rose-50/30 animate-fade-in">
+                              <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: `${customColors.primary}25` }}>
+                                <span className="text-[9px] font-extrabold uppercase tracking-wider flex items-center gap-1.5" style={{ color: customColors.primary }}>
+                                  <Mail className="w-3.5 h-3.5" /> Carta de Dedicatoria
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsPreviewLetterOpen(false)}
+                                  className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition cursor-pointer"
+                                >
+                                  ✉️ Guardar en sobre
+                                </button>
+                              </div>
+
+                              <div className="space-y-2 py-1">
+                                <h3 className="font-serif font-extrabold text-sm" style={{ color: customColors.primary, fontFamily: activeFontFamily }}>
+                                  De mi corazón para ti ❤️
+                                </h3>
+                                <p className="text-xs font-serif italic leading-relaxed whitespace-pre-line text-gray-800 font-light" style={{ fontFamily: activeFontFamily }}>
+                                  {letterText}
+                                </p>
+                              </div>
+
+                              <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: `${customColors.primary}15` }}>
+                                <span className="text-[8px] font-mono text-gray-400">
+                                  📅 {specialDate || 'Para Siempre'}
+                                </span>
+                                <span className="text-[9px] font-serif font-bold italic" style={{ color: customColors.primary }}>
+                                  De: {userName || 'Alguien que te ama'}
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );

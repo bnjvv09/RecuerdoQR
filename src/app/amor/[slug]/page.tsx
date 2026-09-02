@@ -136,6 +136,7 @@ export default function AmorExperiencePage() {
   const [secretUnlocked, setSecretUnlocked] = useState(false);
   const [secretInputPin, setSecretInputPin] = useState('');
   const [surpriseRevealed, setSurpriseRevealed] = useState(false);
+  const [isCartaEnvelopeOpen, setIsCartaEnvelopeOpen] = useState(false);
 
   // Background Audio State (Direct native audio player)
   const [audioFileUrl, setAudioFileUrl] = useState<string | null>(null);
@@ -1527,15 +1528,85 @@ export default function AmorExperiencePage() {
               if (sec.type === 'portada') return null; // Already displayed in gate steps
 
               if (sec.type === 'carta') {
-                const cartaText = sec.content?.text || sec.content?.message || experience.history_text || experience.message || '';
+                const cartaText = sec.content?.text || sec.content?.message || experience.history_text || experience.message || 'Eres lo más hermoso que me ha pasado en la vida. Cada instante a tu lado es un regalo que atesoro en mi corazón...';
                 return (
-                  <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-left space-y-3 ${style.cardClass}`}>
-                    <h3 className={`font-serif font-extrabold text-sm border-b pb-1.5 ${style.borderColor} ${style.textColor}`}>
-                      {sec.title || (themeId === 'love-letter' ? 'Carta de Amor 💌' : 'Nuestra Historia')}
-                    </h3>
-                    <p className="font-serif italic text-xs leading-relaxed text-gray-700 whitespace-pre-line font-light">
-                      {cartaText}
-                    </p>
+                  <div key={sec.id} className="py-2 space-y-3">
+                    <div 
+                      className="relative overflow-hidden rounded-3xl border transition-all duration-300 shadow-md"
+                      style={{
+                        borderColor: `${primaryColor}40`,
+                        backgroundColor: isCartaEnvelopeOpen ? '#fffefc' : `${primaryColor}08`
+                      }}
+                    >
+                      {!isCartaEnvelopeOpen ? (
+                        /* SOBRE CERRADO CON LA CHAPITA PULSANTE */
+                        <div 
+                          onClick={() => {
+                            setIsCartaEnvelopeOpen(true);
+                            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 }, colors: [primaryColor, '#f43f5e', '#ffffff'] });
+                          }}
+                          className="p-5 flex flex-col items-center justify-center text-center space-y-3 cursor-pointer group hover:bg-white/60 transition"
+                        >
+                          {/* Ilustración de Sobre */}
+                          <div className="relative w-32 h-20 bg-gradient-to-b from-rose-100 to-rose-200/90 rounded-2xl border-2 border-rose-300 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                            {/* Solapa del Sobre */}
+                            <div className="absolute top-0 inset-x-0 h-10 bg-rose-200/95 rounded-b-xl border-b border-rose-300 shadow-2xs"></div>
+                            
+                            {/* 🎖️ LA CHAPITA / SELLO DE CERA INTERACTIVO */}
+                            <div 
+                              className="relative z-10 px-3.5 py-1.5 rounded-full text-white font-bold text-[10px] shadow-xl flex items-center gap-1.5 animate-bounce group-hover:animate-none group-hover:scale-110 transition-transform"
+                              style={{ backgroundColor: primaryColor }}
+                            >
+                              <span className="text-xs">✨</span>
+                              <span>¡Aprieta aquí!</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-0.5">
+                            <h4 className="font-serif font-bold text-xs" style={{ color: primaryColor }}>
+                              💌 {sec.title || (themeId === 'love-letter' ? 'Carta de Amor Secreta' : 'Tienes una Carta de Dedicatoria')}
+                            </h4>
+                            <p className="text-[9px] text-gray-500 font-light">
+                              Toca la chapita del sobre para abrirla
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        /* CARTA ABIERTA EN PERGAMINO */
+                        <div className="p-5 text-left space-y-3 bg-gradient-to-b from-amber-50/40 via-white to-rose-50/30 animate-fade-in">
+                          <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: `${primaryColor}25` }}>
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider flex items-center gap-1.5" style={{ color: primaryColor }}>
+                              <Mail className="w-3.5 h-3.5" /> {sec.title || 'Carta de Dedicatoria'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setIsCartaEnvelopeOpen(false)}
+                              className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition cursor-pointer"
+                            >
+                              ✉️ Guardar en sobre
+                            </button>
+                          </div>
+
+                          <div className="space-y-2 py-1">
+                            <h3 className="font-serif font-extrabold text-sm" style={{ color: primaryColor }}>
+                              De mi corazón para ti ❤️
+                            </h3>
+                            <p className="text-xs font-serif italic leading-relaxed whitespace-pre-line text-gray-800 font-light">
+                              {cartaText}
+                            </p>
+                          </div>
+
+                          <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: `${primaryColor}15` }}>
+                            <span className="text-[8px] font-mono text-gray-400">
+                              📅 {experience.special_date || 'Para Siempre'}
+                            </span>
+                            <span className="text-[9px] font-serif font-bold italic" style={{ color: primaryColor }}>
+                              De: {experience.user_name || 'Alguien que te ama'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               }
