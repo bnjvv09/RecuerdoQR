@@ -36,19 +36,19 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🎂 Torta virtual interactiva con velas para soplar',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🎈 Globos flotantes interactivos para reventar sorpresas',
         '🎵 Canción de Cumpleaños / Mañanitas de fondo (YouTube)',
         '📸 Hasta 20 Fotos en galería (6 estilos)',
-        '✨ Tarjeta Digital con 145 Personajes Temáticos a elección',
         '💌 Mensaje largo y carta de dedicatoria'
       ],
       premium: [
         '🎂 Torta interactiva + 🎈 Globos sorpresa + 🎵 Música',
+        '✨ Incluye los 145 Personajes Temáticos',
         '🎬 Video sorpresa de YouTube dedicado (saludos de amigos)',
         '✨ Línea de tiempo de fotos de su vida y mejores momentos',
         '📸 Hasta 35 Fotos en HD (combina 2 estilos juntos)',
-        '🔒 Rincón Secreto con PIN de 4 dígitos',
-        '👑 Tarjeta de Regalo Digital Premium con personajes'
+        '🔒 Rincón Secreto con PIN de 4 dígitos'
       ]
     }
   },
@@ -67,14 +67,15 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '💍 Pregunta interactiva con botón "¡Sí, Acepto! ❤️"',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🏃 Botón travieso "No" que se escapa si intentan tocarlo',
         '🎵 Canción romántica de fondo (YouTube)',
         '💌 Carta de declaración interactiva',
-        '📸 Hasta 20 Fotos (6 estilos de galería)',
-        '✨ Tarjeta Digital con 145 personajes temáticos'
+        '📸 Hasta 20 Fotos (6 estilos de galería)'
       ],
       premium: [
         '💍 Pregunta + Botón escapista + 🎵 Música + 💌 Carta',
+        '✨ Incluye los 145 Personajes Temáticos',
         '📜 Certificado oficial de pareja listo para descargar',
         '✨ Línea de tiempo de cómo se conocieron con fotos',
         '📸 Hasta 35 Fotos en HD (combina 2 estilos)',
@@ -96,13 +97,15 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '💍 Pregunta de propuesta con botón "¡Sí, Acepto!"',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🏃 Botón travieso "No" que se escapa por la pantalla',
         '🎵 Música solemne y romántica de fondo',
         '💌 Carta de amor para toda la vida',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
+        '📸 Hasta 20 Fotos en HD (6 estilos)'
       ],
       premium: [
         '💍 Pregunta + Botón escapista + Música + Carta',
+        '✨ Incluye los 145 Personajes Temáticos',
         '💎 Caja de anillo 3D animada que se abre al tocarla',
         '📜 Certificado oficial de compromiso descargable',
         '📸 Hasta 35 Fotos + Video de su historia de amor'
@@ -123,13 +126,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🍼 Tarjeta Rasca y Gana interactiva',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '📊 Encuesta familiar en vivo: ¿Crees que es Niño 💙 o Niña 💖?',
         '🎵 Música tierna y emotiva de fondo',
-        '📸 Hasta 20 Fotos de la dulce espera',
-        '✨ Tarjeta Digital con personajes (Disney, etc.)'
+        '📸 Hasta 20 Fotos de la dulce espera'
       ],
       premium: [
         '🍼 Rasca y Gana + 📊 Encuesta familiar + 🎵 Música',
+        '✨ Incluye los 145 Personajes Temáticos',
         '👣 Contador de semanas al parto con tamaño del bebé',
         '🎬 Video de la reacción de los padres',
         '📸 Hasta 35 Fotos de recuerdos familiares'
@@ -150,12 +154,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🎁 Caja de regalo 3D que se abre con destellos',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🎟️ Ticket Dorado VIP personalizado con código de barras',
         '🎵 Música de fondo misteriosa o festiva',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
+        '📸 Hasta 20 Fotos en HD (6 estilos)'
       ],
       premium: [
         '🎁 Caja + Ticket Dorado VIP + 🎵 Música',
+        '✨ Incluye los 145 Personajes Temáticos',
         '📍 Mapa interactivo con la ubicación secreta de la sorpresa',
         '🔒 Rincón con PIN secreto para pistas adicionales',
         '📸 Hasta 35 Fotos en HD'
@@ -176,12 +182,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '💌 Sobre con sello de cera + Pergamino',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🖋️ Efecto de escritura en vivo (las letras se van escribiendo)',
         '🎵 Música acústica de piano/guitarra de fondo',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '💌 Sobre + Pergamino + Escritura en vivo + Música',
+        '✨ Incluye los 145 Personajes Temáticos',
         '🔒 Rincón secreto con PIN para una confesión oculta',
         '✨ Línea de tiempo de los capítulos de su amor',
         '📸 Hasta 35 Fotos en HD'
@@ -202,13 +210,15 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '⏱️ Contador de amor en vivo + Corazones',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
         '🎵 Canción especial de la pareja de fondo (YouTube)',
         '💌 Carta de aniversario interactiva',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
+        '✨ Incluye los 145 Personajes Temáticos',
         '✨ Línea de tiempo de hitos con fotos y fechas',
         '📍 Mapa interactivo del lugar donde se conocieron',
         '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
@@ -229,12 +239,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🌹 Lluvia de rosas + Contador de amor',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🎵 Canción romántica de San Valentín de fondo',
         '💌 Carta de amor apasionada',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '🌹 Todo lo de San Valentín + 🎵 Música + 💌 Carta',
+        '✨ Incluye los 145 Personajes Temáticos',
         '🎁 Caja sorpresa interactiva con cupón de cena',
         '✨ Línea de tiempo con sus fotos más hermosas',
         '📸 Hasta 35 Fotos en HD'
@@ -255,12 +267,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🎆 Fuegos artificiales + Mensaje especial',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🎵 Música de celebración o triunfo de fondo',
         '📜 Diploma digital de honor interactivo',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con 145 personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '🎆 Fuegos artificiales + Música + Diploma',
+        '✨ Incluye los 145 Personajes Temáticos',
         '🎬 Video de saludos de amigos y familiares',
         '✨ Línea de tiempo del camino al éxito',
         '📸 Hasta 35 Fotos en HD'
@@ -280,11 +294,13 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🌟 Mensaje de gratitud + 🎵 Música relajante de fondo',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '💌 Carta de agradecimiento extendida',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '🌟 Carta de gratitud + 🎵 Música + 🎬 Video dedicado',
+        '✨ Incluye los 145 Personajes Temáticos',
         '✨ Línea de tiempo de momentos de apoyo mutuo',
         '📸 Hasta 35 Fotos en HD'
       ]
@@ -304,12 +320,14 @@ export const THEME_HIGHLIGHTS: Record<string, {
       ],
       medium: [
         '🕊️ Mensaje + Botón "¿Hacemos las paces?"',
+        '✨ Catálogo de 145 Personajes Temáticos a elección',
         '🎵 Canción suave y reconfortante de fondo',
         '💌 Carta abierta del corazón',
-        '📸 Hasta 20 Fotos + Tarjeta Digital con personajes'
+        '📸 Hasta 20 Fotos en HD'
       ],
       premium: [
         '🕊️ Todo lo anterior + 🎵 Música + 💌 Carta',
+        '✨ Incluye los 145 Personajes Temáticos',
         '🔒 Rincón con PIN secreto con promesa de futuro',
         '📸 Hasta 35 Fotos en HD'
       ]
