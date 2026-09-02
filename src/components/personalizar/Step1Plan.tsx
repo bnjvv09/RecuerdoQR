@@ -103,12 +103,7 @@ export default function Step1Plan({
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
                     <h3 className="font-serif font-bold text-lg text-gray-900">{plan.name}</h3>
-                    <p className="text-xs text-[#a21232] font-bold leading-snug">{plan.subtitle}</p>
-                    {plan.id === 'medium' && (
-                      <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100/80 border border-amber-200 text-amber-900 text-[10px] font-extrabold rounded-full mt-1 shadow-2xs">
-                        <span>⭐ Incluye 145 Personajes Temáticos</span>
-                      </div>
-                    )}
+                    <p className="text-xs text-[#a21232] font-semibold leading-snug">{plan.subtitle}</p>
                   </div>
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center border shrink-0 mt-0.5 transition ${
@@ -133,22 +128,15 @@ export default function Step1Plan({
                 </p>
 
                 <ul className="space-y-2 pt-2">
-                  {plan.features.map((f, fIdx) => {
-                    const is145 = f.includes('145 Personajes');
-                    return (
-                      <li 
-                        key={fIdx} 
-                        className={`text-xs flex items-start gap-2 leading-snug rounded-xl transition-all ${
-                          is145 
-                            ? 'font-bold text-[#a21232] bg-rose-50 border border-rose-200 p-2 shadow-2xs' 
-                            : 'text-gray-700 font-normal py-0.5'
-                        }`}
-                      >
-                        <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${is145 ? 'text-[#a21232]' : 'text-emerald-600'}`} />
-                        <span>{f}</span>
-                      </li>
-                    );
-                  })}
+                  {plan.features.map((f, fIdx) => (
+                    <li 
+                      key={fIdx} 
+                      className="text-xs text-gray-700 flex items-start gap-2 leading-snug py-0.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
