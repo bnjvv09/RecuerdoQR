@@ -271,9 +271,16 @@ export default function AmorExperiencePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-rose-50/20 flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin"></div>
-        <p className="mt-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Cargando recuerdo...</p>
+      <div className="min-h-screen bg-[#faf8f5] flex flex-col items-center justify-center p-4 text-center select-none">
+        <div className="w-16 h-16 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-[#a21232] animate-pulse shadow-lg shadow-rose-950/5 mb-4">
+          <Heart className="w-8 h-8 fill-[#a21232] animate-bounce" />
+        </div>
+        <h2 className="font-serif text-base font-bold text-gray-800">
+          Abriendo tu sorpresa de amor...
+        </h2>
+        <p className="mt-1 text-xs text-gray-500 font-light max-w-xs">
+          Sintonizando la música y preparando tus recuerdos especiales ✨
+        </p>
       </div>
     );
   }
@@ -1837,14 +1844,24 @@ export default function AmorExperiencePage() {
                             onChange={(e) => {
                               const val = e.target.value;
                               setSecretInputPin(val);
-                              if (val === secretCode) {
+                              if (val.trim() === secretCode.trim()) {
                                 setSecretUnlocked(true);
+                                confetti({
+                                  particleCount: 80,
+                                  spread: 70,
+                                  colors: ['#f59e0b', '#fbbf24', '#ffffff', '#a21232']
+                                });
                               }
                             }}
                             placeholder="PIN..."
                             className="w-32 px-3 py-2 text-center text-sm font-mono tracking-widest border border-gray-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-amber-400"
                           />
                         </div>
+                        {secretInputPin.length >= 4 && secretInputPin.trim() !== secretCode.trim() && (
+                          <p className="text-[10px] text-red-500 font-medium animate-pulse">
+                            PIN incorrecto, intenta de nuevo 💡
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <motion.div

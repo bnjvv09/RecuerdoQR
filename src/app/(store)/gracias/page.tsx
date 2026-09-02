@@ -13,8 +13,11 @@ import {
   Printer, 
   MessageCircle, 
   Sparkles,
-  Share2
+  Share2,
+  Copy,
+  Check
 } from 'lucide-react';
+import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 
 function GraciasContent() {
@@ -89,8 +92,22 @@ function GraciasContent() {
     document.body.removeChild(link);
   };
 
+  const [copied, setCopied] = useState(false);
+
   const handlePrintCard = () => {
     window.print();
+  };
+
+  const handleCopyLink = () => {
+    if (!experience) return;
+    const url = `${appUrl}/amor/${experience.slug}`;
+    navigator.clipboard.writeText(url);
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+    setCopied(true);
+    toast.success('¡Enlace de amor copiado al portapapeles! 📋');
+    setTimeout(() => setCopied(false), 3000);
   };
 
   if (loading) {
@@ -317,6 +334,24 @@ function GraciasContent() {
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Descargar solo el QR (PNG HD)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="w-full py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-gray-200 transition active:scale-98 cursor-pointer"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                      <span className="text-emerald-700">¡Copiado con Éxito!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-gray-500" />
+                      <span>Copiar Enlace Directo</span>
+                    </>
+                  )}
                 </button>
 
                 <a

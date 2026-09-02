@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product, Theme, getProducts, getThemes } from '@/lib/db';
 import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
 import { PhotoStyle } from '@/types/gallery';
 import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
 import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
+import { compressImage } from '@/lib/imageCompression';
 import { toast } from 'sonner';
 
 function getDefaultSectionsForPlan(plan: string): ExperienceSection[] {
@@ -222,6 +223,68 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   ]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [hasDraft, setHasDraft] = useState(false);
+
+  // Check saved draft on mount
+  useEffect(() => {
+    try {
+      const savedDraftStr = localStorage.getItem('amor_qr_user_draft');
+      if (savedDraftStr) {
+        const parsed = JSON.parse(savedDraftStr);
+        if (parsed && (parsed.partnerName || parsed.title || parsed.message || parsed.customerName)) {
+          setHasDraft(true);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const restoreDraft = useCallback(() => {
+    try {
+      const savedDraftStr = localStorage.getItem('amor_qr_user_draft');
+      if (!savedDraftStr) return;
+      const d = JSON.parse(savedDraftStr);
+      if (d.partnerName) setPartnerName(d.partnerName);
+      if (d.userName) setUserName(d.userName);
+      if (d.title) setTitle(d.title);
+      if (d.message) setMessage(d.message);
+      if (d.historyText) setHistoryText(d.historyText);
+      if (d.specialDate) setSpecialDate(d.specialDate);
+      if (d.songUrl) setSongUrl(d.songUrl);
+      if (d.customerName) setCustomerName(d.customerName);
+      if (d.customerEmail) setCustomerEmail(d.customerEmail);
+      if (d.customerPhone) setCustomerPhone(d.customerPhone);
+      if (d.deliveryAddress) setDeliveryAddress(d.deliveryAddress);
+      if (d.customFont) setCustomFont(d.customFont);
+      if (d.selectedPlan) setSelectedPlanState(d.selectedPlan);
+      if (d.selectedTheme) setSelectedTheme(d.selectedTheme);
+      if (d.cardPalette) setCardPalette(d.cardPalette);
+      if (d.cardTitle) setCardTitle(d.cardTitle);
+      if (d.cardFrom) setCardFrom(d.cardFrom);
+      if (d.cardMessage) setCardMessage(d.cardMessage);
+      if (d.birthdayWishMessage) setBirthdayWishMessage(d.birthdayWishMessage);
+      if (d.proposalQuestion) setProposalQuestion(d.proposalQuestion);
+      if (d.proposalYesText) setProposalYesText(d.proposalYesText);
+      if (d.secretPasscode) setSecretPasscode(d.secretPasscode);
+      if (d.secretHint) setSecretHint(d.secretHint);
+      if (d.secretMessage) setSecretMessage(d.secretMessage);
+      setHasDraft(false);
+      toast.success('¡Borrador recuperado con éxito! ✨');
+    } catch {
+      toast.error('No se pudo recuperar el borrador');
+    }
+  }, []);
+
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem('amor_qr_user_draft');
+      setHasDraft(false);
+      toast.info('Borrador descartado');
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Load products & themes
   useEffect(() => {
@@ -236,6 +299,72 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
     loadData();
   }, []);
+
+  // Debounced auto-save
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (partnerName || userName || title || message || customerName) {
+        try {
+          const draftPayload = {
+            partnerName,
+            userName,
+            title,
+            message,
+            historyText,
+            specialDate,
+            songUrl,
+            customerName,
+            customerEmail,
+            customerPhone,
+            deliveryAddress,
+            customFont,
+            selectedPlan,
+            selectedTheme,
+            cardPalette,
+            cardTitle,
+            cardFrom,
+            cardMessage,
+            birthdayWishMessage,
+            proposalQuestion,
+            proposalYesText,
+            secretPasscode,
+            secretHint,
+            secretMessage,
+          };
+          localStorage.setItem('amor_qr_user_draft', JSON.stringify(draftPayload));
+        } catch {
+          // ignore
+        }
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [
+    partnerName,
+    userName,
+    title,
+    message,
+    historyText,
+    specialDate,
+    songUrl,
+    customerName,
+    customerEmail,
+    customerPhone,
+    deliveryAddress,
+    customFont,
+    selectedPlan,
+    selectedTheme,
+    cardPalette,
+    cardTitle,
+    cardFrom,
+    cardMessage,
+    birthdayWishMessage,
+    proposalQuestion,
+    proposalYesText,
+    secretPasscode,
+    secretHint,
+    secretMessage,
+  ]);
 
   // Gallery limits calculation
   const galleryCount = sections.filter(s => s.type === 'galeria').length;
@@ -310,7 +439,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   };
 
   // Primary Photo Handlers
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentCount = photos.length;
     const availableSlots = maxPrimaryPhotos - currentCount;
 
@@ -320,7 +449,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
 
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     const fileList = Array.from(files);
     if (fileList.length > availableSlots) {
@@ -328,14 +457,40 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
 
     const toProcess = fileList.slice(0, availableSlots);
-    const newItems: PhotoInput[] = toProcess.map((f) => ({
-      file: f,
-      previewUrl: URL.createObjectURL(f),
-      caption: '',
-    }));
+    const toastId = toast.loading('Optimizando fotos para máxima velocidad...');
 
-    setPhotos([...photos, ...newItems]);
-    toast.success(`Se agregaron ${newItems.length} foto(s).`);
+    try {
+      const compressedItems: PhotoInput[] = await Promise.all(
+        toProcess.map(async (f) => {
+          try {
+            const dataUrl = await compressImage(f, 1600, 1600, 0.85);
+            return {
+              file: f,
+              previewUrl: dataUrl,
+              caption: '',
+            };
+          } catch {
+            return {
+              file: f,
+              previewUrl: URL.createObjectURL(f),
+              caption: '',
+            };
+          }
+        })
+      );
+
+      setPhotos([...photos, ...compressedItems]);
+      toast.dismiss(toastId);
+      toast.success(`Se agregaron ${compressedItems.length} foto(s) en alta velocidad.`);
+    } catch (err) {
+      toast.dismiss(toastId);
+      const fallbackItems: PhotoInput[] = toProcess.map((f) => ({
+        file: f,
+        previewUrl: URL.createObjectURL(f),
+        caption: '',
+      }));
+      setPhotos([...photos, ...fallbackItems]);
+    }
   };
 
   const removePhoto = (idx: number) => {
@@ -349,7 +504,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   };
 
   // Secondary Photo Handlers (for Premium 2nd Gallery)
-  const handleSecondaryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSecondaryPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentCount = secondaryPhotos.length;
     const availableSlots = maxSecondaryPhotos - currentCount;
 
@@ -359,7 +514,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
 
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     const fileList = Array.from(files);
     if (fileList.length > availableSlots) {
@@ -367,14 +522,40 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
 
     const toProcess = fileList.slice(0, availableSlots);
-    const newItems: PhotoInput[] = toProcess.map((f) => ({
-      file: f,
-      previewUrl: URL.createObjectURL(f),
-      caption: '',
-    }));
+    const toastId = toast.loading('Optimizando fotos de 2da galería...');
 
-    setSecondaryPhotos([...secondaryPhotos, ...newItems]);
-    toast.success(`Se agregaron ${newItems.length} foto(s) a la Segunda Galería.`);
+    try {
+      const compressedItems: PhotoInput[] = await Promise.all(
+        toProcess.map(async (f) => {
+          try {
+            const dataUrl = await compressImage(f, 1600, 1600, 0.85);
+            return {
+              file: f,
+              previewUrl: dataUrl,
+              caption: '',
+            };
+          } catch {
+            return {
+              file: f,
+              previewUrl: URL.createObjectURL(f),
+              caption: '',
+            };
+          }
+        })
+      );
+
+      setSecondaryPhotos([...secondaryPhotos, ...compressedItems]);
+      toast.dismiss(toastId);
+      toast.success(`Se agregaron ${compressedItems.length} foto(s) a la Segunda Galería.`);
+    } catch {
+      toast.dismiss(toastId);
+      const fallbackItems: PhotoInput[] = toProcess.map((f) => ({
+        file: f,
+        previewUrl: URL.createObjectURL(f),
+        caption: '',
+      }));
+      setSecondaryPhotos([...secondaryPhotos, ...fallbackItems]);
+    }
   };
 
   const removeSecondaryPhoto = (idx: number) => {
@@ -410,14 +591,22 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     setMilestones(next);
   };
 
-  const handleMilestoneImage = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMilestoneImage = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const next = [...milestones];
-      next[idx].image = file;
-      next[idx].previewUrl = URL.createObjectURL(file);
-      setMilestones(next);
-      toast.success('Foto del momento cargada con éxito');
+      try {
+        const compressedUrl = await compressImage(file, 1200, 1200, 0.85);
+        const next = [...milestones];
+        next[idx].image = file;
+        next[idx].previewUrl = compressedUrl;
+        setMilestones(next);
+        toast.success('Foto de momento agregada');
+      } catch {
+        const next = [...milestones];
+        next[idx].image = file;
+        next[idx].previewUrl = URL.createObjectURL(file);
+        setMilestones(next);
+      }
     }
   };
 
@@ -650,6 +839,9 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     removeMilestone,
     updateMilestone,
     handleMilestoneImage,
+    hasDraft,
+    restoreDraft,
+    clearDraft,
     currentProduct,
     totalPrice,
     validateStep2,

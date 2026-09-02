@@ -254,6 +254,39 @@ function PersonalizarContent() {
   return (
     <div className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
       
+      {/* Draft Recovery Banner */}
+      {form.hasDraft && (
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm animate-fade-in text-left">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">✨</span>
+            <div>
+              <h4 className="text-xs font-bold text-rose-950">
+                Tienes un recuerdo en progreso guardado
+              </h4>
+              <p className="text-[11px] text-rose-800 font-light">
+                Puedes restaurar tus textos, dedicatorias y fotos anteriores con un solo clic.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={form.clearDraft}
+              className="px-3 py-1.5 text-rose-700 hover:bg-rose-100 rounded-xl text-xs font-medium transition cursor-pointer"
+            >
+              Descartar
+            </button>
+            <button
+              type="button"
+              onClick={form.restoreDraft}
+              className="px-4 py-1.5 bg-[#a21232] hover:bg-[#850e28] text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer"
+            >
+              Restaurar Borrador
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Stepper Navigation */}
       <div className="bg-white rounded-3xl border border-gray-200 p-3 sm:p-4 shadow-xs">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">

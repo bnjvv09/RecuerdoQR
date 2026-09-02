@@ -121,7 +121,10 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
             type="text"
             placeholder="Buscar por cliente, email o ID..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full pl-9 pr-3 py-1.5 border border-gray-250 rounded-xl text-xs focus:outline-none focus:border-[#a21232]"
           />
         </div>
@@ -138,7 +141,10 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
             <button
               key={f.id}
               type="button"
-              onClick={() => setStatusFilter(f.id)}
+              onClick={() => {
+                setStatusFilter(f.id);
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1 rounded-xl text-[10px] font-bold whitespace-nowrap transition ${
                 statusFilter === f.id
                   ? 'bg-[#a21232] text-white shadow-xs'
