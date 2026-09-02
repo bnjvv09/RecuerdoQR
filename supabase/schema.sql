@@ -8,9 +8,15 @@ CREATE TABLE IF NOT EXISTS products (
   name TEXT NOT NULL,
   price NUMERIC NOT NULL,
   description TEXT NOT NULL,
+  subtitle TEXT,
+  badge TEXT,
   features TEXT[] NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Si la tabla ya existe, agregar las columnas
+ALTER TABLE products ADD COLUMN IF NOT EXISTS subtitle TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS badge TEXT;
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 
