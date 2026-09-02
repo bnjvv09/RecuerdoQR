@@ -40,24 +40,24 @@ export async function POST(request: Request) {
 
     const isMock = !supabaseUrl || !supabaseServiceRoleKey || supabaseUrl.includes('placeholder-project');
 
-    // Generate unique slug if not provided
-    let finalSlug = (slug || '')
+    // Generate base slug
+    let baseSlug = (slug || '')
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
 
-    if (!finalSlug) {
+    if (!baseSlug) {
       const cleanPartner = partnerName.toLowerCase().replace(/[^a-z0-9]/g, '');
       const cleanUser = userName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      finalSlug = `${cleanPartner}-${cleanUser}-${Math.floor(100 + Math.random() * 900)}`;
+      baseSlug = `${cleanPartner}-${cleanUser}`;
     }
 
+    let finalSlug = baseSlug;
+
     const orderId = typeof crypto !== 'undefined' && crypto.randomUUID 
-      ? crypto.randomUUID 
-        ? crypto.randomUUID() 
-        : Math.random().toString(36).substring(2, 15)
+      ? crypto.randomUUID() 
       : Math.random().toString(36).substring(2, 15);
 
     const experienceId = typeof crypto !== 'undefined' && crypto.randomUUID 
@@ -77,6 +77,24 @@ export async function POST(request: Request) {
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
         auth: { persistSession: false }
       });
+
+      // 0. Ensure unique slug (ej: camila-matias, camila-matias-2, camila-matias-3...)
+      let uniqueSlug = baseSlug;
+      let counter = 1;
+      while (true) {
+        const { data: existingExp } = await supabaseAdmin
+          .from('experiences')
+          .select('id')
+          .eq('slug', uniqueSlug)
+          .maybeSingle();
+
+        if (!existingExp) {
+          break;
+        }
+        counter++;
+        uniqueSlug = `${baseSlug}-${counter}`;
+      }
+      finalSlug = uniqueSlug;
 
       // 1. Insert Order
       const { data: orderData, error: orderError } = await supabaseAdmin

@@ -541,6 +541,7 @@ export default function Step2Personalizacion({
   const activeTypes = sections.map(s => s.type);
 
   const ALL_POSSIBLE_SECTIONS = [
+    { type: 'musica' as const, label: '🎵 Música de Fondo Romántica', planRequired: 'medium', desc: 'Canción oficial de fondo o YouTube' },
     { type: 'carta' as const, label: '💌 Carta de Dedicatoria', planRequired: 'basic', desc: 'Espacio para escribir tus sentimientos' },
     { type: 'contador' as const, label: '⏱️ Contador de Tiempo', planRequired: 'basic', desc: 'Años, días y segundos juntos' },
     { type: 'tematica' as const, label: '🎁 Sorpresa Temática', planRequired: 'basic', desc: 'Rasca y gana, torta o ticket' },

@@ -13,37 +13,37 @@ import { toast } from 'sonner';
 function getDefaultSectionsForPlan(plan: string): ExperienceSection[] {
   if (plan === 'basic') {
     return [
-      { id: 'sec-portada', type: 'portada' },
-      { id: 'sec-tematica', type: 'tematica' },
-      { id: 'sec-contador', type: 'contador' },
-      { id: 'sec-carta', type: 'carta' },
-      { id: 'sec-galeria', type: 'galeria' },
-      { id: 'sec-corazones', type: 'corazones' }
+      { id: 'sec-portada', type: 'portada', content: {} },
+      { id: 'sec-tematica', type: 'tematica', content: {} },
+      { id: 'sec-contador', type: 'contador', content: {} },
+      { id: 'sec-carta', type: 'carta', content: {} },
+      { id: 'sec-galeria', type: 'galeria', content: {} },
+      { id: 'sec-corazones', type: 'corazones', content: {} }
     ];
   }
   if (plan === 'medium' || plan === 'card') {
     return [
-      { id: 'sec-portada', type: 'portada' },
-      { id: 'sec-musica', type: 'musica' },
-      { id: 'sec-tematica', type: 'tematica' },
-      { id: 'sec-contador', type: 'contador' },
-      { id: 'sec-carta', type: 'carta' },
-      { id: 'sec-galeria', type: 'galeria' },
-      { id: 'sec-corazones', type: 'corazones' }
+      { id: 'sec-portada', type: 'portada', content: {} },
+      { id: 'sec-musica', type: 'musica', content: {} },
+      { id: 'sec-tematica', type: 'tematica', content: {} },
+      { id: 'sec-contador', type: 'contador', content: {} },
+      { id: 'sec-carta', type: 'carta', content: {} },
+      { id: 'sec-galeria', type: 'galeria', content: {} },
+      { id: 'sec-corazones', type: 'corazones', content: {} }
     ];
   }
   return [
-    { id: 'sec-portada', type: 'portada' },
-    { id: 'sec-musica', type: 'musica' },
-    { id: 'sec-tematica', type: 'tematica' },
-    { id: 'sec-contador', type: 'contador' },
-    { id: 'sec-carta', type: 'carta' },
-    { id: 'sec-audio', type: 'audio' },
-    { id: 'sec-galeria', type: 'galeria' },
-    { id: 'sec-timeline', type: 'timeline' },
-    { id: 'sec-video', type: 'video' },
-    { id: 'sec-secreto', type: 'secreto' },
-    { id: 'sec-corazones', type: 'corazones' }
+    { id: 'sec-portada', type: 'portada', content: {} },
+    { id: 'sec-musica', type: 'musica', content: {} },
+    { id: 'sec-tematica', type: 'tematica', content: {} },
+    { id: 'sec-contador', type: 'contador', content: {} },
+    { id: 'sec-carta', type: 'carta', content: {} },
+    { id: 'sec-audio', type: 'audio', content: {} },
+    { id: 'sec-galeria', type: 'galeria', content: {} },
+    { id: 'sec-timeline', type: 'timeline', content: {} },
+    { id: 'sec-video', type: 'video', content: {} },
+    { id: 'sec-secreto', type: 'secreto', content: {} },
+    { id: 'sec-corazones', type: 'corazones', content: {} }
   ];
 }
 
@@ -299,6 +299,22 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     }
     loadData();
   }, []);
+
+  // Ensure musica section is always active and positioned for medium and premium plans
+  useEffect(() => {
+    if (selectedPlan === 'medium' || selectedPlan === 'premium' || selectedPlan === 'card') {
+      setSections(prev => {
+        if (!prev.some(s => s.type === 'musica')) {
+          const portadaIdx = prev.findIndex(s => s.type === 'portada');
+          const insertIdx = portadaIdx !== -1 ? portadaIdx + 1 : 0;
+          const next = [...prev];
+          next.splice(insertIdx, 0, { id: 'sec-musica', type: 'musica', content: { url: songUrl || '/audio/full/dicelo.m4a' } });
+          return next;
+        }
+        return prev;
+      });
+    }
+  }, [selectedPlan, songUrl]);
 
   // Debounced auto-save
   useEffect(() => {

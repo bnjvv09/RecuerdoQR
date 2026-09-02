@@ -797,12 +797,30 @@ export async function createExperience(
     return newExperience;
   }
 
+  // 0. Ensure unique slug in database (ej: camila-matias, camila-matias-2, camila-matias-3...)
+  let uniqueSlug = (expData.slug || 'recuerdo').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  let counter = 1;
+  const baseSlug = uniqueSlug;
+  while (true) {
+    const { data: existingExp } = await supabase
+      .from('experiences')
+      .select('id')
+      .eq('slug', uniqueSlug)
+      .maybeSingle();
+
+    if (!existingExp) {
+      break;
+    }
+    counter++;
+    uniqueSlug = `${baseSlug}-${counter}`;
+  }
+
   // 1. Insert experience
   const { data: expResult, error: expError } = await supabase
     .from('experiences')
     .insert([{
       order_id: expData.order_id || null,
-      slug: expData.slug,
+      slug: uniqueSlug,
       title: expData.title,
       partner_name: expData.partner_name,
       user_name: expData.user_name,
