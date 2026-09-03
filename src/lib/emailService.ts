@@ -1,4 +1,5 @@
 // src/lib/emailService.ts
+import nodemailer from 'nodemailer';
 
 export interface OrderEmailData {
   orderId: string;
@@ -13,6 +14,22 @@ export interface OrderEmailData {
   theme?: string;
   couponCode?: string;
   specialDate?: string;
+}
+
+function getGmailTransporter() {
+  const user = process.env.GMAIL_USER || 'somosrecuerdosqr@gmail.com';
+  const pass = (process.env.GMAIL_APP_PASSWORD || 'khilsnssdjzucdtg').replace(/\s+/g, '');
+
+  if (user && pass) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user,
+        pass,
+      },
+    });
+  }
+  return null;
 }
 
 /**
@@ -101,6 +118,24 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
     </body>
     </html>
   `;
+
+  // 1. Enviar con Gmail Oficial auténtico (Llega directo a Bandeja Principal sin Spam)
+  const gmailTransporter = getGmailTransporter();
+  if (gmailTransporter) {
+    try {
+      const fromUser = process.env.GMAIL_USER || 'somosrecuerdosqr@gmail.com';
+      const info = await gmailTransporter.sendMail({
+        from: `"RecuerdoQR Oficial ❤️" <${fromUser}>`,
+        to: data.customerEmail,
+        subject: `¡Tu RecuerdoQR para ${data.partnerName} está listo! ❤️✨`,
+        html: htmlContent,
+      });
+      console.log(`[Gmail] Customer confirmation email sent to ${data.customerEmail}: ${info.messageId}`);
+      return { success: true, method: 'gmail', data: info };
+    } catch (gErr: any) {
+      console.warn('[Gmail] Could not send via Gmail SMTP, trying Resend fallback:', gErr?.message || gErr);
+    }
+  }
 
   if (!apiKey || apiKey === 're_placeholder_key') {
     console.log(`[Email Service - Simulation] Confirmation email for order ${data.orderId} to ${data.customerEmail}: ${experienceUrl}`);
@@ -238,6 +273,24 @@ export async function sendAdminSalesNotification(data: OrderEmailData) {
     </body>
     </html>
   `;
+
+  // 1. Enviar con Gmail Oficial auténtico (Llega directo a Bandeja Principal sin Spam)
+  const gmailTransporter = getGmailTransporter();
+  if (gmailTransporter) {
+    try {
+      const fromUser = process.env.GMAIL_USER || 'somosrecuerdosqr@gmail.com';
+      const info = await gmailTransporter.sendMail({
+        from: `"RecuerdoQR Ventas 💰" <${fromUser}>`,
+        to: adminEmail,
+        subject: `💰 ¡Nueva Venta! $${Number(data.total).toLocaleString('es-CL')} CLP - ${data.productName} (${data.customerName})`,
+        html: htmlContent,
+      });
+      console.log(`[Gmail] Admin sales alert sent to ${adminEmail}: ${info.messageId}`);
+      return { success: true, method: 'gmail', data: info };
+    } catch (gErr: any) {
+      console.warn('[Gmail] Could not send via Gmail SMTP, trying Resend fallback:', gErr?.message || gErr);
+    }
+  }
 
   if (!apiKey || apiKey === 're_placeholder_key') {
     console.log(`[Admin Alert - Simulation] New Sale for ${adminEmail}: ${data.productName} ($${data.total}) by ${data.customerName}`);

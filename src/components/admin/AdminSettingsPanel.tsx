@@ -49,7 +49,7 @@ export default function AdminSettingsPanel() {
       const data = await res.json();
       toast.dismiss(toastId);
       if (data.hasRealKey && data.success) {
-        toast.success('¡Correo de prueba enviado con éxito a somosrecuerdosqr@gmail.com! Revisa tu bandeja de entrada o spam.');
+        toast.success('¡Correo enviado con éxito desde somosrecuerdosqr@gmail.com! Revisa tu bandeja de entrada principal.');
       } else if (data.simulated) {
         toast.info('Simulación ejecutada con éxito en el servidor. Para que llegue a tu bandeja real de Gmail, recuerda agregar la variable RESEND_API_KEY en Vercel.');
       } else if (data.error) {
