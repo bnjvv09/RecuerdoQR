@@ -261,7 +261,11 @@ export async function sendAdminSalesNotification(data: OrderEmailData) {
     });
 
     const result = await res.json();
-    return { success: res.ok, data: result };
+    if (!res.ok) {
+      console.error('Resend API Error:', result);
+      return { success: false, error: result.message || result.name || 'Error al conectar con la API de Resend' };
+    }
+    return { success: true, data: result };
   } catch (error) {
     console.error('Error sending admin sales alert:', error);
     return { success: false, error };
