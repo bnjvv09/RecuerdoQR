@@ -103,7 +103,6 @@ export default function Step2Plan({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 items-stretch">
         {planItems.map((plan) => {
           const isSelected = selectedPlan === plan.id;
-          const isFeatured = plan.id === 'medium';
 
           return (
             <div
@@ -112,9 +111,7 @@ export default function Step2Plan({
               className={`relative rounded-3xl p-5 sm:p-6 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                 isSelected
                   ? 'border-2 border-[#a21232] bg-white shadow-xl shadow-rose-950/10 scale-[1.02] ring-2 ring-rose-200'
-                  : isFeatured
-                  ? 'border-2 border-rose-300 bg-white/95 shadow-md hover:border-[#a21232]'
-                  : 'border border-gray-200 bg-white/90 hover:border-rose-300 hover:shadow-md'
+                  : 'border border-gray-200 bg-white/90 hover:border-gray-300 hover:shadow-md'
               }`}
             >
               {plan.badge && (
