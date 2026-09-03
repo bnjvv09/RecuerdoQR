@@ -11,7 +11,7 @@ import Step4TarjetaRegalo from '@/components/personalizar/Step4TarjetaRegalo';
 import Step4Checkout from '@/components/personalizar/Step4Checkout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { uploadImage } from '@/lib/upload';
-import { createOrder, createExperience } from '@/lib/db';
+import { createOrder, createExperience, redeemCoupon } from '@/lib/db';
 import { sanitizeText, sanitizeObject } from '@/lib/sanitize';
 import { toast } from 'sonner';
 
@@ -66,7 +66,7 @@ function PersonalizarContent() {
     }
   };
 
-  const handleFinalSubmit = async (e: React.FormEvent, finalDiscountPrice?: number) => {
+  const handleFinalSubmit = async (e: React.FormEvent, finalDiscountPrice?: number, couponCode?: string) => {
     e.preventDefault();
     if (!form.validateStep4()) return;
 
@@ -224,6 +224,14 @@ function PersonalizarContent() {
         uploadedPhotosList,
         formattedMilestones
       );
+
+      if (couponCode) {
+        try {
+          await redeemCoupon(couponCode);
+        } catch (cErr) {
+          console.warn('Error redeeming coupon:', cErr);
+        }
+      }
 
       toast.dismiss(toastId);
       toast.success('¡Experiencia creada exitosamente!');

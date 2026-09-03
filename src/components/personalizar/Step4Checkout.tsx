@@ -21,7 +21,7 @@ interface Step4CheckoutProps {
   deliveryAddress: string;
   setDeliveryAddress: (val: string) => void;
   loading: boolean;
-  onSubmit: (e: React.FormEvent, finalDiscountPrice?: number) => void;
+  onSubmit: (e: React.FormEvent, finalDiscountPrice?: number, couponCode?: string) => void;
 }
 
 export default function Step4Checkout({
@@ -89,7 +89,10 @@ export default function Step4Checkout({
           value: result.discount_value 
         });
         const label = type === 'percent' ? `-${result.discount_value}%` : `-$${result.discount_value.toLocaleString('es-CL')} CLP`;
-        toast.success(`¡Cupón ${couponInput.trim().toUpperCase()} aplicado! (${label} de descuento)`);
+        const cuposInfo = result.remaining_uses !== null && result.remaining_uses !== undefined
+          ? ` • ¡Quedan ${result.remaining_uses} cupos disponibles!`
+          : '';
+        toast.success(`¡Cupón ${couponInput.trim().toUpperCase()} aplicado! (${label} de descuento${cuposInfo})`);
       } else {
         toast.error(result.error || 'El cupón ingresado no es válido');
       }
@@ -244,8 +247,8 @@ export default function Step4Checkout({
       return;
     }
 
-    // 🎟️ Pasar el precio rebajado si hay un cupón aplicado
-    onSubmit(e, appliedCoupon ? finalPrice : undefined);
+    // 🎟️ Pasar el precio rebajado y el código si hay un cupón aplicado
+    onSubmit(e, appliedCoupon ? finalPrice : undefined, appliedCoupon?.code);
   };
 
   return (

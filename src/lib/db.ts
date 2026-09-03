@@ -30,6 +30,8 @@ export interface Coupon {
   code: string;
   discount_type: 'percent' | 'fixed';
   discount_value: number;
+  max_uses?: number | null;
+  used_count?: number;
   is_active: boolean;
   created_at: string;
 }
@@ -1131,17 +1133,28 @@ const generateUUID = () => {
   });
 };
 
-export async function createCoupon(code: string, discount_type: 'percent' | 'fixed', discount_value: number): Promise<Coupon> {
+export async function createCoupon(
+  code: string, 
+  discount_type: 'percent' | 'fixed', 
+  discount_value: number,
+  max_uses?: number | null
+): Promise<Coupon> {
   const current = await getCoupons();
   const cleanVal = discount_type === 'percent' 
     ? Math.min(100, Math.max(1, Number(discount_value)))
     : Math.max(100, Number(discount_value));
+
+  const parsedMaxUses = (max_uses !== undefined && max_uses !== null && Number(max_uses) > 0)
+    ? Math.floor(Number(max_uses))
+    : null;
 
   const newCoupon: Coupon = {
     id: generateUUID(),
     code: code.trim().toUpperCase(),
     discount_type,
     discount_value: cleanVal,
+    max_uses: parsedMaxUses,
+    used_count: 0,
     is_active: true,
     created_at: new Date().toISOString(),
   };
@@ -1204,6 +1217,9 @@ export async function validateCoupon(code: string): Promise<{
   valid: boolean; 
   discount_type?: 'percent' | 'fixed'; 
   discount_value?: number; 
+  max_uses?: number | null;
+  used_count?: number;
+  remaining_uses?: number | null;
   error?: string 
 }> {
   const clean = code.trim().toUpperCase();
@@ -1216,14 +1232,73 @@ export async function validateCoupon(code: string): Promise<{
     return { valid: false, error: 'El cupón ingresado no existe' };
   }
 
-  if (!found.is_active) {
-    return { valid: false, error: 'Este cupón se encuentra inactivo o expirado' };
+  const used = Number(found.used_count) || 0;
+  const max = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
+    ? Number(found.max_uses)
+    : null;
+
+  // Si tiene cupos limitados y ya se agotó
+  if (max !== null && used >= max) {
+    if (found.is_active) {
+      toggleCoupon(found.id).catch(() => {});
+    }
+    return { valid: false, error: `Este cupón alcanzó su límite de usos (${max}/${max}) y se encuentra agotado` };
   }
+
+  if (!found.is_active) {
+    return { valid: false, error: 'Este cupón se encuentra inactivo o pausado' };
+  }
+
+  const remaining = max !== null ? Math.max(0, max - used) : null;
 
   return { 
     valid: true, 
     discount_type: found.discount_type || 'percent', 
-    discount_value: found.discount_value 
+    discount_value: found.discount_value,
+    max_uses: max,
+    used_count: used,
+    remaining_uses: remaining,
   };
+}
+
+export async function redeemCoupon(code: string): Promise<boolean> {
+  const clean = code.trim().toUpperCase();
+  if (!clean) return false;
+
+  const coupons = await getCoupons();
+  const found = coupons.find(c => c.code.toUpperCase() === clean);
+  if (!found) return false;
+
+  const currentUsed = (Number(found.used_count) || 0) + 1;
+  const max = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
+    ? Number(found.max_uses)
+    : null;
+
+  const willBeActive = max !== null ? currentUsed < max : found.is_active;
+
+  try {
+    if (!isMockMode) {
+      await supabase
+        .from('coupons')
+        .update({
+          used_count: currentUsed,
+          is_active: willBeActive,
+        })
+        .eq('id', found.id);
+    }
+  } catch (err) {
+    console.warn('Error redeeming coupon in Supabase:', err);
+  }
+
+  const updated = coupons.map(c => 
+    c.id === found.id 
+      ? { ...c, used_count: currentUsed, is_active: willBeActive } 
+      : c
+  );
+
+  if (typeof window !== 'undefined') {
+    setLocalData('custom_coupons', updated);
+  }
+  return true;
 }
 
