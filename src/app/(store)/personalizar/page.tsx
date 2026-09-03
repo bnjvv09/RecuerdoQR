@@ -173,6 +173,7 @@ function PersonalizarContent() {
             photoStyle: form.photoStyle,
             secondaryPhotoStyle: form.secondaryPhotoStyle,
             enableDualPhotoStyle: form.enableDualPhotoStyle,
+            secondaryPhotos: form.secondaryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption })),
             selectedCharacter: form.selectedCharacter,
             cardPalette: form.cardPalette,
             cardOrientation: form.cardOrientation,
@@ -217,6 +218,7 @@ function PersonalizarContent() {
             gratitudeStar3: form.gratitudeStar3,
             reconciliationQuestion: form.reconciliationQuestion,
             reconciliationPromise: form.reconciliationPromise,
+            specialAddress: form.specialPlaceAddress,
           },
         },
         uploadedPhotosList,
@@ -466,6 +468,12 @@ function PersonalizarContent() {
             expandedSection={form.expandedSection}
             setExpandedSection={form.setExpandedSection}
             photos={form.photos}
+            secondaryPhotos={form.secondaryPhotos}
+            handleSecondaryPhotoUpload={form.handleSecondaryPhotoUpload}
+            removeSecondaryPhoto={form.removeSecondaryPhoto}
+            updateSecondaryPhotoCaption={form.updateSecondaryPhotoCaption}
+            maxPrimaryPhotos={form.maxPrimaryPhotos}
+            maxSecondaryPhotos={form.maxSecondaryPhotos}
             milestones={form.milestones}
             addSection={form.addSection}
             removeSection={form.removeSection}
@@ -539,8 +547,10 @@ function PersonalizarContent() {
             customColors={form.customColors}
             setCustomColors={form.setCustomColors}
             photoStyle={form.photoStyle}
+            specialPlaceAddress={form.specialPlaceAddress}
             sections={form.sections}
             photos={form.photos}
+            secondaryPhotos={form.secondaryPhotos}
             milestones={form.milestones}
           />
         )}

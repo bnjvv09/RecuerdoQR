@@ -111,14 +111,16 @@ export default function DigitalAlbum({
                   </div>
 
                   {/* Caption / Dedication */}
-                  <div className="mt-2 text-center w-full px-2">
-                    <p 
-                      className="text-xs text-gray-800 font-serif italic leading-relaxed line-clamp-2"
-                      style={{ fontFamily }}
-                    >
-                      &quot;{photos[currentPage - 1]?.caption || 'Un recuerdo que guardamos en el corazón'}&quot;
-                    </p>
-                  </div>
+                  {photos[currentPage - 1]?.caption?.trim() && (
+                    <div className="mt-2 text-center w-full px-2">
+                      <p 
+                        className="text-xs text-gray-800 font-serif italic leading-relaxed line-clamp-2"
+                        style={{ fontFamily }}
+                      >
+                        &quot;{photos[currentPage - 1].caption}&quot;
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

@@ -180,7 +180,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
         '🎙️ Nota de Voz Real de WhatsApp con los latidos o anuncio',
         '🎬 Video Dedicado en HD de la ecografía o reacción familiar',
-        '👣 Contador de semanas al parto con tamaño del bebé',
+        '👣 Contador de semanas al parto',
         '⏳ Línea de Tiempo del crecimiento del embarazo',
         '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
       ]
@@ -238,7 +238,7 @@ export const THEME_HIGHLIGHTS: Record<string, {
         '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
         '🎵 Música Personalizada (Banda Sonora Oficial romántica)',
         '✨ Despliegue con tipografía caligráfica clásica',
-        '💌 Carta de Amor Extensa Interactiva',
+        '📜 Pergamino Vintage con Sello de Lacre Personalizado',
         '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
       ],
       premium: [

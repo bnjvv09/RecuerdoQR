@@ -38,6 +38,7 @@ import {
 import PhotoStyleSelector from '@/components/gallery/PhotoStyleSelector';
 import { PhotoStyle } from '@/types/gallery';
 import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
+import { compressImage } from '@/lib/imageCompression';
 import { toast } from 'sonner';
 
 export const ROMANTIC_SONGS = [
@@ -508,8 +509,15 @@ export default function Step2Personalizacion({
         };
       case 'tematica':
         return { label: 'Sorpresa Temática Interactiva', icon: Gift, color: 'text-amber-600', deletable: true };
-      case 'contador':
-        return { label: isPregnancy ? 'Cuenta Regresiva de Llegada' : 'Contador de Tiempo Juntos', icon: Clock, color: 'text-blue-600', deletable: true };
+      case 'contador': {
+        let label = 'Contador de Tiempo Juntos';
+        if (isBirthday) label = 'Fecha de Nacimiento & Años de Vida';
+        else if (isLoveConfession) label = 'Días Pensando en Ti (Enamorado/a)';
+        else if (isSpecial) label = 'Días de Esfuerzo hasta la Meta';
+        else if (isReconciliation) label = 'Días de Nuestra Historia Juntos';
+        else if (isPregnancy) label = 'Contador de Semanas al Parto';
+        return { label, icon: Clock, color: 'text-blue-600', deletable: true };
+      }
       case 'carta':
         return { label: 'Carta de Dedicatoria', icon: Mail, color: 'text-purple-600', deletable: true };
       case 'galeria':
@@ -528,6 +536,8 @@ export default function Step2Personalizacion({
         return { label: 'Línea de Tiempo con Fotos', icon: Calendar, color: 'text-indigo-600', deletable: true };
       case 'video':
         return { label: 'Video Dedicado', icon: Video, color: 'text-red-600', deletable: true };
+      case 'lugar':
+        return { label: 'Mapa de Lugar Especial', icon: MapPin, color: 'text-rose-600', deletable: true };
       case 'secreto':
         return { label: 'Rincón Secreto con PIN', icon: KeyRound, color: 'text-amber-700', deletable: true };
       case 'corazones':
@@ -542,11 +552,12 @@ export default function Step2Personalizacion({
 
   const ALL_POSSIBLE_SECTIONS = [
     { type: 'musica' as const, label: '🎵 Música de Fondo Romántica', planRequired: 'medium', desc: 'Canción oficial de fondo o YouTube' },
-    { type: 'carta' as const, label: '💌 Carta de Dedicatoria', planRequired: 'basic', desc: 'Espacio para escribir tus sentimientos' },
-    { type: 'contador' as const, label: '⏱️ Contador de Tiempo', planRequired: 'basic', desc: 'Años, días y segundos juntos' },
+    ...(!isLoveLetter ? [{ type: 'carta' as const, label: '💌 Carta de Dedicatoria', planRequired: 'basic', desc: 'Espacio para escribir tus sentimientos' }] : []),
+    { type: 'contador' as const, label: isBirthday ? '🎂 Fecha de Nacimiento' : '⏱️ Contador de Tiempo', planRequired: 'basic', desc: 'Días y momentos especiales' },
     { type: 'tematica' as const, label: '🎁 Sorpresa Temática', planRequired: 'basic', desc: 'Rasca y gana, torta o ticket' },
+    { type: 'timeline' as const, label: '✨ Línea de Tiempo', planRequired: 'medium', desc: 'Hitos con fechas y fotos históricas' },
+    { type: 'lugar' as const, label: '📍 Mapa de Lugar Especial', planRequired: 'premium', desc: 'Mapa interactivo de Google Maps' },
     { type: 'audio' as const, label: '🎙️ Nota de Voz Secreta', planRequired: 'premium', desc: 'Audio real estilo nota de WhatsApp' },
-    { type: 'timeline' as const, label: '✨ Línea de Tiempo', planRequired: 'premium', desc: 'Hitos con fechas y fotos históricas' },
     { type: 'video' as const, label: '🎬 Video Dedicado', planRequired: 'premium', desc: 'Video en alta definición o YouTube' },
     { type: 'secreto' as const, label: '🔒 Rincón Secreto PIN', planRequired: 'premium', desc: 'Mensaje oculto protegido con contraseña' },
     { type: 'corazones' as const, label: '💖 Dedicatoria Final', planRequired: 'basic', desc: 'Tarjeta de cierre de la experiencia' },
@@ -600,6 +611,7 @@ export default function Step2Personalizacion({
           {(() => {
             let galleryOrder = 0;
             return sections.map((sec, idx) => {
+              if (isLoveLetter && sec.type === 'carta') return null;
               if (sec.type === 'galeria') galleryOrder++;
               const isSecondGallery = sec.type === 'galeria' && galleryOrder > 1;
               const meta = getSectionMetadata(sec.type, sec.type === 'galeria' ? galleryOrder : undefined);
@@ -962,15 +974,61 @@ export default function Step2Personalizacion({
 
                               <div>
                                 <label className="block text-[9px] font-bold text-cyan-900 uppercase mb-1">
-                                  🖼️ URL o Foto de la Ecografía (Opcional)
+                                  🖼️ Foto de la Ecografía del Bebé (Opcional)
                                 </label>
-                                <input
-                                  type="url"
-                                  value={scratchUltrasoundUrl}
-                                  onChange={(e) => setScratchUltrasoundUrl && setScratchUltrasoundUrl(e.target.value)}
-                                  placeholder="https://..."
-                                  className="w-full px-3 py-2 border border-cyan-250 rounded-xl text-xs bg-white"
-                                />
+                                {scratchUltrasoundUrl ? (
+                                  <div className="flex items-center gap-3 p-2 bg-white rounded-xl border border-cyan-200">
+                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-cyan-100 shrink-0">
+                                      <Image src={scratchUltrasoundUrl} alt="Ecografía" fill sizes="64px" className="object-cover" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 text-left">
+                                      <p className="text-[10px] font-bold text-cyan-950">✓ Foto de ecografía adjunta</p>
+                                      <p className="text-[9px] text-gray-500 truncate">{scratchUltrasoundUrl.startsWith('data:') ? 'Imagen cargada desde tu dispositivo' : scratchUltrasoundUrl}</p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setScratchUltrasoundUrl && setScratchUltrasoundUrl('')}
+                                      className="px-2 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition"
+                                    >
+                                      Cambiar
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-2">
+                                    <label className="w-full py-3 border-2 border-dashed border-cyan-300 hover:border-cyan-500 rounded-xl flex items-center justify-center gap-2 cursor-pointer bg-white hover:bg-cyan-50/50 transition">
+                                      <Upload className="w-4 h-4 text-cyan-700" />
+                                      <span className="text-xs font-bold text-cyan-800">📷 Subir Foto de la Ecografía desde tu Teléfono</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                          const file = e.target.files?.[0];
+                                          if (!file) return;
+                                          try {
+                                            const dataUrl = await compressImage(file, 1200, 1200, 0.8);
+                                            setScratchUltrasoundUrl && setScratchUltrasoundUrl(dataUrl);
+                                            toast.success('Foto de ecografía cargada con éxito ✨');
+                                          } catch {
+                                            const url = URL.createObjectURL(file);
+                                            setScratchUltrasoundUrl && setScratchUltrasoundUrl(url);
+                                            toast.success('Foto de ecografía seleccionada');
+                                          }
+                                        }}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                    <div className="text-center">
+                                      <span className="text-[8px] text-gray-400">o pega un enlace de imagen si lo prefieres:</span>
+                                      <input
+                                        type="url"
+                                        value={scratchUltrasoundUrl}
+                                        onChange={(e) => setScratchUltrasoundUrl && setScratchUltrasoundUrl(e.target.value)}
+                                        placeholder="https://..."
+                                        className="w-full px-2.5 py-1 border border-cyan-200 rounded-lg text-[10px] bg-white mt-1"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                               </div>
 
                               {!isBasic && (
@@ -1067,6 +1125,18 @@ export default function Step2Personalizacion({
                                   onChange={(e) => setWaxSealSender && setWaxSealSender(e.target.value)}
                                   placeholder="Con Todo Mi Amor..."
                                   className="w-full px-3 py-2 border border-amber-250 rounded-xl text-xs bg-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[9px] font-bold text-amber-900 uppercase mb-1">
+                                  📜 Mensaje de tu Carta de Amor (Se despliega en Pergamino)
+                                </label>
+                                <textarea
+                                  rows={4}
+                                  value={historyText}
+                                  onChange={(e) => setHistoryText(e.target.value)}
+                                  placeholder="Escribe aquí tu carta de amor..."
+                                  className="w-full px-3 py-2 border border-amber-250 rounded-xl text-xs bg-white font-serif leading-relaxed"
                                 />
                               </div>
                             </div>
@@ -1253,18 +1323,41 @@ export default function Step2Personalizacion({
                         </div>
                       )}
 
-                      {/* 4. CONTADOR DE TIEMPO */}
+                      {/* 4. CONTADOR DE TIEMPO ADAPTADO */}
                       {sec.type === 'contador' && (
-                        <div className="space-y-3">
-                          <label className="block text-[9px] font-bold text-gray-500 uppercase">
-                            📅 {isPregnancy ? 'Fecha Estimada de Nacimiento del Bebé' : 'Fecha Especial / Inicio de la Relación'}
+                        <div className="space-y-2.5">
+                          <label className="block text-[9px] font-bold text-gray-700 uppercase">
+                            {isBirthday
+                              ? '🎂 Fecha de Nacimiento del Festejado/a'
+                              : isLoveConfession
+                              ? '💭 ¿Desde qué fecha nació este sentimiento / piensas en esa persona?'
+                              : isSpecial
+                              ? '🏆 Fecha de inicio del esfuerzo / estudios / proyecto'
+                              : isReconciliation
+                              ? '🕊️ Fecha en que comenzó su historia'
+                              : isPregnancy
+                              ? '👶 Fecha Estimada de Llegada del Bebé'
+                              : '📅 Fecha Especial / Inicio de la Relación'}
                           </label>
                           <input
                             type="date"
                             value={specialDate}
                             onChange={(e) => setSpecialDate(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs bg-white"
+                            className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs bg-white font-medium"
                           />
+                          <p className="text-[10px] text-gray-500 font-light">
+                            {isBirthday
+                              ? 'Calcula automáticamente los años de vida cumplidos y días llenando el mundo de alegría.'
+                              : isLoveConfession
+                              ? 'Muestra los días que llevas enamorado/a y pensando en esa persona.'
+                              : isSpecial
+                              ? 'Muestra los días dedicados y acumulados de esfuerzo hasta la meta.'
+                              : isReconciliation
+                              ? 'Muestra los días que han compartido y que valen más que cualquier error.'
+                              : isPregnancy
+                              ? 'Calcula las semanas restantes para la llegada del bebé.'
+                              : 'Muestra los años, días y segundos transcurridos en tiempo real.'}
+                          </p>
                         </div>
                       )}
 
@@ -1739,6 +1832,25 @@ export default function Step2Personalizacion({
                               />
                             </div>
                           </div>
+                        </div>
+                      )}
+
+                      {/* 10B. LUGAR ESPECIAL / MAPA INTERACTIVO */}
+                      {sec.type === 'lugar' && (
+                        <div className="space-y-3 bg-white p-4 rounded-xl border border-gray-200">
+                          <label className="block text-[9px] font-bold text-gray-700 uppercase">
+                            📍 Dirección o Nombre del Lugar Especial (Google Maps)
+                          </label>
+                          <input
+                            type="text"
+                            value={specialPlaceAddress}
+                            onChange={(e) => setSpecialPlaceAddress(e.target.value)}
+                            placeholder="Ej: Mirador San Cristóbal, Santiago / Playa Blanca, Viña del Mar..."
+                            className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs bg-white font-medium"
+                          />
+                          <p className="text-[10px] text-gray-500 font-light">
+                            Genera automáticamente un mapa interactivo de Google Maps para recordar aquel lugar donde comenzó su historia.
+                          </p>
                         </div>
                       )}
 

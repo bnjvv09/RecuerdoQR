@@ -551,7 +551,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
         return;
       }
     } else if (selectedPlan === 'medium' || selectedPlan === 'card') {
-      const forbiddenInMedium = ['timeline', 'video', 'audio', 'secreto', 'sorpresa', 'lugar'];
+      const forbiddenInMedium = ['video', 'audio', 'secreto', 'sorpresa', 'lugar'];
       if (forbiddenInMedium.includes(type)) {
         toast.error('🔒 Esta sección es exclusiva del Plan Máximo.');
         return;

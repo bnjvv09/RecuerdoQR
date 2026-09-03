@@ -1229,6 +1229,16 @@ export default function AmorExperiencePage() {
                     <p className="text-sm font-bold" style={{ color: primaryColor }}>💖 ¡Dijiste que Sí! 💖</p>
                     <p className="text-xs text-gray-700 font-light">{experience.config?.proposalCelebrationText || '¡Nuestra historia oficial comienza hoy!'}</p>
                     
+                    {themeId === 'dating-proposal' && (
+                      <div className="mt-3 p-4 bg-gradient-to-br from-rose-50 via-white to-amber-50 rounded-2xl border-2 border-dashed border-rose-300 text-center space-y-1.5 shadow-xs">
+                        <span className="text-2xl block">📜❤️</span>
+                        <h5 className="font-serif font-extrabold text-xs text-[#a21232]">Certificado Oficial de Noviazgo</h5>
+                        <p className="text-[10px] text-gray-700 italic leading-relaxed">
+                          Se certifica solemnemente que hoy comienza nuestra historia oficial entre <strong>{experience.user_name || 'Tu pareja'}</strong> y <strong>{experience.partner_name || 'Tú'}</strong>.
+                        </p>
+                      </div>
+                    )}
+
                     {themeId === 'marriage-proposal' && (
                       <div
                         onClick={() => setIsRingBoxOpened(!isRingBoxOpened)}
@@ -1293,6 +1303,16 @@ export default function AmorExperiencePage() {
                       <p className="text-[9px] opacity-70 font-light border-t pt-1.5" style={{ borderColor: `${primaryColor}20` }}>
                         {experience.config?.ticketConditions || 'Válido para canjear cuando tú quieras ❤️'}
                       </p>
+
+                      {/* Golden Barcode */}
+                      <div className="pt-2 flex justify-between items-center border-t border-dashed" style={{ borderColor: `${primaryColor}30` }}>
+                        <div className="flex gap-0.5 items-center h-4">
+                          {[2, 1, 3, 1, 2, 4, 1, 3, 2, 1, 4, 2].map((w, bI) => (
+                            <div key={bI} className="bg-gray-800 h-full" style={{ width: `${w * 1.5}px` }} />
+                          ))}
+                        </div>
+                        <span className="font-mono text-[8px] text-gray-400 font-bold">#TICKET-VIP-GOLD</span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1382,8 +1402,24 @@ export default function AmorExperiencePage() {
                 <h3 className="font-serif font-bold text-sm" style={{ color: primaryColor }}>
                   {experience.config?.valentineBoxTitle || 'Caja de Bombones de San Valentín 🍫'}
                 </h3>
-                <div className="p-4 bg-white/95 rounded-2xl border text-xs font-serif italic shadow-2xs" style={{ borderColor: `${primaryColor}30`, color: primaryColor }}>
-                  &quot;{experience.config?.valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️'}&quot;
+                
+                {/* VALE ROMÁNTICO VIP */}
+                <div className="p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
+                  <div className="flex justify-between items-center border-b border-rose-200 pb-1">
+                    <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
+                      <span>🎟️</span> VALE ROMÁNTICO OFICIAL
+                    </span>
+                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
+                      SAN VALENTÍN
+                    </span>
+                  </div>
+                  <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900">
+                    &quot;{experience.config?.valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️'}&quot;
+                  </p>
+                  <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
+                    <span>Válido para canjear en cualquier momento ❤️</span>
+                    <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -1407,15 +1443,22 @@ export default function AmorExperiencePage() {
                   <span>🎆 Toca para Llenar de Fuegos Artificiales</span>
                 </button>
 
-                <div className="bg-white/95 rounded-2xl p-4 border shadow-sm space-y-1.5 text-center" style={{ borderColor: `${primaryColor}35` }}>
-                  <span className="text-4xl block">🏆</span>
-                  <h4 className="font-serif font-bold text-sm" style={{ color: primaryColor }}>
+                <div className="bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 rounded-2xl p-5 border-2 border-amber-300 shadow-md space-y-2 text-center">
+                  <div className="flex justify-center items-center gap-1.5">
+                    <span className="text-2xl">📜</span>
+                    <span className="text-[9px] font-extrabold uppercase tracking-widest text-amber-800 font-mono">DIPLOMA DE HONOR OFICIAL</span>
+                  </div>
+                  <h4 className="font-serif font-extrabold text-sm text-gray-900" style={{ color: primaryColor }}>
                     {experience.config?.trophyTitle || 'Trofeo al Mayor Logro 🏆'}
                   </h4>
-                  <p className="text-xs text-gray-700 font-light">{experience.config?.trophyCategory || '¡Orgullo Total por tu Gran Meta Cumplida!'}</p>
-                  <p className="text-[9px] opacity-70 font-mono border-t pt-1.5 mt-1" style={{ borderColor: `${primaryColor}20` }}>
-                    {experience.config?.diplomaText || 'Reconocimiento oficial a la persona más talentosa y perseverante.'}
+                  <p className="text-xs font-bold text-amber-900">{experience.config?.trophyCategory || '¡Orgullo Total por tu Gran Meta Cumplida!'}</p>
+                  <p className="text-[10px] font-serif italic text-gray-700 border-t border-amber-200/60 pt-2 leading-relaxed">
+                    &quot;{experience.config?.diplomaText || 'Reconocimiento oficial a la persona más talentosa y perseverante.'}&quot;
                   </p>
+                  <div className="flex justify-between items-center pt-2 border-t border-amber-200/40 text-[7px] text-gray-400 font-mono">
+                    <span>EXPEDIDO CON ORGULLO</span>
+                    <span>META CUMPLIDA ✨</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -1528,6 +1571,7 @@ export default function AmorExperiencePage() {
               if (sec.type === 'portada') return null; // Already displayed in gate steps
 
               if (sec.type === 'carta') {
+                if (themeId === 'love-letter') return null;
                 const cartaText = sec.content?.text || sec.content?.message || experience.history_text || experience.message || 'Eres lo más hermoso que me ha pasado en la vida. Cada instante a tu lado es un regalo que atesoro en mi corazón...';
                 return (
                   <div key={sec.id} className="py-2 space-y-3">
@@ -1611,20 +1655,52 @@ export default function AmorExperiencePage() {
                 );
               }
 
-              if (sec.type === 'contador' && themeId !== 'pregnancy') {
+              if (sec.type === 'contador') {
+                let counterHeader = sec.title;
+                if (!counterHeader) {
+                  if (themeId === 'birthday') counterHeader = `¡Celebrando la Vida de ${experience.partner_name || 'Festejado/a'}! 🎂`;
+                  else if (themeId === 'love-confession') counterHeader = 'Días que Llevo Pensando en Ti 💭';
+                  else if (themeId === 'special') counterHeader = 'Días de Esfuerzo & Dedicación hasta la Meta 🏆';
+                  else if (themeId === 'reconciliation') counterHeader = 'Días Compartidos que Valen Más que Cualquier Error 🕊️';
+                  else if (themeId === 'pregnancy') counterHeader = 'Cuenta Regresiva al Nacimiento 👣';
+                  else counterHeader = 'Tiempo Compartido Juntos ⏱️';
+                }
+
+                let col1Val: string | number = timeElapsed.years;
+                let col1Label = 'Años';
+                let col2Val: string | number = timeElapsed.days;
+                let col2Label = 'Días';
+
+                if (themeId === 'pregnancy') {
+                  const target = experience.special_date ? new Date(experience.special_date).getTime() : 0;
+                  const diff = target - new Date().getTime();
+                  if (diff > 0) {
+                    const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    col1Val = Math.floor(totalDays / 7).toString();
+                    col2Val = (totalDays % 7).toString();
+                    col1Label = 'Semanas';
+                    col2Label = 'Días';
+                  } else {
+                    col1Val = '0';
+                    col2Val = '0';
+                    col1Label = 'Semanas';
+                    col2Label = 'Días';
+                  }
+                }
+
                 return (
                   <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-4 ${style.cardClass}`}>
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
-                      {sec.title || (themeId === 'birthday' ? 'Años y Días de Vida' : 'Tiempo Compartido Juntos')}
+                      {counterHeader}
                     </h3>
                     <div className="grid grid-cols-5 gap-1.5 text-center">
                       <div className="bg-rose-50/40 p-2 rounded-xl border border-rose-100/25">
-                        <span className={`block font-serif text-base font-extrabold ${style.textColor}`}>{timeElapsed.years}</span>
-                        <span className="text-[7px] text-gray-400 font-bold uppercase block">Años</span>
+                        <span className={`block font-serif text-base font-extrabold ${style.textColor}`}>{col1Val}</span>
+                        <span className="text-[7px] text-gray-400 font-bold uppercase block">{col1Label}</span>
                       </div>
                       <div className="bg-rose-50/40 p-2 rounded-xl border border-rose-100/25">
-                        <span className={`block font-serif text-base font-extrabold ${style.textColor}`}>{timeElapsed.days}</span>
-                        <span className="text-[7px] text-gray-400 font-bold uppercase block">Días</span>
+                        <span className={`block font-serif text-base font-extrabold ${style.textColor}`}>{col2Val}</span>
+                        <span className="text-[7px] text-gray-400 font-bold uppercase block">{col2Label}</span>
                       </div>
                       <div className="bg-rose-50/40 p-2 rounded-xl border border-rose-100/25">
                         <span className={`block font-serif text-base font-extrabold ${style.textColor}`}>{timeElapsed.hours}</span>
@@ -1906,7 +1982,11 @@ export default function AmorExperiencePage() {
                   ? (isSecondGallery ? '📸 Segunda Galería de Fotos' : '📸 Primera Galería de Fotos')
                   : (sec.title || '📸 Galería de Fotos');
 
-                const galleryPhotos = (sec.content?.photos || experience.photos || []).map((p: any, pIdx: number) => ({
+                const rawPhotos = isSecondGallery
+                  ? (experience.config?.secondaryPhotos || sec.content?.secondaryPhotos || [])
+                  : (sec.content?.photos || experience.photos || []);
+
+                const galleryPhotos = rawPhotos.map((p: any, pIdx: number) => ({
                   url: p.url || p.previewUrl,
                   caption: p.caption,
                   id: p.id || `photo-${pIdx}`

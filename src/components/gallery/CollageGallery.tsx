@@ -86,12 +86,16 @@ export default function CollageGallery({
 
               {/* Caption or Mini Stamp */}
               <div className="mt-2 flex items-center justify-between px-1">
-                <p 
-                  className="text-[9px] text-gray-700 font-serif italic truncate flex-1"
-                  style={{ fontFamily }}
-                >
-                  {p.caption || 'Momento inolvidable'}
-                </p>
+                {p.caption?.trim() ? (
+                  <p 
+                    className="text-[9px] text-gray-700 font-serif italic truncate flex-1"
+                    style={{ fontFamily }}
+                  >
+                    {p.caption}
+                  </p>
+                ) : (
+                  <div className="flex-1" />
+                )}
                 <span className="text-[10px] ml-1 shrink-0 opacity-70">
                   {stickers[idx % stickers.length]}
                 </span>

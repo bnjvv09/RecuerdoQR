@@ -123,6 +123,7 @@ interface Step4PreviewProps {
   customColors: CustomColors;
   setCustomColors?: (colors: CustomColors) => void;
   photoStyle: PhotoStyle;
+  specialPlaceAddress?: string;
   sections: ExperienceSection[];
   photos: PhotoInput[];
   secondaryPhotos?: PhotoInput[];
@@ -137,6 +138,7 @@ export default function Step4Preview({
   partnerName,
   userName,
   specialDate,
+  specialPlaceAddress = '',
   title,
   message,
   historyText,
@@ -480,25 +482,23 @@ export default function Step4Preview({
               ❤️ Nuestro Aniversario de Amor
             </span>
             
-            {!isBasic && (
-              <div className="bg-white/95 rounded-2xl p-3 border space-y-1.5" style={{ borderColor: `${themeColor}30` }}>
-                <span className="text-[8px] font-bold uppercase block" style={{ color: themeColor }}>📊 Nuestras Estadísticas</span>
-                <div className="grid grid-cols-3 gap-1.5 text-center">
-                  <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
-                    <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsKisses}</span>
-                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsKissesLabel || 'Besos'}</span>
-                  </div>
-                  <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
-                    <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsCoffees}</span>
-                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsCoffeesLabel || 'Citas'}</span>
-                  </div>
-                  <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
-                    <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsSmiles}</span>
-                    <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsSmilesLabel || 'Sonrisas'}</span>
-                  </div>
+            <div className="bg-white/95 rounded-2xl p-3 border space-y-1.5" style={{ borderColor: `${themeColor}30` }}>
+              <span className="text-[8px] font-bold uppercase block" style={{ color: themeColor }}>📊 Nuestras Estadísticas</span>
+              <div className="grid grid-cols-3 gap-1.5 text-center">
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
+                  <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsKisses}</span>
+                  <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsKissesLabel || 'Besos'}</span>
+                </div>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
+                  <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsCoffees}</span>
+                  <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsCoffeesLabel || 'Citas'}</span>
+                </div>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${themeColor}10` }}>
+                  <span className="text-xs font-bold block" style={{ color: themeColor }}>{statsSmiles}</span>
+                  <span className="text-[7.5px] font-medium opacity-80 block truncate">{statsSmilesLabel || 'Sonrisas'}</span>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         )}
 
@@ -540,10 +540,20 @@ export default function Step4Preview({
                 )}
               </div>
             ) : (
-              <div className="bg-white/95 p-3 rounded-2xl border space-y-2 animate-fade-in" style={{ borderColor: `${themeColor}40` }}>
+              <div className="bg-white/95 p-3.5 rounded-2xl border space-y-2 animate-fade-in" style={{ borderColor: `${themeColor}40` }}>
                 <p className="text-xs font-bold" style={{ color: themeColor }}>💖 ¡Dijiste que Sí! 💖</p>
                 <p className="text-[9px] font-light" style={{ color: customColors.text }}>{proposalCelebrationText}</p>
                 
+                {isDatingProposal && !isBasic && (
+                  <div className="mt-2 p-3.5 bg-gradient-to-br from-rose-50 via-white to-amber-50 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-1">
+                    <span className="text-xl block">📜❤️</span>
+                    <h5 className="font-serif font-extrabold text-[11px] text-[#a21232]">Certificado Oficial de Noviazgo</h5>
+                    <p className="text-[9px] text-gray-700 italic">
+                      Se certifica solemnemente que hoy comienza nuestra historia oficial entre <strong>{userName || 'Tu pareja'}</strong> y <strong>{partnerName || 'Tú'}</strong>.
+                    </p>
+                  </div>
+                )}
+
                 {isMarriageProposal && !isBasic && (
                   <div
                     onClick={() => setIsRingBoxOpened(!isRingBoxOpened)}
@@ -713,25 +723,35 @@ export default function Step4Preview({
                 </div>
               ) : (
                 <div
-                  className="rounded-2xl p-4 border-2 border-dashed shadow-md space-y-2 animate-fade-in w-full text-left bg-white/95"
+                  className="rounded-2xl p-4 border-2 border-dashed shadow-md space-y-2 animate-fade-in w-full text-left bg-gradient-to-br from-amber-50/80 via-white to-amber-100/50"
                   style={{ borderColor: themeColor }}
                 >
                   <div className="flex items-center justify-between border-b pb-1.5" style={{ borderColor: `${themeColor}30` }}>
-                    <span className="text-[9px] font-extrabold uppercase tracking-widest" style={{ color: themeColor }}>
-                      🎟️ {ticketTitle}
+                    <span className="text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1" style={{ color: themeColor }}>
+                      <span>🎟️</span> {ticketTitle}
                     </span>
-                    <span className="text-[8px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: `${themeColor}20`, color: themeColor }}>
-                      VIP-2026
+                    <span className="text-[8px] font-bold px-1.5 py-0.5 rounded font-mono" style={{ backgroundColor: `${themeColor}20`, color: themeColor }}>
+                      VIP PASS
                     </span>
                   </div>
                   
-                  <p className="text-xs font-bold italic leading-relaxed" style={{ color: customColors.text, fontFamily: activeFontFamily }}>
+                  <p className="text-xs font-bold italic leading-relaxed text-gray-900" style={{ fontFamily: activeFontFamily }}>
                     &quot;{surpriseMessage || 'Una cena romántica este fin de semana'}&quot;
                   </p>
 
                   <p className="text-[8px] opacity-70 font-light border-t pt-1" style={{ borderColor: `${themeColor}20` }}>
                     {ticketConditions}
                   </p>
+
+                  {/* Golden Barcode */}
+                  <div className="pt-1.5 flex justify-between items-center border-t border-dashed" style={{ borderColor: `${themeColor}30` }}>
+                    <div className="flex gap-0.5 items-center h-3.5">
+                      {[2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 4, 2].map((w, bI) => (
+                        <div key={bI} className="bg-gray-800 h-full" style={{ width: `${w * 1.5}px` }} />
+                      ))}
+                    </div>
+                    <span className="font-mono text-[7px] text-gray-400 font-bold">#TICKET-GOLD-2026</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -817,8 +837,24 @@ export default function Step4Preview({
           >
             <span className="text-3xl select-none">🌹🍫</span>
             <h3 className="font-bold text-xs" style={{ color: themeColor, fontFamily: activeFontFamily }}>{valentineBoxTitle}</h3>
-            <div className="p-3 bg-white/95 rounded-2xl border text-xs italic shadow-2xs" style={{ borderColor: `${themeColor}30`, color: themeColor, fontFamily: activeFontFamily }}>
-              &quot;{valentineCoupon}&quot;
+            
+            {/* VALE ROMÁNTICO VIP */}
+            <div className="p-3.5 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
+              <div className="flex justify-between items-center border-b border-rose-200 pb-1">
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
+                  <span>🎟️</span> VALE ROMÁNTICO OFICIAL
+                </span>
+                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
+                  SAN VALENTÍN
+                </span>
+              </div>
+              <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900" style={{ fontFamily: activeFontFamily }}>
+                &quot;{valentineCoupon || 'Vale por una cena romántica a la luz de las velas'}&quot;
+              </p>
+              <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
+                <span>Válido para canjear cuando tú quieras ❤️</span>
+                <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+              </div>
             </div>
           </div>
         )}
@@ -844,11 +880,18 @@ export default function Step4Preview({
             </button>
 
             {!isBasic && (
-              <div className="bg-white/95 rounded-2xl p-3 border shadow-sm space-y-1 text-center" style={{ borderColor: `${themeColor}35` }}>
-                <span className="text-3xl block">🏆</span>
-                <h4 className="font-bold text-xs" style={{ color: themeColor, fontFamily: activeFontFamily }}>{trophyTitle}</h4>
-                <p className="text-[9px] font-light" style={{ color: customColors.text }}>{trophyCategory}</p>
-                <p className="text-[8px] opacity-70 border-t pt-1 mt-1" style={{ borderColor: `${themeColor}20` }}>{diplomaText}</p>
+              <div className="bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 rounded-2xl p-4 border-2 border-amber-300 shadow-md space-y-2 text-center">
+                <div className="flex justify-center items-center gap-1.5">
+                  <span className="text-2xl">📜</span>
+                  <span className="text-[9px] font-extrabold uppercase tracking-widest text-amber-800 font-mono">DIPLOMA DE HONOR OFICIAL</span>
+                </div>
+                <h4 className="font-serif font-extrabold text-sm text-gray-900" style={{ color: themeColor, fontFamily: activeFontFamily }}>{trophyTitle}</h4>
+                <p className="text-[10px] font-bold text-amber-900">{trophyCategory}</p>
+                <p className="text-[9px] font-serif italic text-gray-700 border-t border-amber-200/60 pt-2 leading-relaxed">&quot;{diplomaText}&quot;</p>
+                <div className="flex justify-between items-center pt-2 border-t border-amber-200/40 text-[7px] text-gray-400 font-mono">
+                  <span>EXPEDIDO CON ORGULLO</span>
+                  <span>META CUMPLIDA ✨</span>
+                </div>
               </div>
             )}
           </div>
@@ -1265,28 +1308,62 @@ export default function Step4Preview({
                     );
                   }
 
-                  if (sec.type === 'contador' && !isBirthday && !isPregnancy) {
+                  if (sec.type === 'contador') {
+                    let counterTitle = '⏱️ Tiempo Juntos';
+                    let firstColLabel = 'Años';
+                    let secondColLabel = 'Días';
+                    let firstColVal: string | number = timeElapsed.years;
+                    let secondColVal: string | number = timeElapsed.days;
+
+                    if (isBirthday) {
+                      counterTitle = `🎂 ¡Celebrando la Vida de ${partnerName || 'Festejado/a'}!`;
+                      firstColLabel = 'Años';
+                      secondColLabel = 'Días de Luz';
+                    } else if (isPregnancy) {
+                      counterTitle = '👣 Cuenta Regresiva al Nacimiento';
+                      const target = specialDate ? new Date(specialDate).getTime() : 0;
+                      const diff = target - new Date().getTime();
+                      if (diff > 0) {
+                        const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        firstColVal = Math.floor(totalDays / 7).toString();
+                        secondColVal = (totalDays % 7).toString();
+                        firstColLabel = 'Semanas';
+                        secondColLabel = 'Días';
+                      } else {
+                        firstColVal = '0';
+                        secondColVal = '0';
+                        firstColLabel = 'Semanas';
+                        secondColLabel = 'Días';
+                      }
+                    } else if (selectedTheme === 'love-confession') {
+                      counterTitle = '💭 Días que Llevo Pensando en Ti';
+                    } else if (selectedTheme === 'special') {
+                      counterTitle = '🏆 Días de Esfuerzo & Dedicación hasta la Meta';
+                    } else if (selectedTheme === 'reconciliation') {
+                      counterTitle = '🕊️ Días Compartidos que Valen Más que Cualquier Error';
+                    }
+
                     return (
                       <div key={sec.id} className="rounded-2xl p-4 bg-white/80 border border-gray-200/60 shadow-xs space-y-2" style={{ fontFamily: activeFontFamily }}>
                         <span className="text-[9px] uppercase tracking-wider font-bold block" style={{ color: customColors.primary }}>
-                          ⏱️ Tiempo Juntos
+                          {counterTitle}
                         </span>
                         <div className="grid grid-cols-4 gap-1.5 text-center font-mono">
                           <div className="bg-gray-50/70 p-1.5 rounded-lg border border-gray-100">
-                            <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{timeElapsed.years}</span>
-                            <span className="text-[7px] text-gray-500">Años</span>
+                            <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{firstColVal}</span>
+                            <span className="text-[7px] text-gray-500 font-sans">{firstColLabel}</span>
                           </div>
                           <div className="bg-gray-50/70 p-1.5 rounded-lg border border-gray-100">
-                            <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{timeElapsed.days}</span>
-                            <span className="text-[7px] text-gray-500">Días</span>
+                            <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{secondColVal}</span>
+                            <span className="text-[7px] text-gray-500 font-sans">{secondColLabel}</span>
                           </div>
                           <div className="bg-gray-50/70 p-1.5 rounded-lg border border-gray-100">
                             <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{timeElapsed.hours}</span>
-                            <span className="text-[7px] text-gray-500">Horas</span>
+                            <span className="text-[7px] text-gray-500 font-sans">Horas</span>
                           </div>
                           <div className="bg-gray-50/70 p-1.5 rounded-lg border border-gray-100">
                             <span className="block text-sm font-bold" style={{ color: customColors.primary }}>{timeElapsed.minutes}</span>
-                            <span className="text-[7px] text-gray-500">Min</span>
+                            <span className="text-[7px] text-gray-500 font-sans">Min</span>
                           </div>
                         </div>
                       </div>
@@ -1295,6 +1372,7 @@ export default function Step4Preview({
 
                   {/* 💌 CARTA INTERACTIVA CON SOBRE Y CHAPITA */}
                   if (sec.type === 'carta') {
+                    if (isLoveLetter) return null;
                     const letterText = historyText || message || 'Eres lo más hermoso que me ha pasado en la vida. Cada instante a tu lado es un regalo que atesoro en mi corazón...';
                     return (
                       <div key={sec.id} className="py-2 space-y-3" style={{ fontFamily: activeFontFamily }}>
@@ -1439,8 +1517,8 @@ export default function Step4Preview({
                       ? (isSecondGallery ? '📸 Segunda Galería de Fotos' : '📸 Primera Galería de Fotos') 
                       : '📸 Galería de Fotos';
 
-                    const currentGalleryPhotos = isSecondGallery && secondaryPhotos.length > 0 
-                      ? secondaryPhotos 
+                    const currentGalleryPhotos = isSecondGallery
+                      ? secondaryPhotos
                       : photos;
 
                     return (
@@ -1448,12 +1526,18 @@ export default function Step4Preview({
                         <h3 className="text-xs font-bold" style={{ color: customColors.text, fontFamily: activeFontFamily }}>
                           {galleryTitle}
                         </h3>
-                        <PhotoGallery
-                          photos={currentGalleryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption }))}
-                          style={isSecondGallery && secondaryPhotoStyle ? secondaryPhotoStyle : photoStyle}
-                          secondaryStyle={null}
-                          primaryColor={customColors.primary}
-                        />
+                        {isSecondGallery && currentGalleryPhotos.length === 0 ? (
+                          <div className="p-4 border border-dashed border-teal-200 bg-teal-50/40 rounded-2xl text-center text-[10px] text-teal-800">
+                            📸 Esta es tu Segunda Galería. Sube fotos independientes en el Paso 3.
+                          </div>
+                        ) : (
+                          <PhotoGallery
+                            photos={currentGalleryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption }))}
+                            style={isSecondGallery && secondaryPhotoStyle ? secondaryPhotoStyle : photoStyle}
+                            secondaryStyle={null}
+                            primaryColor={customColors.primary}
+                          />
+                        )}
                       </div>
                     );
                   }
@@ -1495,6 +1579,36 @@ export default function Step4Preview({
                         ) : (
                           <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300 text-[9px] text-gray-400">
                             📹 Video configurado para el momento especial
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  if (sec.type === 'lugar') {
+                    const addressStr = specialPlaceAddress || 'Lugar Especial';
+                    return (
+                      <div key={sec.id} className="bg-white/90 rounded-2xl p-4 border border-gray-200/60 shadow-xs text-left space-y-2.5" style={{ fontFamily: activeFontFamily }}>
+                        <div className="flex items-center gap-1.5 border-b pb-1.5">
+                          <MapPin className="w-4 h-4 text-rose-500 shrink-0" />
+                          <h3 className="text-xs font-bold text-gray-900 font-serif">Nuestro Lugar Especial</h3>
+                        </div>
+                        <p className="text-[11px] font-bold text-gray-800">{addressStr}</p>
+                        {specialPlaceAddress ? (
+                          <div className="aspect-video rounded-xl overflow-hidden shadow-inner border border-gray-150 bg-gray-100">
+                            <iframe
+                              src={`https://maps.google.com/maps?q=${encodeURIComponent(specialPlaceAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                              frameBorder="0"
+                              scrolling="no"
+                              marginHeight={0}
+                              marginWidth={0}
+                              className="w-full h-full border-0"
+                              title="Mapa de lugar especial"
+                            ></iframe>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-xl border border-dashed border-gray-250 text-center text-[9px] text-gray-400">
+                            📍 Ingresa la dirección en el Paso 3 para mostrar el mapa interactivo aquí
                           </div>
                         )}
                       </div>

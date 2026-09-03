@@ -89,14 +89,18 @@ export default function PolaroidGallery({
                 </div>
 
                 {/* Polaroid chin for caption */}
-                <div className="pt-3 text-center min-h-[36px] flex items-center justify-center">
-                  <p 
-                    className="text-xs sm:text-sm text-gray-800 font-serif italic tracking-wide truncate px-1"
-                    style={{ fontFamily }}
-                  >
-                    {photos[activeIndex]?.caption || 'Nuestro momento especial ❤️'}
-                  </p>
-                </div>
+                {photos[activeIndex]?.caption?.trim() ? (
+                  <div className="pt-3 text-center min-h-[36px] flex items-center justify-center">
+                    <p 
+                      className="text-xs sm:text-sm text-gray-800 font-serif italic tracking-wide truncate px-1"
+                      style={{ fontFamily }}
+                    >
+                      {photos[activeIndex].caption}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="pt-2 min-h-[16px]" />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -152,12 +156,14 @@ export default function PolaroidGallery({
                   />
                 )}
               </div>
-              <p 
-                className="text-[9px] text-gray-800 font-serif italic text-center truncate mt-2 px-0.5"
-                style={{ fontFamily }}
-              >
-                {p.caption || 'Recuerdo ❤️'}
-              </p>
+              {p.caption?.trim() && (
+                <p 
+                  className="text-[9px] text-gray-800 font-serif italic text-center truncate mt-2 px-0.5"
+                  style={{ fontFamily }}
+                >
+                  {p.caption}
+                </p>
+              )}
             </motion.div>
           ))}
         </div>

@@ -90,14 +90,16 @@ export default function PhotoCarousel({
               </div>
 
               {/* Caption */}
-              <div className="pt-2 text-center">
-                <p 
-                  className="text-xs text-gray-800 font-serif italic truncate"
-                  style={{ fontFamily }}
-                >
-                  {photos[currentIndex]?.caption || `Recuerdo ${currentIndex + 1}`}
-                </p>
-              </div>
+              {photos[currentIndex]?.caption?.trim() && (
+                <div className="pt-2 text-center">
+                  <p 
+                    className="text-xs text-gray-800 font-serif italic truncate"
+                    style={{ fontFamily }}
+                  >
+                    {photos[currentIndex].caption}
+                  </p>
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
