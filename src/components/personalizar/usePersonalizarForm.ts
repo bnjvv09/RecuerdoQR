@@ -207,14 +207,14 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
 
   // Media (Primary and Secondary Gallery)
   const [photos, setPhotos] = useState<PhotoInput[]>([
-    { previewUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop', caption: 'Nuestra primera cita' },
-    { previewUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop', caption: 'Bajo las estrellas' },
-    { previewUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop', caption: 'Tu hermosa sonrisa' }
+    { previewUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop', caption: '' },
+    { previewUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop', caption: '' },
+    { previewUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop', caption: '' }
   ]);
 
   const [secondaryPhotos, setSecondaryPhotos] = useState<PhotoInput[]>([
-    { previewUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop', caption: 'Momentos inolvidables' },
-    { previewUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop', caption: 'Riendo juntos' }
+    { previewUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop', caption: '' },
+    { previewUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop', caption: '' }
   ]);
 
   const [milestones, setMilestones] = useState<MilestoneInput[]>([

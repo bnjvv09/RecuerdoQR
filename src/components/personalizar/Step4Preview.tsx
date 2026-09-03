@@ -1316,9 +1316,36 @@ export default function Step4Preview({
                     let secondColVal: string | number = timeElapsed.days;
 
                     if (isBirthday) {
-                      counterTitle = `🎂 ¡Celebrando la Vida de ${partnerName || 'Festejado/a'}!`;
-                      firstColLabel = 'Años';
-                      secondColLabel = 'Días de Luz';
+                      let calculatedAge = 0;
+                      let totalBirthDays = 0;
+                      if (specialDate) {
+                        const birth = new Date(specialDate);
+                        const now = new Date();
+                        calculatedAge = now.getFullYear() - birth.getFullYear();
+                        const m = now.getMonth() - birth.getMonth();
+                        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
+                          calculatedAge--;
+                        }
+                        const diffTime = Math.abs(now.getTime() - birth.getTime());
+                        totalBirthDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                      }
+
+                      return (
+                        <div key={sec.id} className="rounded-2xl p-4 bg-gradient-to-br from-amber-50/90 via-white to-rose-50/70 border border-amber-200/80 shadow-xs space-y-2 text-center" style={{ fontFamily: activeFontFamily }}>
+                          <span className="text-2xl block animate-bounce">🎂✨</span>
+                          <h3 className="font-serif font-extrabold text-xs uppercase tracking-wider" style={{ color: customColors.primary }}>
+                            ¡Celebrando la Vida de {partnerName || 'Festejado/a'}!
+                          </h3>
+                          <div className="py-1 px-3 rounded-full bg-amber-100/90 border border-amber-300/80 inline-block shadow-2xs">
+                            <span className="font-serif font-extrabold text-sm text-amber-900">
+                              🎉 ¡Hoy tienes {calculatedAge > 0 ? `${calculatedAge} Años` : 'tu Cumpleaños'}!
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-gray-500 font-light">
+                            Son más de <strong>{totalBirthDays.toLocaleString('es-CL')}</strong> días llenando de alegría y sonrisas a todos los que te aman ❤️
+                          </p>
+                        </div>
+                      );
                     } else if (isPregnancy) {
                       counterTitle = '👣 Cuenta Regresiva al Nacimiento';
                       const target = specialDate ? new Date(specialDate).getTime() : 0;
@@ -1458,15 +1485,9 @@ export default function Step4Preview({
 
                   {/* VOICE NOTE WHATSAPP PLAYER */}
                   if (sec.type === 'audio') {
+                    if (!voiceNoteUrl) return null;
                     return (
-                      <div key={sec.id} className="bg-white/95 rounded-3xl p-4 border shadow-md text-left space-y-2" style={{ borderColor: `${customColors.primary}40`, fontFamily: activeFontFamily }}>
-                        <div className="flex items-center justify-between border-b pb-1" style={{ borderColor: `${customColors.primary}20` }}>
-                          <span className="text-[8px] font-extrabold uppercase tracking-widest flex items-center gap-1" style={{ color: customColors.primary }}>
-                            <Mic className="w-3 h-3" /> Nota de Voz Secreta
-                          </span>
-                          <span className="text-[7px] font-mono font-bold" style={{ color: customColors.primary }}>12:34 PM</span>
-                        </div>
-
+                      <div key={sec.id} className="bg-white/95 rounded-3xl p-3.5 border shadow-md text-left space-y-2" style={{ borderColor: `${customColors.primary}40`, fontFamily: activeFontFamily }}>
                         <div className="bg-[#e7fed6] rounded-2xl p-2.5 border border-[#c3f0a8] flex items-center gap-2.5 shadow-inner">
                           <button
                             type="button"
@@ -1512,23 +1533,15 @@ export default function Step4Preview({
                   if (sec.type === 'galeria') {
                     renderedGalleryCount++;
                     const isSecondGallery = renderedGalleryCount > 1;
-                    const isPlanPremium = selectedPlan === 'premium';
-                    const galleryTitle = isPlanPremium 
-                      ? (isSecondGallery ? '📸 Segunda Galería de Fotos' : '📸 Primera Galería de Fotos') 
-                      : '📸 Galería de Fotos';
-
                     const currentGalleryPhotos = isSecondGallery
                       ? secondaryPhotos
                       : photos;
 
                     return (
-                      <div key={sec.id} className="space-y-2 py-2" style={{ fontFamily: activeFontFamily }}>
-                        <h3 className="text-xs font-bold" style={{ color: customColors.text, fontFamily: activeFontFamily }}>
-                          {galleryTitle}
-                        </h3>
+                      <div key={sec.id} className="py-2" style={{ fontFamily: activeFontFamily }}>
                         {isSecondGallery && currentGalleryPhotos.length === 0 ? (
                           <div className="p-4 border border-dashed border-teal-200 bg-teal-50/40 rounded-2xl text-center text-[10px] text-teal-800">
-                            📸 Esta es tu Segunda Galería. Sube fotos independientes en el Paso 3.
+                            📸 Sube fotos para tu segunda galería en el Paso 3.
                           </div>
                         ) : (
                           <PhotoGallery
@@ -1543,9 +1556,15 @@ export default function Step4Preview({
                   }
 
                   if (sec.type === 'timeline') {
+                    if (milestones.length === 0) return null;
                     return (
                       <div key={sec.id} className="bg-white/90 rounded-2xl p-4 border border-gray-200/60 shadow-xs text-left space-y-3" style={{ fontFamily: activeFontFamily }}>
-                        <h3 className="text-xs font-bold" style={{ color: customColors.primary, fontFamily: activeFontFamily }}>✨ Línea de Tiempo</h3>
+                        <div className="flex items-center gap-1.5 border-b border-gray-150/60 pb-1.5">
+                          <span className="text-xs">✨</span>
+                          <h3 className="text-xs font-serif font-bold" style={{ color: customColors.primary, fontFamily: activeFontFamily }}>
+                            Nuestra Historia Juntos
+                          </h3>
+                        </div>
                         <div className="space-y-3">
                           {milestones.map((m, mIdx) => (
                             <div key={mIdx} className="border-l-2 pl-3 py-1 space-y-1" style={{ borderColor: customColors.primary }}>
@@ -1565,22 +1584,16 @@ export default function Step4Preview({
                   }
 
                   if (sec.type === 'video') {
+                    if (!uploadedVideoUrl && !youtubeVideoUrl) return null;
                     return (
                       <div key={sec.id} className="bg-white/90 rounded-2xl p-4 border border-gray-200/60 shadow-xs text-center space-y-2" style={{ fontFamily: activeFontFamily }}>
-                        <h3 className="text-xs font-bold flex items-center justify-center gap-1" style={{ color: customColors.primary, fontFamily: activeFontFamily }}>
-                          <VideoIcon className="w-3.5 h-3.5" /> Video Dedicado
-                        </h3>
                         {uploadedVideoUrl ? (
                           <video src={uploadedVideoUrl} controls className="w-full rounded-xl max-h-48 object-cover shadow-xs" />
                         ) : youtubeVideoUrl ? (
                           <div className="aspect-video bg-gray-900 rounded-xl flex items-center justify-center text-white text-[10px]">
-                            ▶️ Reproductor de Video de YouTube
+                            ▶️ Video de YouTube
                           </div>
-                        ) : (
-                          <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300 text-[9px] text-gray-400">
-                            📹 Video configurado para el momento especial
-                          </div>
-                        )}
+                        ) : null}
                       </div>
                     );
                   }

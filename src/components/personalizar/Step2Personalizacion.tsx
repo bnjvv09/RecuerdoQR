@@ -1411,24 +1411,29 @@ export default function Step2Personalizacion({
 
                           {/* Photo Grid */}
                           {photos.length > 0 && (
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-56 overflow-y-auto pr-1">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
                               {photos.map((p, pIdx) => (
-                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-gray-200 shadow-2xs h-24">
-                                  <Image src={p.previewUrl} alt={`Foto ${pIdx + 1}`} fill sizes="120px" className="object-cover" />
-                                  <button
-                                    type="button"
-                                    onClick={() => removePhoto(pIdx)}
-                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10"
-                                  >
-                                    ×
-                                  </button>
-                                  <input
-                                    type="text"
-                                    value={p.caption}
-                                    onChange={(e) => updatePhotoCaption(pIdx, e.target.value)}
-                                    placeholder="Pie de foto..."
-                                    className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] px-1.5 py-0.5 outline-none placeholder-gray-300 font-light z-10"
-                                  />
+                                <div key={pIdx} className="rounded-xl overflow-hidden border border-gray-200 shadow-2xs bg-white flex flex-col group hover:border-rose-300 transition">
+                                  <div className="relative h-28 w-full bg-gray-100">
+                                    <Image src={p.previewUrl} alt={`Foto ${pIdx + 1}`} fill sizes="140px" className="object-cover" />
+                                    <button
+                                      type="button"
+                                      onClick={() => removePhoto(pIdx)}
+                                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10 font-bold text-xs"
+                                      title="Eliminar foto"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                  <div className="p-1.5 bg-gray-50/90 border-t border-gray-100">
+                                    <input
+                                      type="text"
+                                      value={p.caption || ''}
+                                      onChange={(e) => updatePhotoCaption(pIdx, e.target.value)}
+                                      placeholder="Pie de foto (opcional)..."
+                                      className="w-full text-[10px] px-2 py-1 bg-white border border-gray-200 rounded-lg focus:border-rose-400 focus:outline-none placeholder-gray-400 text-gray-800"
+                                    />
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1486,24 +1491,29 @@ export default function Step2Personalizacion({
 
                           {/* Secondary Photo Grid */}
                           {secondaryPhotos.length > 0 && (
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-56 overflow-y-auto pr-1">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
                               {secondaryPhotos.map((p, pIdx) => (
-                                <div key={pIdx} className="relative group rounded-xl overflow-hidden border border-teal-200 shadow-2xs h-24">
-                                  <Image src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} fill sizes="120px" className="object-cover" />
-                                  <button
-                                    type="button"
-                                    onClick={() => removeSecondaryPhoto && removeSecondaryPhoto(pIdx)}
-                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10"
-                                  >
-                                    ×
-                                  </button>
-                                  <input
-                                    type="text"
-                                    value={p.caption}
-                                    onChange={(e) => updateSecondaryPhotoCaption && updateSecondaryPhotoCaption(pIdx, e.target.value)}
-                                    placeholder="Pie de foto..."
-                                    className="w-full text-[9px] px-1.5 py-1 bg-white/95 border-t border-gray-200"
-                                  />
+                                <div key={pIdx} className="rounded-xl overflow-hidden border border-teal-200 shadow-2xs bg-white flex flex-col group hover:border-teal-400 transition">
+                                  <div className="relative h-28 w-full bg-teal-50/50">
+                                    <Image src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} fill sizes="140px" className="object-cover" />
+                                    <button
+                                      type="button"
+                                      onClick={() => removeSecondaryPhoto && removeSecondaryPhoto(pIdx)}
+                                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 cursor-pointer z-10 font-bold text-xs"
+                                      title="Eliminar foto"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                  <div className="p-1.5 bg-teal-50/60 border-t border-teal-100">
+                                    <input
+                                      type="text"
+                                      value={p.caption || ''}
+                                      onChange={(e) => updateSecondaryPhotoCaption && updateSecondaryPhotoCaption(pIdx, e.target.value)}
+                                      placeholder="Pie de foto (opcional)..."
+                                      className="w-full text-[10px] px-2 py-1 bg-white border border-teal-200 rounded-lg focus:border-teal-500 focus:outline-none placeholder-gray-400 text-gray-800"
+                                    />
+                                  </div>
                                 </div>
                               ))}
                             </div>

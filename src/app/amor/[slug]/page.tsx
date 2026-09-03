@@ -1657,9 +1657,41 @@ export default function AmorExperiencePage() {
 
               if (sec.type === 'contador') {
                 let counterHeader = sec.title;
+                if (themeId === 'birthday') {
+                  let calculatedAge = 0;
+                  let totalBirthDays = 0;
+                  if (experience.special_date) {
+                    const birth = new Date(experience.special_date);
+                    const now = new Date();
+                    calculatedAge = now.getFullYear() - birth.getFullYear();
+                    const m = now.getMonth() - birth.getMonth();
+                    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
+                      calculatedAge--;
+                    }
+                    const diffTime = Math.abs(now.getTime() - birth.getTime());
+                    totalBirthDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                  }
+
+                  return (
+                    <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-3 ${style.cardClass}`}>
+                      <span className="text-3xl block animate-bounce">🎂✨</span>
+                      <h3 className={`font-serif font-extrabold text-sm uppercase tracking-wider ${style.textColor}`}>
+                        ¡Celebrando la Vida de {experience.partner_name || 'Festejado/a'}!
+                      </h3>
+                      <div className="py-1.5 px-4 rounded-full bg-amber-100/90 border border-amber-300/80 inline-block shadow-2xs">
+                        <span className="font-serif font-extrabold text-base text-amber-900">
+                          🎉 ¡Hoy celebras {calculatedAge > 0 ? `${calculatedAge} Años de Vida` : 'tu Cumpleaños'}!
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 font-light">
+                        Son más de <strong>{totalBirthDays.toLocaleString('es-CL')}</strong> días llenando de sonrisas y momentos inolvidables a quienes te aman ❤️
+                      </p>
+                    </div>
+                  );
+                }
+
                 if (!counterHeader) {
-                  if (themeId === 'birthday') counterHeader = `¡Celebrando la Vida de ${experience.partner_name || 'Festejado/a'}! 🎂`;
-                  else if (themeId === 'love-confession') counterHeader = 'Días que Llevo Pensando en Ti 💭';
+                  if (themeId === 'love-confession') counterHeader = 'Días que Llevo Pensando en Ti 💭';
                   else if (themeId === 'special') counterHeader = 'Días de Esfuerzo & Dedicación hasta la Meta 🏆';
                   else if (themeId === 'reconciliation') counterHeader = 'Días Compartidos que Valen Más que Cualquier Error 🕊️';
                   else if (themeId === 'pregnancy') counterHeader = 'Cuenta Regresiva al Nacimiento 👣';
@@ -1875,6 +1907,8 @@ export default function AmorExperiencePage() {
 
               if (sec.type === 'video') {
                 const videoSource = sec.content?.url || experience.config?.uploadedVideoUrl || '';
+                if (!videoSource && !videoCode) return null;
+
                 const isDirectFile = videoSource.startsWith('blob:') || 
                                      videoSource.endsWith('.mp4') || 
                                      videoSource.endsWith('.mov') || 
@@ -1883,10 +1917,7 @@ export default function AmorExperiencePage() {
                                      videoSource.includes('supabase.co');
 
                 return (
-                  <div key={sec.id} className={`rounded-3xl p-6 shadow-md border text-center space-y-4 ${style.cardClass}`}>
-                    <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
-                      {sec.title || 'Un Video para ti 🎥'}
-                    </h3>
+                  <div key={sec.id} className={`rounded-3xl p-4 sm:p-6 shadow-md border text-center space-y-2 ${style.cardClass}`}>
                     {isDirectFile ? (
                       <div className="rounded-2xl overflow-hidden shadow-inner border border-gray-100 bg-black">
                         <video src={videoSource} controls className="w-full max-h-72 object-cover" />
@@ -1901,24 +1932,17 @@ export default function AmorExperiencePage() {
                           className="w-full h-full"
                         ></iframe>
                       </div>
-                    ) : (
-                      <p className="text-xs text-gray-450 italic">No se pudo cargar el video.</p>
-                    )}
+                    ) : null}
                   </div>
                 );
               }
 
               if (sec.type === 'audio') {
                 const audioSource = sec.content?.url || experience.config?.uploadedVoiceNoteUrl || '';
-                return (
-                  <div key={sec.id} className={`rounded-3xl p-5 shadow-md border text-left space-y-3 ${style.cardClass}`}>
-                    <div className="flex items-center justify-between border-b border-emerald-100 pb-1.5">
-                      <span className="text-[9px] font-extrabold uppercase tracking-widest text-emerald-800 flex items-center gap-1.5">
-                        <Mic className="w-3.5 h-3.5 text-emerald-600" /> Nota de Voz Secreta
-                      </span>
-                      <span className="text-[8px] font-mono text-emerald-600 font-bold">12:34 PM</span>
-                    </div>
+                if (!audioSource) return null;
 
+                return (
+                  <div key={sec.id} className={`rounded-3xl p-4 shadow-md border text-left space-y-2 ${style.cardClass}`}>
                     <div className="bg-[#e7fed6] rounded-2xl p-3 border border-[#c3f0a8] flex items-center gap-3 shadow-inner">
                       <button
                         type="button"
@@ -1977,11 +2001,6 @@ export default function AmorExperiencePage() {
               if (sec.type === 'galeria') {
                 publicGalleryIdx++;
                 const isSecondGallery = publicGalleryIdx > 1;
-                const hasMultipleGalleries = (experience.sections?.filter(s => s.type === 'galeria').length || 0) > 1 || Boolean(experience.config?.enableDualPhotoStyle);
-                const galleryTitle = hasMultipleGalleries
-                  ? (isSecondGallery ? '📸 Segunda Galería de Fotos' : '📸 Primera Galería de Fotos')
-                  : (sec.title || '📸 Galería de Fotos');
-
                 const rawPhotos = isSecondGallery
                   ? (experience.config?.secondaryPhotos || sec.content?.secondaryPhotos || [])
                   : (sec.content?.photos || experience.photos || []);
@@ -1996,15 +2015,7 @@ export default function AmorExperiencePage() {
                   : (sec.content?.photoStyle || experience.config?.photoStyle || 'polaroid');
 
                 return (
-                  <div key={sec.id} className={`rounded-3xl p-4 sm:p-6 shadow-md border text-center space-y-4 ${style.cardClass}`}>
-                    <div className="flex items-center justify-between border-b border-rose-100/40 pb-2">
-                      <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
-                        {galleryTitle}
-                      </h3>
-                      <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-rose-50 border border-rose-100 text-[#a21232] uppercase">
-                        {galleryStyle}
-                      </span>
-                    </div>
+                  <div key={sec.id} className={`rounded-3xl p-2 sm:p-4 shadow-md border text-center space-y-2 ${style.cardClass}`}>
 
                     {galleryPhotos.length > 0 ? (
                       <PhotoGallery
@@ -2023,10 +2034,11 @@ export default function AmorExperiencePage() {
 
               if (sec.type === 'timeline') {
                 const timelineMilestones = sec.content?.milestones || experience.milestones || [];
+                if (timelineMilestones.length === 0) return null;
                 return (
                   <div key={sec.id} className="space-y-4 max-w-lg mx-auto text-center">
                     <h3 className={`font-serif font-extrabold text-sm ${style.textColor}`}>
-                      {sec.title || 'Momentos Especiales'}
+                      {sec.title || 'Nuestra Historia Juntos ✨'}
                     </h3>
                     <div className="relative pl-6 border-l border-rose-200 ml-3 space-y-6 text-left">
                       {timelineMilestones.map((m: any, mIdx: number) => (
