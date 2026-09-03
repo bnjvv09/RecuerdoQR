@@ -16,7 +16,9 @@ import {
   Mic, 
   Plus, 
   ExternalLink,
-  Heart
+  Heart,
+  MapPin,
+  Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -50,6 +52,14 @@ export default function AdminEditExperienceModal({
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
 
+  // Secondary Photos State (Plan Máximo)
+  const [secondaryPhotos, setSecondaryPhotos] = useState<Array<{ url: string; caption?: string; id?: string }>>([]);
+  const [newSecondaryPhotoUrl, setNewSecondaryPhotoUrl] = useState('');
+  const [newSecondaryPhotoCaption, setNewSecondaryPhotoCaption] = useState('');
+
+  // Interactive Place / Google Maps
+  const [specialAddress, setSpecialAddress] = useState('');
+
   // Config fields
   const [birthdayWishMessage, setBirthdayWishMessage] = useState('');
   const [birthdayBalloons, setBirthdayBalloons] = useState<[string, string, string]>([
@@ -73,6 +83,27 @@ export default function AdminEditExperienceModal({
   const [uploadedVoiceNoteUrl, setUploadedVoiceNoteUrl] = useState('');
   const [secretPasscode, setSecretPasscode] = useState('1234');
   const [secretMessage, setSecretMessage] = useState('');
+
+  // Additional 12 Themes State
+  const [waxSealSender, setWaxSealSender] = useState('');
+  const [crystalHeartTitle, setCrystalHeartTitle] = useState('');
+  const [crystalHeartSecret, setCrystalHeartSecret] = useState('');
+  const [valentineBoxTitle, setValentineBoxTitle] = useState('');
+  const [valentineCoupon, setValentineCoupon] = useState('');
+  const [trophyTitle, setTrophyTitle] = useState('');
+  const [trophyCategory, setTrophyCategory] = useState('');
+  const [diplomaText, setDiplomaText] = useState('');
+  const [gratitudeStar1, setGratitudeStar1] = useState('');
+  const [gratitudeStar2, setGratitudeStar2] = useState('');
+  const [gratitudeStar3, setGratitudeStar3] = useState('');
+  const [reconciliationQuestion, setReconciliationQuestion] = useState('');
+  const [reconciliationPromise, setReconciliationPromise] = useState('');
+  const [statsKisses, setStatsKisses] = useState('2.500+');
+  const [statsKissesLabel, setStatsKissesLabel] = useState('Besos Inolvidables');
+  const [statsCoffees, setStatsCoffees] = useState('850+');
+  const [statsCoffeesLabel, setStatsCoffeesLabel] = useState('Citas Juntos');
+  const [statsSmiles, setStatsSmiles] = useState('Incontables');
+  const [statsSmilesLabel, setStatsSmilesLabel] = useState('Sonrisas Compartidas');
 
   useEffect(() => {
     if (experience) {
@@ -114,6 +145,33 @@ export default function AdminEditExperienceModal({
       setUploadedVoiceNoteUrl(conf.uploadedVoiceNoteUrl || '');
       setSecretPasscode(conf.secretPasscode || '1234');
       setSecretMessage(conf.secretMessage || '');
+      setSpecialAddress(conf.specialAddress || conf.specialPlaceAddress || '');
+      setSecondaryPhotos(
+        (conf.secondaryPhotos || []).map((p: any) => ({
+          url: p.url || p.previewUrl,
+          caption: p.caption || '',
+          id: p.id || Math.random().toString(36).substring(2, 9)
+        }))
+      );
+      setWaxSealSender(conf.waxSealSender || '');
+      setCrystalHeartTitle(conf.crystalHeartTitle || 'Corazón de Cristal Encantado');
+      setCrystalHeartSecret(conf.crystalHeartSecret || '');
+      setValentineBoxTitle(conf.valentineBoxTitle || 'Caja de Bombones de San Valentín 🍫');
+      setValentineCoupon(conf.valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️');
+      setTrophyTitle(conf.trophyTitle || 'Trofeo al Mayor Logro 🏆');
+      setTrophyCategory(conf.trophyCategory || '¡Orgullo Total por tu Gran Meta Cumplida!');
+      setDiplomaText(conf.diplomaText || 'Reconocimiento oficial a la persona más talentosa y perseverante.');
+      setGratitudeStar1(conf.gratitudeStar1 || 'Gracias por tu apoyo incondicional ✨');
+      setGratitudeStar2(conf.gratitudeStar2 || 'Gracias por creer siempre en mí 🌟');
+      setGratitudeStar3(conf.gratitudeStar3 || 'Gracias por iluminar mi vida 💛');
+      setReconciliationQuestion(conf.reconciliationQuestion || '¿Me perdonas? ❤️');
+      setReconciliationPromise(conf.reconciliationPromise || 'Prometo escucharte más y valorar cada momento a tu lado.');
+      setStatsKisses(conf.statsKisses || '2.500+');
+      setStatsKissesLabel(conf.statsKissesLabel || 'Besos Inolvidables');
+      setStatsCoffees(conf.statsCoffees || '850+');
+      setStatsCoffeesLabel(conf.statsCoffeesLabel || 'Citas Juntos');
+      setStatsSmiles(conf.statsSmiles || 'Incontables');
+      setStatsSmilesLabel(conf.statsSmilesLabel || 'Sonrisas Compartidas');
     }
   }, [experience]);
 
@@ -141,6 +199,27 @@ export default function AdminEditExperienceModal({
     setPhotos(updated);
   };
 
+  const handleAddSecondaryPhoto = () => {
+    if (!newSecondaryPhotoUrl.trim()) {
+      toast.error('Ingresa la URL de la imagen para la 2da galería');
+      return;
+    }
+    setSecondaryPhotos([...secondaryPhotos, { url: newSecondaryPhotoUrl.trim(), caption: newSecondaryPhotoCaption.trim(), id: Math.random().toString(36).substring(2, 9) }]);
+    setNewSecondaryPhotoUrl('');
+    setNewSecondaryPhotoCaption('');
+    toast.success('Foto agregada a la Segunda Galería');
+  };
+
+  const handleRemoveSecondaryPhoto = (idx: number) => {
+    setSecondaryPhotos(secondaryPhotos.filter((_, i) => i !== idx));
+  };
+
+  const handleUpdateSecondaryCaption = (idx: number, caption: string) => {
+    const updated = [...secondaryPhotos];
+    updated[idx].caption = caption;
+    setSecondaryPhotos(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -149,6 +228,7 @@ export default function AdminEditExperienceModal({
     try {
       const updatedConfig = {
         ...config,
+        specialAddress,
         birthdayWishMessage,
         birthdayBalloons,
         scratchSecretMessage,
@@ -163,11 +243,31 @@ export default function AdminEditExperienceModal({
         surpriseMessage,
         ticketTitle,
         ticketConditions,
+        waxSealSender,
+        crystalHeartTitle,
+        crystalHeartSecret,
+        valentineBoxTitle,
+        valentineCoupon,
+        trophyTitle,
+        trophyCategory,
+        diplomaText,
+        gratitudeStar1,
+        gratitudeStar2,
+        gratitudeStar3,
+        reconciliationQuestion,
+        reconciliationPromise,
+        statsKisses,
+        statsKissesLabel,
+        statsCoffees,
+        statsCoffeesLabel,
+        statsSmiles,
+        statsSmilesLabel,
         uploadedVideoUrl,
         uploadedVoiceNoteUrl,
         secretPasscode,
         secretMessage,
         photos: photos.map(p => ({ url: p.url, caption: p.caption })),
+        secondaryPhotos: secondaryPhotos.map(p => ({ url: p.url, caption: p.caption })),
       };
 
       const payload = {
@@ -464,12 +564,150 @@ export default function AdminEditExperienceModal({
             </div>
           </div>
 
+          {/* Section 3.1: Secondary Photo Gallery (Plan Máximo) */}
+          <div className="bg-gray-50/70 p-4 rounded-2xl border border-gray-200 space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-gray-900 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-teal-600" />
+                <span>3.1. Segunda Galería de Fotos - Plan Máximo ({secondaryPhotos.length})</span>
+              </h4>
+            </div>
+
+            {/* Secondary Photos List */}
+            {secondaryPhotos.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto p-1">
+                {secondaryPhotos.map((p, idx) => (
+                  <div key={idx} className="bg-white p-2 rounded-xl border border-gray-250 relative space-y-1 group">
+                    <div className="relative w-full h-20 rounded-lg overflow-hidden">
+                      <Image src={p.url} alt="Foto 2da galería" fill sizes="120px" className="object-cover" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSecondaryPhoto(idx)}
+                      className="absolute top-3 right-3 p-1 bg-red-600 text-white rounded-full opacity-90 hover:opacity-100 transition cursor-pointer"
+                      title="Eliminar foto"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="Pie de foto..."
+                      value={p.caption || ''}
+                      onChange={(e) => handleUpdateSecondaryCaption(idx, e.target.value)}
+                      className="w-full px-1.5 py-0.5 text-[9px] border border-gray-200 rounded bg-gray-50"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[10px] text-gray-400 italic">No hay fotos en la segunda galería.</p>
+            )}
+
+            {/* Add secondary photo by URL */}
+            <div className="pt-2 border-t border-gray-200 flex flex-col sm:flex-row gap-2">
+              <input
+                type="url"
+                placeholder="URL foto para 2da galería (https://...)"
+                value={newSecondaryPhotoUrl}
+                onChange={(e) => setNewSecondaryPhotoUrl(e.target.value)}
+                className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-xl text-xs"
+              />
+              <input
+                type="text"
+                placeholder="Pie de foto (opcional)"
+                value={newSecondaryPhotoCaption}
+                onChange={(e) => setNewSecondaryPhotoCaption(e.target.value)}
+                className="w-full sm:w-48 px-3 py-1.5 bg-white border border-gray-300 rounded-xl text-xs"
+              />
+              <button
+                type="button"
+                onClick={handleAddSecondaryPhoto}
+                className="px-3 py-1.5 bg-teal-700 text-white rounded-xl text-xs font-bold hover:bg-teal-800 transition flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Agregar</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Section 3.2: Lugar Especial con Google Maps */}
+          <div className="bg-gray-50/70 p-4 rounded-2xl border border-gray-200 space-y-2">
+            <h4 className="font-bold text-gray-900 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-rose-600" />
+              <span>3.2. Lugar Especial (Mapa Interactivo Google Maps)</span>
+            </h4>
+            <input
+              type="text"
+              placeholder="Ej: Cerro San Cristóbal, Santiago o Parque Bicentenario..."
+              value={specialAddress}
+              onChange={(e) => setSpecialAddress(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+            />
+            <p className="text-[10px] text-gray-400">Si se ingresa una dirección o nombre de lugar, se renderizará automáticamente el mapa satelital de Google Maps interactivo en la experiencia.</p>
+          </div>
+
           {/* Section 4: Advanced Theme Config */}
           <div className="bg-gray-50/70 p-4 rounded-2xl border border-gray-200 space-y-3">
             <h4 className="font-bold text-gray-900 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#a21232]" />
               <span>4. Parámetros Especiales de Temática</span>
             </h4>
+
+            {theme === 'anniversary' && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">Estadísticas de la Pareja</label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      placeholder="Cantidad Besos (ej: 2.500+)"
+                      value={statsKisses}
+                      onChange={(e) => setStatsKisses(e.target.value)}
+                      className="w-full px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Etiqueta"
+                      value={statsKissesLabel}
+                      onChange={(e) => setStatsKissesLabel(e.target.value)}
+                      className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      placeholder="Cantidad Citas (ej: 850+)"
+                      value={statsCoffees}
+                      onChange={(e) => setStatsCoffees(e.target.value)}
+                      className="w-full px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Etiqueta"
+                      value={statsCoffeesLabel}
+                      onChange={(e) => setStatsCoffeesLabel(e.target.value)}
+                      className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      placeholder="Cantidad Sonrisas (ej: Incontables)"
+                      value={statsSmiles}
+                      onChange={(e) => setStatsSmiles(e.target.value)}
+                      className="w-full px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Etiqueta"
+                      value={statsSmilesLabel}
+                      onChange={(e) => setStatsSmilesLabel(e.target.value)}
+                      className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px]"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {theme === 'birthday' && (
               <div className="space-y-2">
@@ -596,6 +834,151 @@ export default function AdminEditExperienceModal({
                     value={ticketConditions}
                     onChange={(e) => setTicketConditions(e.target.value)}
                     className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-[10px]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {theme === 'love-letter' && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">Firma en el Sello de Lacre Vintage</label>
+                <input
+                  type="text"
+                  placeholder="Ej: De tu amor por siempre..."
+                  value={waxSealSender}
+                  onChange={(e) => setWaxSealSender(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                />
+              </div>
+            )}
+
+            {theme === 'love-confession' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Título del Corazón de Cristal</label>
+                  <input
+                    type="text"
+                    value={crystalHeartTitle}
+                    onChange={(e) => setCrystalHeartTitle(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Mensaje al Tocar el Corazón</label>
+                  <input
+                    type="text"
+                    value={crystalHeartSecret}
+                    onChange={(e) => setCrystalHeartSecret(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {theme === 'valentines' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Título de la Caja de Bombones</label>
+                  <input
+                    type="text"
+                    value={valentineBoxTitle}
+                    onChange={(e) => setValentineBoxTitle(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Vale Romántico Oficial</label>
+                  <input
+                    type="text"
+                    value={valentineCoupon}
+                    onChange={(e) => setValentineCoupon(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {theme === 'special' && (
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Título del Trofeo</label>
+                    <input
+                      type="text"
+                      value={trophyTitle}
+                      onChange={(e) => setTrophyTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoría / Logro Celebrado</label>
+                    <input
+                      type="text"
+                      value={trophyCategory}
+                      onChange={(e) => setTrophyCategory(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Texto del Diploma de Honor</label>
+                  <input
+                    type="text"
+                    value={diplomaText}
+                    onChange={(e) => setDiplomaText(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {theme === 'gratitude' && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">3 Estrellas de Gratitud</label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    placeholder="Estrella 1"
+                    value={gratitudeStar1}
+                    onChange={(e) => setGratitudeStar1(e.target.value)}
+                    className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Estrella 2"
+                    value={gratitudeStar2}
+                    onChange={(e) => setGratitudeStar2(e.target.value)}
+                    className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Estrella 3"
+                    value={gratitudeStar3}
+                    onChange={(e) => setGratitudeStar3(e.target.value)}
+                    className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {theme === 'reconciliation' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Pregunta de Reconciliación</label>
+                  <input
+                    type="text"
+                    value={reconciliationQuestion}
+                    onChange={(e) => setReconciliationQuestion(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Promesa Sincera</label>
+                  <input
+                    type="text"
+                    value={reconciliationPromise}
+                    onChange={(e) => setReconciliationPromise(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs"
                   />
                 </div>
               </div>

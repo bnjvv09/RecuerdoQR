@@ -174,7 +174,25 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
         voiceNoteUrl: uploadedVoiceNoteUrl || form.voiceNoteUrl,
         youtubeVideoUrl: form.youtubeVideoUrl,
         secondaryPhotos: form.secondaryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption })),
-        secondaryPhotoStyle: form.secondaryPhotoStyle,
+        specialAddress: form.specialPlaceAddress,
+        scratchUltrasoundUrl: form.scratchUltrasoundUrl,
+        surpriseMessage: form.surpriseMessage,
+        ticketTitle: form.ticketTitle,
+        ticketConditions: form.ticketConditions,
+        waxSealSender: form.waxSealSender,
+        crystalHeartTitle: form.crystalHeartTitle,
+        crystalHeartSecret: form.crystalHeartSecret,
+        valentineBoxTitle: form.valentineBoxTitle,
+        valentineCoupon: form.valentineCoupon,
+        trophyTitle: form.trophyTitle,
+        trophyCategory: form.trophyCategory,
+        diplomaText: form.diplomaText,
+        gratitudeStar1: form.gratitudeStar1,
+        gratitudeStar2: form.gratitudeStar2,
+        gratitudeStar3: form.gratitudeStar3,
+        pollQuestion: form.pollQuestion,
+        pollOptionA: form.pollOptionA,
+        pollOptionB: form.pollOptionB,
         cardOrientation: form.cardOrientation,
         cardPalette: form.cardPalette,
         cardTitle: form.cardTitle,
@@ -527,8 +545,10 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
             customColors={form.customColors}
             setCustomColors={form.setCustomColors}
             photoStyle={form.photoStyle}
+            specialPlaceAddress={form.specialPlaceAddress}
             sections={form.sections}
             photos={form.photos}
+            secondaryPhotos={form.secondaryPhotos}
             milestones={form.milestones}
           />
         )}
