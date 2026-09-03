@@ -75,7 +75,9 @@ export async function POST(request: Request) {
                 total: order.total,
                 slug: exp.slug,
                 partnerName: exp.partner_name,
-                userName: exp.user_name
+                userName: exp.user_name,
+                theme: exp.theme,
+                couponCode: (exp.config as any)?.couponCode,
               };
               await Promise.allSettled([
                 sendCustomerConfirmationEmail(emailPayload),

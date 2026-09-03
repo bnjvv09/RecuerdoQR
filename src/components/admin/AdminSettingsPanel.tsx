@@ -19,7 +19,8 @@ import {
   Ticket,
   Percent,
   Trash2,
-  Plus
+  Plus,
+  Send
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -27,6 +28,7 @@ export default function AdminSettingsPanel() {
   const { settings, setSettings, updateSettingsLocal } = useAdminStore();
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'contact' | 'coupons' | 'legal'>('contact');
   const [couponsList, setCouponsList] = useState<Coupon[]>([]);
   const [newCouponCode, setNewCouponCode] = useState('');
@@ -38,6 +40,30 @@ export default function AdminSettingsPanel() {
     setFormData(settings);
     getCoupons().then(setCouponsList).catch(console.error);
   }, [settings]);
+
+  const handleSendTestEmail = async () => {
+    setIsSendingTestEmail(true);
+    const toastId = toast.loading('Enviando correo de prueba a somosrecuerdosqr@gmail.com...');
+    try {
+      const res = await fetch('/api/admin/test-email', { method: 'POST' });
+      const data = await res.json();
+      toast.dismiss(toastId);
+      if (data.hasRealKey && data.success) {
+        toast.success('¡Correo de prueba enviado con éxito a somosrecuerdosqr@gmail.com! Revisa tu bandeja de entrada o spam.');
+      } else if (data.simulated) {
+        toast.info('Simulación ejecutada con éxito en el servidor. Para que llegue a tu bandeja real de Gmail, recuerda agregar la variable RESEND_API_KEY en Vercel.');
+      } else if (data.error) {
+        toast.error(`Error: ${data.error}`);
+      } else {
+        toast.success('Petición procesada correctamente');
+      }
+    } catch {
+      toast.dismiss(toastId);
+      toast.error('Error al conectar con el servidor de correo');
+    } finally {
+      setIsSendingTestEmail(false);
+    }
+  };
 
   const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,6 +246,43 @@ export default function AdminSettingsPanel() {
                 </a>
               </div>
             )}
+          </div>
+
+          {/* Card: Notificaciones Automáticas de Ventas a Gmail */}
+          <div className="bg-white rounded-2xl p-6 border-2 border-rose-100 shadow-xs space-y-4 md:col-span-2 bg-gradient-to-br from-rose-50/20 to-white">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-rose-100 pb-3">
+              <h3 className="font-serif font-bold text-sm text-gray-900 flex items-center gap-2">
+                <Mail className="w-5 h-5 text-[#a21232]" />
+                <span>Alertas de Nuevas Ventas por Correo Electrónico</span>
+              </h3>
+              <span className="text-[10px] text-rose-800 bg-rose-100/80 px-2.5 py-0.5 rounded-full font-bold self-start sm:self-auto">
+                ⚡ Notificación Instantánea
+              </span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white border border-rose-150 rounded-xl">
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-gray-900 flex items-center gap-1.5 flex-wrap">
+                  <span>Bandeja receptora de ventas:</span>
+                  <span className="font-mono text-[#a21232] bg-rose-50 px-2.5 py-0.5 rounded-md border border-rose-200 font-bold">
+                    somosrecuerdosqr@gmail.com
+                  </span>
+                </p>
+                <p className="text-[11px] text-gray-500 font-light">
+                  Cada vez que un cliente pague un plan, recibirás un correo automático con los datos de quien compró (nombre, email, WhatsApp), qué plan eligió, cuánto pagó y el enlace directo al recuerdo publicado.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={isSendingTestEmail}
+                onClick={handleSendTestEmail}
+                className="px-4 py-2.5 bg-gradient-to-r from-rose-600 to-[#a21232] hover:from-rose-700 hover:to-[#880e28] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0 active:scale-98"
+              >
+                {isSendingTestEmail ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                <span>Enviar Correo de Prueba</span>
+              </button>
+            </div>
           </div>
 
           {/* Card: Datos de Contacto */}

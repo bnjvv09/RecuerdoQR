@@ -1,6 +1,6 @@
 // src/lib/emailService.ts
 
-interface OrderEmailData {
+export interface OrderEmailData {
   orderId: string;
   customerName: string;
   customerEmail: string;
@@ -10,6 +10,9 @@ interface OrderEmailData {
   slug: string;
   partnerName: string;
   userName: string;
+  theme?: string;
+  couponCode?: string;
+  specialDate?: string;
 }
 
 /**
@@ -133,41 +136,111 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
  */
 export async function sendAdminSalesNotification(data: OrderEmailData) {
   const apiKey = process.env.RESEND_API_KEY;
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'contacto@recuerdoqr.cl';
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'somosrecuerdosqr@gmail.com';
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
   const experienceUrl = `${appUrl}/amor/${data.slug}`;
 
+  // Extraer dígitos para link de WhatsApp directo
+  const rawPhone = (data.customerPhone || '').replace(/\D/g, '');
+  const cleanPhone = rawPhone.length >= 9 ? (rawPhone.startsWith('56') ? rawPhone : `56${rawPhone}`) : '';
+
   const htmlContent = `
     <!DOCTYPE html>
-    <html>
-    <body style="font-family: sans-serif; padding: 20px; background: #f3f4f6; color: #111827;">
-      <div style="max-width: 500px; margin: 0 auto; background: #ffffff; padding: 24px; border-radius: 16px; border: 1px solid #e5e7eb;">
-        <h2 style="color: #059669; margin: 0 0 12px;">🎉 ¡Nueva Venta Aprobada en RecuerdoQR!</h2>
-        <p style="font-size: 14px; color: #4b5563;">Se acaba de recibir y confirmar un nuevo pago por Mercado Pago:</p>
-        
-        <div style="background: #f9fafb; padding: 16px; border-radius: 12px; margin: 16px 0; font-size: 13px;">
-          <p style="margin: 4px 0;"><strong>Cliente:</strong> ${data.customerName}</p>
-          <p style="margin: 4px 0;"><strong>Email:</strong> ${data.customerEmail}</p>
-          <p style="margin: 4px 0;"><strong>Teléfono:</strong> ${data.customerPhone || 'No informado'}</p>
-          <p style="margin: 4px 0;"><strong>Plan:</strong> ${data.productName}</p>
-          <p style="margin: 4px 0;"><strong>Total:</strong> $${Number(data.total).toLocaleString('es-CL')} CLP</p>
-          <p style="margin: 4px 0;"><strong>Pareja:</strong> ${data.partnerName} & ${data.userName}</p>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #111827; }
+        .container { max-width: 550px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .header { background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 28px 24px; text-align: center; color: #ffffff; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+        .header p { margin: 6px 0 0; font-size: 13px; opacity: 0.9; }
+        .body { padding: 28px; }
+        .amount-box { background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 20px; }
+        .amount-title { margin: 0; font-size: 11px; color: #065f46; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .amount-val { margin: 4px 0 0; font-size: 28px; font-weight: 900; color: #047857; }
+        .table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+        .table td { padding: 9px 0; border-bottom: 1px solid #f3f4f6; }
+        .table td.label { font-weight: 600; color: #6b7280; width: 42%; }
+        .table td.val { font-weight: 700; color: #111827; text-align: right; }
+        .btn-live { display: block; text-align: center; background: #a21232; color: #ffffff !important; padding: 13px 20px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; margin-top: 20px; box-shadow: 0 4px 12px rgba(162,18,50,0.25); }
+        .btn-wa { display: inline-block; background: #25d366; color: #ffffff !important; padding: 4px 10px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 10px; margin-left: 6px; }
+        .btn-admin { display: block; text-align: center; color: #4b5563; font-size: 12px; text-decoration: none; margin-top: 14px; font-weight: 600; }
+        .footer { background: #f9fafb; padding: 16px; text-align: center; font-size: 11px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🎉 ¡Nueva Venta Aprobada en RecuerdoQR!</h1>
+          <p>Se ha recibido y confirmado un nuevo pago</p>
         </div>
+        <div class="body">
+          <div class="amount-box">
+            <p class="amount-title">Total Pagado</p>
+            <p class="amount-val">$${Number(data.total).toLocaleString('es-CL')} CLP</p>
+          </div>
 
-        <a href="${experienceUrl}" style="display: block; text-align: center; background: #111827; color: #ffffff; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; margin: 16px 0;">
-          Ver Experiencia Creada 🔗
-        </a>
+          <table class="table">
+            <tr>
+              <td class="label">📦 Plan Comprado:</td>
+              <td class="val">${data.productName}</td>
+            </tr>
+            <tr>
+              <td class="label">👤 Cliente:</td>
+              <td class="val">${data.customerName}</td>
+            </tr>
+            <tr>
+              <td class="label">📧 Correo:</td>
+              <td class="val"><a href="mailto:${data.customerEmail}" style="color: #0284c7; text-decoration: none;">${data.customerEmail}</a></td>
+            </tr>
+            <tr>
+              <td class="label">📱 Teléfono:</td>
+              <td class="val">
+                ${data.customerPhone || 'No registrado'}
+                ${cleanPhone ? `<a href="https://wa.me/${cleanPhone}" class="btn-wa" target="_blank">WhatsApp 💬</a>` : ''}
+              </td>
+            </tr>
+            <tr>
+              <td class="label">👫 Pareja del Recuerdo:</td>
+              <td class="val">${data.partnerName} & ${data.userName}</td>
+            </tr>
+            ${data.theme ? `
+            <tr>
+              <td class="label">🎨 Temática:</td>
+              <td class="val">${data.theme}</td>
+            </tr>
+            ` : ''}
+            ${data.couponCode ? `
+            <tr>
+              <td class="label">🎟️ Cupón de Descuento:</td>
+              <td class="val" style="color: #059669;">${data.couponCode}</td>
+            </tr>
+            ` : ''}
+            <tr>
+              <td class="label">🆔 ID de Pedido:</td>
+              <td class="val" style="font-family: monospace; font-size: 11px;">${data.orderId.slice(0, 16)}</td>
+            </tr>
+          </table>
 
-        <a href="${appUrl}/admin" style="display: block; text-align: center; color: #a21232; font-size: 12px; text-decoration: none;">
-          Ir al Panel de Administración →
-        </a>
+          <a href="${experienceUrl}" class="btn-live" target="_blank">
+            Ver Experiencia Publicada del Cliente 🔗
+          </a>
+
+          <a href="${appUrl}/admin" class="btn-admin" target="_blank">
+            Ir al Panel de Administración RecuerdoQR →
+          </a>
+        </div>
+        <div class="footer">
+          <p style="margin: 0;">Notificación automática de ventas para <strong>${adminEmail}</strong></p>
+        </div>
       </div>
     </body>
     </html>
   `;
 
   if (!apiKey || apiKey === 're_placeholder_key') {
-    console.log(`[Admin Alert - Simulation] New Sale: ${data.productName} ($${data.total}) by ${data.customerName}`);
+    console.log(`[Admin Alert - Simulation] New Sale for ${adminEmail}: ${data.productName} ($${data.total}) by ${data.customerName}`);
     return { success: true, simulated: true };
   }
 
@@ -182,7 +255,7 @@ export async function sendAdminSalesNotification(data: OrderEmailData) {
       body: JSON.stringify({
         from: fromAddress,
         to: [adminEmail],
-        subject: `💰 ¡Nueva Venta! $${Number(data.total).toLocaleString('es-CL')} - ${data.productName} (${data.customerName})`,
+        subject: `💰 ¡Nueva Venta! $${Number(data.total).toLocaleString('es-CL')} CLP - ${data.productName} (${data.customerName})`,
         html: htmlContent,
       }),
     });
