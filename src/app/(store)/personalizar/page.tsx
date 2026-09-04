@@ -3,12 +3,26 @@
 import React, { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { usePersonalizarForm } from '@/components/personalizar/usePersonalizarForm';
+import dynamic from 'next/dynamic';
 import Step1Tematica from '@/components/personalizar/Step1Tematica';
 import Step2Plan from '@/components/personalizar/Step2Plan';
-import Step2Personalizacion from '@/components/personalizar/Step2Personalizacion';
-import Step4Preview from '@/components/personalizar/Step4Preview';
-import Step4TarjetaRegalo from '@/components/personalizar/Step4TarjetaRegalo';
-import Step4Checkout from '@/components/personalizar/Step4Checkout';
+
+const Step2Personalizacion = dynamic(() => import('@/components/personalizar/Step2Personalizacion'), {
+  loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando editor de personalización...</div>,
+  ssr: false,
+});
+const Step4Preview = dynamic(() => import('@/components/personalizar/Step4Preview'), {
+  loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Preparando vista previa...</div>,
+  ssr: false,
+});
+const Step4TarjetaRegalo = dynamic(() => import('@/components/personalizar/Step4TarjetaRegalo'), {
+  loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando tarjeta de regalo...</div>,
+  ssr: false,
+});
+const Step4Checkout = dynamic(() => import('@/components/personalizar/Step4Checkout'), {
+  loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando pasarela de pago...</div>,
+  ssr: false,
+});
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { uploadImage } from '@/lib/upload';
 import { createOrder, createExperience, redeemCoupon } from '@/lib/db';
