@@ -117,6 +117,7 @@ export default function EjemplosPage() {
                 <Link
                   href={`/amor/${example.slug}`}
                   target="_blank"
+                  prefetch={true}
                   className="w-full py-3.5 bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600 text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 shadow-md shadow-rose-500/10 hover:shadow-lg hover:shadow-rose-500/20"
                 >
                   Ver experiencia en vivo
