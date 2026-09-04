@@ -133,11 +133,50 @@ export default function AmorExperiencePage() {
   const [heartUnited, setHeartUnited] = useState(false);
   const [isValentineBoxOpened, setIsValentineBoxOpened] = useState(false);
 
-  // Custom apartados states
+  // Custom apartados states & PIN brute-force defense
   const [secretUnlocked, setSecretUnlocked] = useState(false);
   const [secretInputPin, setSecretInputPin] = useState('');
+  const [pinAttempts, setPinAttempts] = useState(0);
+  const [pinLockedUntil, setPinLockedUntil] = useState<number | null>(null);
+  const [pinCooldownRemaining, setPinCooldownRemaining] = useState(0);
   const [surpriseRevealed, setSurpriseRevealed] = useState(false);
   const [isCartaEnvelopeOpen, setIsCartaEnvelopeOpen] = useState(false);
+
+  // 🔒 Cooldown timer after repeated wrong PIN attempts
+  useEffect(() => {
+    if (!pinLockedUntil) return;
+    const interval = setInterval(() => {
+      const rem = Math.ceil((pinLockedUntil - Date.now()) / 1000);
+      if (rem <= 0) {
+        setPinLockedUntil(null);
+        setPinCooldownRemaining(0);
+        setPinAttempts(0);
+      } else {
+        setPinCooldownRemaining(rem);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [pinLockedUntil]);
+
+  const verifyPinInput = (val: string, correctPasscode: string) => {
+    if (pinLockedUntil && Date.now() < pinLockedUntil) return;
+    setSecretInputPin(val);
+    const cleanEntered = val.trim();
+    const cleanTarget = correctPasscode.trim();
+
+    if (cleanEntered === cleanTarget) {
+      setSecretUnlocked(true);
+      setPinAttempts(0);
+      confetti({ particleCount: 50, spread: 50, colors: ['#ff8fa3', '#f59e0b'] });
+    } else if (cleanEntered.length >= 4) {
+      const nextCount = pinAttempts + 1;
+      setPinAttempts(nextCount);
+      if (nextCount >= 5) {
+        setPinLockedUntil(Date.now() + 30000);
+        setPinCooldownRemaining(30);
+      }
+    }
+  };
 
   // Background Audio State (Direct native audio player)
   const [audioFileUrl, setAudioFileUrl] = useState<string | null>(null);
@@ -1868,23 +1907,27 @@ export default function AmorExperiencePage() {
                     ) : (
                       <div className="space-y-3">
                         <p className="text-[10px] text-gray-450 font-light">Ingresa la contraseña de 4 dígitos para ver el mensaje secreto:</p>
+                        {pinLockedUntil && (
+                          <div className="p-2 bg-red-50 border border-red-200 text-red-600 rounded-xl text-[11px] font-medium">
+                            ⏳ Demasiados intentos. Espera {pinCooldownRemaining}s para volver a intentar.
+                          </div>
+                        )}
                         <div className="flex gap-2 justify-center max-w-[180px] mx-auto">
                           <input
-                            type="text"
+                            type="password"
                             maxLength={6}
+                            disabled={Boolean(pinLockedUntil)}
                             placeholder="PIN"
                             value={secretInputPin}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setSecretInputPin(val);
-                              if (val === secretPasscode) {
-                                setSecretUnlocked(true);
-                                confetti({ particleCount: 40, spread: 40, colors: ['#ff8fa3'] });
-                              }
-                            }}
-                            className="w-full text-center px-4 py-2 border border-gray-250 rounded-xl focus:outline-none focus:border-rose-350 text-xs font-mono font-bold tracking-[8px]"
+                            onChange={(e) => verifyPinInput(e.target.value, secretPasscode)}
+                            className="w-full text-center px-4 py-2 border border-gray-250 rounded-xl focus:outline-none focus:border-rose-350 text-xs font-mono font-bold tracking-[8px] disabled:bg-gray-100 disabled:cursor-not-allowed"
                           />
                         </div>
+                        {secretInputPin.length >= 4 && secretInputPin.trim() !== secretPasscode.trim() && !pinLockedUntil && (
+                          <p className="text-[10px] text-red-500 font-medium">
+                            PIN incorrecto ({5 - pinAttempts} intentos restantes)
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -2148,30 +2191,25 @@ export default function AmorExperiencePage() {
                             <span><strong>Pista:</strong> {secretHint}</span>
                           </div>
                         )}
+                        {pinLockedUntil && (
+                          <div className="p-2 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs font-medium">
+                            ⏳ Demasiados intentos fallidos. Espera {pinCooldownRemaining}s.
+                          </div>
+                        )}
                         <div className="flex justify-center gap-2">
                           <input
                             type="password"
                             maxLength={6}
+                            disabled={Boolean(pinLockedUntil)}
                             value={secretInputPin}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setSecretInputPin(val);
-                              if (val.trim() === secretCode.trim()) {
-                                setSecretUnlocked(true);
-                                confetti({
-                                  particleCount: 80,
-                                  spread: 70,
-                                  colors: ['#f59e0b', '#fbbf24', '#ffffff', '#a21232']
-                                });
-                              }
-                            }}
+                            onChange={(e) => verifyPinInput(e.target.value, secretCode)}
                             placeholder="PIN..."
-                            className="w-32 px-3 py-2 text-center text-sm font-mono tracking-widest border border-gray-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-amber-400"
+                            className="w-32 px-3 py-2 text-center text-sm font-mono tracking-widest border border-gray-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-amber-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                           />
                         </div>
-                        {secretInputPin.length >= 4 && secretInputPin.trim() !== secretCode.trim() && (
+                        {secretInputPin.length >= 4 && secretInputPin.trim() !== secretCode.trim() && !pinLockedUntil && (
                           <p className="text-[10px] text-red-500 font-medium animate-pulse">
-                            PIN incorrecto, intenta de nuevo 💡
+                            PIN incorrecto ({5 - pinAttempts} intentos restantes) 💡
                           </p>
                         )}
                       </div>

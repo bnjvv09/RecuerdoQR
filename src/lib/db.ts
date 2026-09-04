@@ -1297,22 +1297,35 @@ export async function redeemCoupon(code: string): Promise<boolean> {
   const found = coupons.find(c => c.code.toUpperCase() === clean);
   if (!found) return false;
 
-  const currentUsed = (Number(found.used_count) || 0) + 1;
+  const currentCount = Number(found.used_count) || 0;
   const max = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
     ? Number(found.max_uses)
     : null;
 
-  const willBeActive = max !== null ? currentUsed < max : found.is_active;
+  // 🔒 SEGURIDAD: Prevenir sobre-canjeo y condición de carrera si el cupón ya agotó sus cupos
+  if (max !== null && currentCount >= max) {
+    return false;
+  }
+
+  const nextUsed = currentCount + 1;
+  const willBeActive = max !== null ? nextUsed < max : found.is_active;
 
   try {
     if (!isMockMode) {
-      await supabase
+      let query = supabase
         .from('coupons')
         .update({
-          used_count: currentUsed,
+          used_count: nextUsed,
           is_active: willBeActive,
         })
         .eq('id', found.id);
+
+      // Prevenir condición de carrera atómica a nivel de fila
+      if (max !== null) {
+        query = query.lt('used_count', max);
+      }
+
+      await query;
     }
   } catch (err) {
     console.warn('Error redeeming coupon in Supabase:', err);
@@ -1320,7 +1333,7 @@ export async function redeemCoupon(code: string): Promise<boolean> {
 
   const updated = coupons.map(c => 
     c.id === found.id 
-      ? { ...c, used_count: currentUsed, is_active: willBeActive } 
+      ? { ...c, used_count: nextUsed, is_active: willBeActive } 
       : c
   );
 
