@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Product } from '@/lib/db';
-import { Check, CheckCircle2, Sparkles, Image as ImageIcon, Music, Heart, Mic, Video, MapPin, KeyRound, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Product, getLaunchPromo, LaunchPromoConfig } from '@/lib/db';
+import { Check, CheckCircle2, Sparkles, Image as ImageIcon, Music, Heart, Mic, Video, MapPin, KeyRound, Calendar, Flame } from 'lucide-react';
 import { THEME_HIGHLIGHTS } from './Step1Tematica';
 
 interface Step2PlanProps {
@@ -19,6 +19,15 @@ export default function Step2Plan({
   selectedTheme,
 }: Step2PlanProps) {
   const themeInfo = THEME_HIGHLIGHTS[selectedTheme] || THEME_HIGHLIGHTS['anniversary'];
+  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
+
+  useEffect(() => {
+    getLaunchPromo().then(setLaunchPromo).catch(() => {});
+  }, []);
+
+  const isPromoActive = Boolean(launchPromo?.isActive);
+  const promoPrice = launchPromo?.promoPrice || 6990;
+  const regularPremiumPrice = products.find(p => p.id === 'premium')?.price || 7990;
 
   const basicFeatures = themeInfo?.plans?.basic || [
     '📸 Hasta 10 Fotos en Polaroid & Collage',
@@ -55,6 +64,8 @@ export default function Step2Plan({
       subtitle: 'El detalle romántico esencial',
       photoBadge: '10 Fotos',
       price: products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990,
+      regularPrice: null,
+      isPromo: false,
       description: `Página web con la interacción clave de ${themeInfo.name}, dedicatoria y tarjeta digital.`,
       features: basicFeatures,
       badge: null,
@@ -65,6 +76,8 @@ export default function Step2Plan({
       subtitle: 'Música Oficial + 145 Personajes',
       photoBadge: '20 Fotos',
       price: products.find(p => p.id === 'medium' || p.id === 'card')?.price || 6990,
+      regularPrice: null,
+      isPromo: false,
       description: `La opción más recomendada: incluye música de fondo oficial y tarjeta con 145 personajes temáticos.`,
       features: mediumFeatures,
       badge: 'Más Recomendado',
@@ -72,12 +85,16 @@ export default function Step2Plan({
     {
       id: 'premium',
       name: 'Plan Máximo',
-      subtitle: 'Nota de Voz + Video + 40 Fotos 👑',
+      subtitle: isPromoActive 
+        ? `🔥 ¡Precio Lanzamiento! Quedan ${launchPromo?.remainingSlots} cupos`
+        : 'Nota de Voz + Video + 40 Fotos 👑',
       photoBadge: '40 Fotos Dual',
-      price: products.find(p => p.id === 'premium')?.price || 7990,
+      price: isPromoActive ? promoPrice : regularPremiumPrice,
+      regularPrice: isPromoActive ? regularPremiumPrice : null,
+      isPromo: isPromoActive,
       description: `La experiencia definitiva: nota de voz grabada estilo WhatsApp, video HD, línea de tiempo y rincón secreto.`,
       features: premiumFeatures,
-      badge: 'Experiencia Pro',
+      badge: isPromoActive ? `🔥 LANZAMIENTO (${launchPromo?.remainingSlots} CUPOS)` : 'Experiencia Pro',
     },
   ];
 
@@ -141,10 +158,15 @@ export default function Step2Plan({
 
                 {/* Price & Photos Badge */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-serif text-2xl sm:text-3xl font-black text-gray-900">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className={`font-serif text-2xl sm:text-3xl font-black ${plan.isPromo ? 'text-[#a21232]' : 'text-gray-900'}`}>
                       ${Number(plan.price).toLocaleString('es-CL')}
                     </span>
+                    {plan.regularPrice && (
+                      <span className="text-xs text-gray-400 line-through font-semibold">
+                        ${Number(plan.regularPrice).toLocaleString('es-CL')}
+                      </span>
+                    )}
                     <span className="text-[10px] text-gray-500 font-bold uppercase">CLP</span>
                   </div>
 

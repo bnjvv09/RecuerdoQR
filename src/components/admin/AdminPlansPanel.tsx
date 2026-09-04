@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAdminStore } from '@/lib/store';
-import { updateProduct, Product } from '@/lib/db';
+import { updateProduct, Product, getLaunchPromo, updateLaunchPromo, LaunchPromoConfig } from '@/lib/db';
 import { 
   DollarSign, 
   Save, 
@@ -13,7 +13,9 @@ import {
   Layers, 
   Tag, 
   FileText,
-  RefreshCw
+  RefreshCw,
+  Flame,
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -22,6 +24,75 @@ export default function AdminPlansPanel() {
   const [editingPlan, setEditingPlan] = useState<Product | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [newFeatureText, setNewFeatureText] = useState('');
+
+  // Estados de Oferta de Lanzamiento Automática
+  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
+  const [promoForm, setPromoForm] = useState<{
+    isActive: boolean;
+    promoPrice: number;
+    totalSlots: number;
+    usedSlots: number;
+  }>({
+    isActive: true,
+    promoPrice: 6990,
+    totalSlots: 10,
+    usedSlots: 0,
+  });
+  const [isSavingPromo, setIsSavingPromo] = useState(false);
+
+  useEffect(() => {
+    getLaunchPromo().then((data) => {
+      setLaunchPromo(data);
+      setPromoForm({
+        isActive: data.isActive,
+        promoPrice: data.promoPrice,
+        totalSlots: data.totalSlots,
+        usedSlots: data.usedSlots,
+      });
+    }).catch(() => {});
+  }, []);
+
+  const handleSavePromo = async () => {
+    setIsSavingPromo(true);
+    try {
+      const ok = await updateLaunchPromo({
+        isActive: promoForm.isActive,
+        promoPrice: promoForm.promoPrice,
+        totalSlots: promoForm.totalSlots,
+        usedSlots: promoForm.usedSlots,
+      });
+      if (ok) {
+        const updated = await getLaunchPromo();
+        setLaunchPromo(updated);
+        toast.success('¡Configuración de Oferta de Lanzamiento guardada con éxito! 🔥');
+      } else {
+        toast.error('Error al guardar la oferta');
+      }
+    } catch {
+      toast.error('Error al guardar la oferta');
+    } finally {
+      setIsSavingPromo(false);
+    }
+  };
+
+  const handleResetPromoSlots = async () => {
+    if (!confirm('¿Deseas reiniciar los cupos vendidos a 0 para empezar una nueva tanda de ventas con oferta?')) return;
+    setIsSavingPromo(true);
+    try {
+      await updateLaunchPromo({
+        isActive: true,
+        promoPrice: promoForm.promoPrice,
+        totalSlots: promoForm.totalSlots,
+        usedSlots: 0,
+      });
+      const updated = await getLaunchPromo();
+      setLaunchPromo(updated);
+      setPromoForm(prev => ({ ...prev, usedSlots: 0, isActive: true }));
+      toast.success('Cupos de lanzamiento reiniciados a 0 con éxito');
+    } finally {
+      setIsSavingPromo(false);
+    }
+  };
 
   const handleSelectPlan = (plan: Product) => {
     setEditingPlan(JSON.parse(JSON.stringify(plan)));
@@ -83,6 +154,119 @@ export default function AdminPlansPanel() {
           <p className="text-xs text-gray-500 font-light mt-1">
             Modifica los precios, subtítulos, descripciones y lista de beneficios que se muestran a los clientes.
           </p>
+        </div>
+      </div>
+
+      {/* SECCIÓN OFERTA DE LANZAMIENTO AUTOMÁTICA */}
+      <div className="bg-gradient-to-br from-amber-500/10 via-rose-500/10 to-amber-500/5 rounded-3xl p-6 border-2 border-amber-400/60 shadow-md space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-200/60 pb-4">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="p-1.5 bg-amber-100 rounded-xl text-amber-800">
+                <Flame className="w-5 h-5 fill-amber-500 text-amber-600" />
+              </span>
+              <h3 className="font-serif font-bold text-base text-gray-950">
+                Oferta de Lanzamiento Automática (Sin Cupones)
+              </h3>
+              <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                promoForm.isActive && (promoForm.totalSlots - promoForm.usedSlots) > 0
+                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                  : 'bg-gray-100 text-gray-600 border border-gray-300'
+              }`}>
+                {promoForm.isActive && (promoForm.totalSlots - promoForm.usedSlots) > 0 ? '● Activa en la web' : '○ Pausada / Finalizada'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 font-light">
+              Muestra el Plan Máximo a precio especial rebajado. Al alcanzar el límite de cupos, la web <strong>vuelve sola automáticamente a $7.990</strong> sin que tengas que hacer nada.
+            </p>
+          </div>
+
+          {/* Switch Activar / Pausar */}
+          <button
+            type="button"
+            onClick={() => setPromoForm(prev => ({ ...prev, isActive: !prev.isActive }))}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-xs shrink-0 ${
+              promoForm.isActive
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+            }`}
+          >
+            <span>{promoForm.isActive ? 'Oferta Activada ✓' : 'Oferta Pausada ✕'}</span>
+          </button>
+        </div>
+
+        {/* Formulario y Métricas */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Precio de Oferta */}
+          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
+              Precio Oferta Plan Máximo (CLP)
+            </label>
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-bold text-gray-400">$</span>
+              <input
+                type="number"
+                value={promoForm.promoPrice}
+                onChange={(e) => setPromoForm(prev => ({ ...prev, promoPrice: Number(e.target.value) }))}
+                className="w-full text-base font-extrabold text-gray-900 border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+            <p className="text-[9px] text-gray-500">Precio normal: $7.990 CLP</p>
+          </div>
+
+          {/* Cupos Totales */}
+          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
+              Límite de Cupos de Lanzamiento
+            </label>
+            <input
+              type="number"
+              value={promoForm.totalSlots}
+              onChange={(e) => setPromoForm(prev => ({ ...prev, totalSlots: Number(e.target.value) }))}
+              className="w-full text-base font-extrabold text-gray-900 border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500"
+            />
+            <p className="text-[9px] text-gray-500">Ejemplo: 10 o 20 pedidos</p>
+          </div>
+
+          {/* Contador en Vivo */}
+          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-2">
+            <div className="flex justify-between items-center text-[10px] font-bold">
+              <span className="text-gray-600 uppercase">Ventas de Estreno</span>
+              <span className="text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full font-extrabold">
+                {promoForm.usedSlots} / {promoForm.totalSlots} vendidos
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-amber-500 to-rose-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, Math.max(0, (promoForm.usedSlots / promoForm.totalSlots) * 100))}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center text-[9px] text-gray-500">
+              <span>Restantes: <strong>{Math.max(0, promoForm.totalSlots - promoForm.usedSlots)}</strong></span>
+              <button
+                type="button"
+                onClick={handleResetPromoSlots}
+                className="text-rose-600 font-bold hover:underline cursor-pointer flex items-center gap-1"
+              >
+                <RefreshCw className="w-2.5 h-2.5" />
+                <span>Reiniciar a 0</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Botón Guardar Oferta */}
+        <div className="flex justify-end pt-2">
+          <button
+            type="button"
+            onClick={handleSavePromo}
+            disabled={isSavingPromo}
+            className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
+          >
+            <Save className="w-4 h-4" />
+            <span>{isSavingPromo ? 'Guardando...' : 'Guardar Configuración de Oferta'}</span>
+          </button>
         </div>
       </div>
 

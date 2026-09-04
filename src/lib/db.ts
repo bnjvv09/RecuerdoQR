@@ -568,6 +568,9 @@ export async function updateOrderPayment(
       serverMemoryStore.orders[idx].payment_id = paymentId;
       serverMemoryStore.orders[idx].status = status;
     }
+    if (status === 'paid') {
+      recordLaunchPromoSale().catch(() => {});
+    }
     return true;
   }
 
@@ -579,6 +582,10 @@ export async function updateOrderPayment(
   if (error) {
     console.error('Error updating order payment details:', error);
     return false;
+  }
+
+  if (status === 'paid') {
+    recordLaunchPromoSale().catch(() => {});
   }
   return true;
 }
@@ -1100,7 +1107,10 @@ export const DEFAULT_COUPONS: Coupon[] = [
   { id: 'c3', code: 'TIKTOK15', discount_type: 'percent', discount_value: 15, is_active: true, created_at: new Date().toISOString() },
 ];
 
-export async function getCoupons(): Promise<Coupon[]> {
+export const LAUNCH_PROMO_CODE = '__SYS_LAUNCH_PROMO__';
+
+export async function getCoupons(includeSystem: boolean = false): Promise<Coupon[]> {
+  let allCoupons: Coupon[] = [];
   try {
     if (!isMockMode) {
       const { data, error } = await supabase
@@ -1109,18 +1119,26 @@ export async function getCoupons(): Promise<Coupon[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data as Coupon[];
+        allCoupons = data as Coupon[];
       }
     }
   } catch (err) {
     console.warn('Could not fetch coupons from Supabase, using local:', err);
   }
 
-  if (typeof window !== 'undefined') {
+  if (allCoupons.length === 0 && typeof window !== 'undefined') {
     const local = getLocalData<Coupon[]>('custom_coupons', []);
-    if (local.length > 0) return local;
+    if (local.length > 0) allCoupons = local;
   }
-  return DEFAULT_COUPONS;
+
+  if (allCoupons.length === 0) {
+    allCoupons = DEFAULT_COUPONS;
+  }
+
+  if (!includeSystem) {
+    return allCoupons.filter(c => c.code !== LAUNCH_PROMO_CODE);
+  }
+  return allCoupons;
 }
 
 const generateUUID = () => {
@@ -1301,4 +1319,130 @@ export async function redeemCoupon(code: string): Promise<boolean> {
   }
   return true;
 }
+
+// 5. AUTOMATIC LAUNCH PROMO SYSTEM (No Coupons Required for Customers)
+export interface LaunchPromoConfig {
+  isActive: boolean;
+  targetPlan: string;
+  promoPrice: number;
+  regularPrice: number;
+  totalSlots: number;
+  usedSlots: number;
+  remainingSlots: number;
+  badgeText: string;
+}
+
+export async function getLaunchPromo(): Promise<LaunchPromoConfig> {
+  // Pass includeSystem = true to locate the launch promo record
+  const coupons = await getCoupons(true);
+  const found = coupons.find(c => c.code.toUpperCase() === LAUNCH_PROMO_CODE);
+
+  if (!found) {
+    // Initial seeded state: active for 10 slots at $6.990 for Plan Máximo
+    return {
+      isActive: true,
+      targetPlan: 'premium',
+      promoPrice: 6990,
+      regularPrice: 7990,
+      totalSlots: 10,
+      usedSlots: 0,
+      remainingSlots: 10,
+      badgeText: '🔥 PRECIO DE LANZAMIENTO (10 CUPOS)',
+    };
+  }
+
+  const totalSlots = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
+    ? Number(found.max_uses)
+    : 10;
+  const usedSlots = Number(found.used_count) || 0;
+  const remainingSlots = Math.max(0, totalSlots - usedSlots);
+  const isActive = Boolean(found.is_active) && remainingSlots > 0;
+  const discount = Number(found.discount_value) || 1000;
+  const regularPrice = 7990;
+  const promoPrice = Math.max(1000, regularPrice - discount);
+
+  return {
+    isActive,
+    targetPlan: 'premium',
+    promoPrice,
+    regularPrice,
+    totalSlots,
+    usedSlots,
+    remainingSlots,
+    badgeText: `🔥 PRECIO DE LANZAMIENTO (${totalSlots} CUPOS)`,
+  };
+}
+
+export async function updateLaunchPromo(config: {
+  isActive: boolean;
+  promoPrice?: number;
+  totalSlots?: number;
+  usedSlots?: number;
+}): Promise<boolean> {
+  const coupons = await getCoupons(true);
+  const found = coupons.find(c => c.code.toUpperCase() === LAUNCH_PROMO_CODE);
+  const promoPrice = config.promoPrice !== undefined ? Number(config.promoPrice) : 6990;
+  const regularPrice = 7990;
+  const discountValue = Math.max(0, regularPrice - promoPrice);
+  const totalSlots = config.totalSlots !== undefined ? Number(config.totalSlots) : (found?.max_uses || 10);
+  const usedSlots = config.usedSlots !== undefined ? Number(config.usedSlots) : (found?.used_count || 0);
+
+  if (!found) {
+    const newCoupon: Coupon = {
+      id: generateUUID(),
+      code: LAUNCH_PROMO_CODE,
+      discount_type: 'fixed',
+      discount_value: discountValue,
+      max_uses: totalSlots,
+      used_count: usedSlots,
+      is_active: config.isActive,
+      created_at: new Date().toISOString()
+    };
+    if (!isMockMode) {
+      try {
+        await supabase.from('coupons').upsert(newCoupon);
+      } catch (err) {
+        console.warn('Error creating launch promo coupon in Supabase:', err);
+      }
+    }
+    if (typeof window !== 'undefined') {
+      setLocalData('custom_coupons', [...coupons, newCoupon]);
+    }
+  } else {
+    const updated: Coupon = {
+      ...found,
+      discount_value: discountValue,
+      max_uses: totalSlots,
+      used_count: usedSlots,
+      is_active: config.isActive,
+    };
+    if (!isMockMode) {
+      try {
+        await supabase.from('coupons').update({
+          discount_value: discountValue,
+          max_uses: totalSlots,
+          used_count: usedSlots,
+          is_active: config.isActive,
+        }).eq('id', found.id);
+      } catch (err) {
+        console.warn('Error updating launch promo in Supabase:', err);
+      }
+    }
+    if (typeof window !== 'undefined') {
+      setLocalData('custom_coupons', coupons.map(c => c.id === found.id ? updated : c));
+    }
+  }
+  return true;
+}
+
+export async function recordLaunchPromoSale(): Promise<void> {
+  try {
+    const promo = await getLaunchPromo();
+    if (!promo.isActive) return;
+    await redeemCoupon(LAUNCH_PROMO_CODE);
+  } catch (err) {
+    console.error('Error recording launch promo sale:', err);
+  }
+}
+
 

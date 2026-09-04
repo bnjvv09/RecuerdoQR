@@ -2,17 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProducts, Product } from '@/lib/db';
-import { CheckCircle, ShieldCheck, Heart, Sparkles, Send } from 'lucide-react';
+import { getProducts, Product, getLaunchPromo, LaunchPromoConfig } from '@/lib/db';
+import { CheckCircle, ShieldCheck, Heart, Sparkles, Send, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function PlanesPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProducts().then((data) => {
-      setProducts(data);
+    Promise.all([
+      getProducts(),
+      getLaunchPromo()
+    ]).then(([productsData, promoData]) => {
+      setProducts(productsData);
+      setLaunchPromo(promoData);
       setLoading(false);
     });
   }, []);
@@ -59,7 +64,10 @@ export default function PlanesPage() {
         {/* Planes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
           {products.map((product, idx) => {
-            const isFeatured = product.badge || product.id === 'medium';
+            const isPromoActive = product.id === 'premium' && Boolean(launchPromo?.isActive);
+            const isFeatured = isPromoActive || product.badge || product.id === 'medium';
+            const displayPrice = isPromoActive ? (launchPromo?.promoPrice || 6990) : product.price;
+
             return (
               <motion.div
                 key={product.id}
@@ -67,16 +75,23 @@ export default function PlanesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 className={`bg-white rounded-3xl p-8 border ${
-                  isFeatured
+                  isPromoActive
+                    ? 'border-amber-400 shadow-2xl relative md:scale-105 z-20 ring-2 ring-amber-400/30'
+                    : isFeatured
                     ? 'border-rose-400 shadow-xl relative md:scale-105 z-10'
                     : 'border-rose-100 shadow-md'
                 } flex flex-col justify-between text-left`}
               >
-                {product.badge && (
+                {isPromoActive ? (
+                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-red-500 text-white text-[10px] font-extrabold tracking-widest rounded-full uppercase shadow-lg animate-pulse flex items-center gap-1.5 whitespace-nowrap">
+                    <Flame className="w-3.5 h-3.5 fill-white" />
+                    <span>OFERTA DE LANZAMIENTO ({launchPromo?.remainingSlots} CUPOS)</span>
+                  </span>
+                ) : product.badge ? (
                   <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-rose-500 to-red-500 text-white text-[10px] font-extrabold tracking-widest rounded-full uppercase shadow-md">
                     {product.badge}
                   </span>
-                )}
+                ) : null}
 
                 <div>
                   <div className="flex justify-between items-start mb-2">
@@ -102,11 +117,40 @@ export default function PlanesPage() {
                     {product.description}
                   </p>
 
-                  <div className="flex items-baseline gap-1.5 mb-8">
-                    <span className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-                      ${Number(product.price).toLocaleString('es-CL')}
-                    </span>
-                    <span className="text-xs text-gray-400 font-semibold uppercase">CLP</span>
+                  {/* Pricing Section */}
+                  <div className="mb-8">
+                    <div className="flex items-baseline gap-2">
+                      <span className={`text-3xl sm:text-4xl font-extrabold ${isPromoActive ? 'text-[#a21232]' : 'text-gray-900'}`}>
+                        ${Number(displayPrice).toLocaleString('es-CL')}
+                      </span>
+                      {isPromoActive && (
+                        <span className="text-sm text-gray-400 line-through font-semibold">
+                          ${Number(launchPromo?.regularPrice || 7990).toLocaleString('es-CL')}
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-400 font-semibold uppercase">CLP</span>
+                    </div>
+
+                    {/* Barra interactiva de cupos restantes en Oferta de Lanzamiento */}
+                    {isPromoActive && launchPromo && (
+                      <div className="mt-3 p-3 bg-gradient-to-r from-amber-50/80 via-rose-50/60 to-amber-50/80 rounded-2xl border border-amber-300/80 shadow-2xs space-y-2">
+                        <div className="flex justify-between items-center text-[10px] font-bold">
+                          <span className="text-rose-900 flex items-center gap-1">
+                            <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500 animate-pulse" />
+                            <span>¡Quedan pocos cupos de estreno!</span>
+                          </span>
+                          <span className="text-amber-900 bg-amber-200/70 px-2 py-0.5 rounded-full font-extrabold text-[9px]">
+                            {launchPromo.remainingSlots} de {launchPromo.totalSlots} disponibles
+                          </span>
+                        </div>
+                        <div className="w-full bg-amber-200/50 h-2 rounded-full overflow-hidden">
+                          <div 
+                            className="bg-gradient-to-r from-amber-500 to-rose-500 h-full rounded-full transition-all duration-500" 
+                            style={{ width: `${Math.max(10, Math.min(100, (launchPromo.remainingSlots / launchPromo.totalSlots) * 100))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="border-t border-rose-50 pt-6 mb-8">

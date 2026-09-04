@@ -543,7 +543,14 @@ export default function Step4Checkout({
               </div>
 
               <div className="border-t border-gray-100 pt-2 flex justify-between items-baseline">
-                <span className="font-serif font-bold text-sm text-gray-900">Total a Pagar:</span>
+                <div>
+                  <span className="font-serif font-bold text-sm text-gray-900 block">Total a Pagar:</span>
+                  {selectedPlan === 'premium' && totalPrice < 7990 && (
+                    <span className="text-[9px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200 font-bold inline-block mt-0.5">
+                      🔥 Oferta Lanzamiento Aplicada
+                    </span>
+                  )}
+                </div>
                 <div className="text-right">
                   {appliedCoupon && (
                     <span className="text-xs text-gray-400 line-through mr-2 font-mono">
