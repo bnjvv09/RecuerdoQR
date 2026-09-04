@@ -200,12 +200,14 @@ export default function LandingPage() {
               >
                 <Link
                   href="/personalizar"
+                  prefetch={true}
                   className="px-8 py-4 bg-[#a21232] hover:bg-[#880e28] text-white font-bold rounded-full transition shadow-lg shadow-rose-900/10 flex items-center justify-center gap-2 text-sm"
                 >
                   Crear mi experiencia ❤️
                 </Link>
                 <Link
                   href="/ejemplos"
+                  prefetch={true}
                   className="px-8 py-4 bg-white hover:bg-rose-50/20 text-[#a21232] border border-rose-200 font-bold rounded-full transition text-sm flex items-center justify-center"
                 >
                   Ver ejemplos

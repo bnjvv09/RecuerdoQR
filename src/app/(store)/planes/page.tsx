@@ -172,6 +172,7 @@ export default function PlanesPage() {
 
                 <Link
                   href={`/personalizar?plan=${product.id}`}
+                  prefetch={true}
                   className={`w-full py-4 text-center font-bold rounded-2xl transition shadow-md cursor-pointer ${
                     isFeatured
                       ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600 hover:shadow-lg'

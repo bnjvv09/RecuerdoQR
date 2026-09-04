@@ -6,11 +6,13 @@ import { Toaster } from 'sonner';
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-serif',
+  display: 'swap',
 });
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

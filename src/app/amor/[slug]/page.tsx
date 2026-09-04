@@ -1968,7 +1968,13 @@ export default function AmorExperiencePage() {
                   <div key={sec.id} className={`rounded-3xl p-4 sm:p-6 shadow-md border text-center space-y-2 ${style.cardClass}`}>
                     {isDirectFile ? (
                       <div className="rounded-2xl overflow-hidden shadow-inner border border-gray-100 bg-black">
-                        <video src={videoSource} controls className="w-full max-h-72 object-cover" />
+                        <video 
+                          src={videoSource} 
+                          controls 
+                          preload="metadata"
+                          playsInline
+                          className="w-full max-h-72 object-cover" 
+                        />
                       </div>
                     ) : videoCode ? (
                       <div className="aspect-video rounded-2xl overflow-hidden shadow-inner border border-gray-100 bg-black">
