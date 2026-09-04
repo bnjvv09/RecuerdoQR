@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Product, Theme, getProducts, getThemes, getLaunchPromo, LaunchPromoConfig } from '@/lib/db';
+import { Product, Theme, getProducts, getThemes, getPlanPromos, PlanPromosMap } from '@/lib/db';
 import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
 import { PhotoStyle } from '@/types/gallery';
 import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
@@ -57,7 +57,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   // Products and themes
   const [products, setProducts] = useState<Product[]>([]);
   const [themes, setThemes] = useState<Theme[]>([]);
-  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
+  const [planPromos, setPlanPromos] = useState<PlanPromosMap | null>(null);
   const [selectedPlan, setSelectedPlanState] = useState<string>(initialPlan || 'basic');
   const [selectedTheme, setSelectedTheme] = useState<string>(initialTheme || 'anniversary');
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterTheme | null>(CHARACTERS_DATABASE[0] || null);
@@ -361,10 +361,10 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   useEffect(() => {
     async function loadData() {
       try {
-        const [prodList, themeList, promo] = await Promise.all([getProducts(), getThemes(), getLaunchPromo()]);
+        const [prodList, themeList, promos] = await Promise.all([getProducts(), getThemes(), getPlanPromos()]);
         setProducts(prodList);
         setThemes(themeList);
-        setLaunchPromo(promo);
+        setPlanPromos(promos);
       } catch (err) {
         console.error('Error loading initial data in form:', err);
       }
@@ -777,8 +777,9 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
 
   const currentProduct = products.find((p) => p.id === selectedPlan);
   let totalPrice = currentProduct?.price || (selectedPlan === 'premium' ? 7990 : selectedPlan === 'medium' ? 6990 : 4990);
-  if (selectedPlan === 'premium' && launchPromo?.isActive) {
-    totalPrice = launchPromo.promoPrice;
+  const activePromo = planPromos ? planPromos[selectedPlan] : null;
+  if (activePromo?.isActive && activePromo.remainingSlots > 0) {
+    totalPrice = activePromo.promoPrice;
   }
 
   const validateStep2 = (): boolean => {
@@ -1007,7 +1008,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     clearDraft,
     currentProduct,
     totalPrice,
-    launchPromo,
+    planPromos,
     validateStep2,
     validateStep4,
   };

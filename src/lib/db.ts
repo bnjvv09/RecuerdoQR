@@ -569,7 +569,12 @@ export async function updateOrderPayment(
       serverMemoryStore.orders[idx].status = status;
     }
     if (status === 'paid') {
-      recordLaunchPromoSale().catch(() => {});
+      getOrderById(id).then(ord => {
+        const pId = ord?.product_id || 'premium';
+        recordPlanPromoSale(pId).catch(() => {});
+      }).catch(() => {
+        recordPlanPromoSale('premium').catch(() => {});
+      });
     }
     return true;
   }
@@ -585,7 +590,12 @@ export async function updateOrderPayment(
   }
 
   if (status === 'paid') {
-    recordLaunchPromoSale().catch(() => {});
+    getOrderById(id).then(ord => {
+      const pId = ord?.product_id || 'premium';
+      recordPlanPromoSale(pId).catch(() => {});
+    }).catch(() => {
+      recordPlanPromoSale('premium').catch(() => {});
+    });
   }
   return true;
 }
@@ -1136,7 +1146,7 @@ export async function getCoupons(includeSystem: boolean = false): Promise<Coupon
   }
 
   if (!includeSystem) {
-    return allCoupons.filter(c => c.code !== LAUNCH_PROMO_CODE);
+    return allCoupons.filter(c => !c.code.startsWith('__SYS_'));
   }
   return allCoupons;
 }
@@ -1320,10 +1330,10 @@ export async function redeemCoupon(code: string): Promise<boolean> {
   return true;
 }
 
-// 5. AUTOMATIC LAUNCH PROMO SYSTEM (No Coupons Required for Customers)
-export interface LaunchPromoConfig {
+// 5. AUTOMATIC MULTI-PLAN LAUNCH PROMO SYSTEM (No Coupons Required for Customers)
+export interface PlanPromoConfig {
+  planId: string; // 'basic' | 'medium' | 'premium'
   isActive: boolean;
-  targetPlan: string;
   promoPrice: number;
   regularPrice: number;
   totalSlots: number;
@@ -1332,67 +1342,105 @@ export interface LaunchPromoConfig {
   badgeText: string;
 }
 
-export async function getLaunchPromo(): Promise<LaunchPromoConfig> {
-  // Pass includeSystem = true to locate the launch promo record
-  const coupons = await getCoupons(true);
-  const found = coupons.find(c => c.code.toUpperCase() === LAUNCH_PROMO_CODE);
+export type PlanPromosMap = Record<string, PlanPromoConfig>;
 
-  if (!found) {
-    // Initial seeded state: active for 10 slots at $6.990 for Plan Máximo
-    return {
-      isActive: true,
-      targetPlan: 'premium',
-      promoPrice: 6990,
-      regularPrice: 7990,
-      totalSlots: 10,
-      usedSlots: 0,
-      remainingSlots: 10,
-      badgeText: '🔥 PRECIO DE LANZAMIENTO (10 CUPOS)',
-    };
+export const PLAN_PROMO_CODES: Record<string, string> = {
+  basic: '__SYS_PROMO_BASIC__',
+  medium: '__SYS_PROMO_MEDIUM__',
+  premium: '__SYS_PROMO_PREMIUM__',
+};
+
+const DEFAULT_PLAN_CONFIGS: Record<string, { regularPrice: number; promoPrice: number; totalSlots: number; defaultActive: boolean }> = {
+  basic: { regularPrice: 4990, promoPrice: 3990, totalSlots: 10, defaultActive: false },
+  medium: { regularPrice: 6990, promoPrice: 5990, totalSlots: 10, defaultActive: false },
+  premium: { regularPrice: 7990, promoPrice: 6990, totalSlots: 10, defaultActive: true },
+};
+
+export async function getPlanPromos(): Promise<PlanPromosMap> {
+  const coupons = await getCoupons(true);
+  const products = await getProducts();
+  const promosMap: PlanPromosMap = {};
+
+  for (const planId of ['basic', 'medium', 'premium']) {
+    const code = PLAN_PROMO_CODES[planId];
+    const defaultData = DEFAULT_PLAN_CONFIGS[planId];
+    const prod = products.find(p => p.id === planId || (planId === 'basic' && p.id === 'digital') || (planId === 'medium' && p.id === 'card'));
+    const regularPrice = prod?.price || defaultData.regularPrice;
+
+    // Look for coupon matching code (or legacy __SYS_LAUNCH_PROMO__ for premium)
+    const found = coupons.find(c => 
+      c.code.toUpperCase() === code || 
+      (planId === 'premium' && c.code.toUpperCase() === LAUNCH_PROMO_CODE)
+    );
+
+    if (!found) {
+      promosMap[planId] = {
+        planId,
+        isActive: defaultData.defaultActive,
+        promoPrice: defaultData.promoPrice,
+        regularPrice,
+        totalSlots: defaultData.totalSlots,
+        usedSlots: 0,
+        remainingSlots: defaultData.totalSlots,
+        badgeText: `🔥 PRECIO DE LANZAMIENTO (${defaultData.totalSlots} CUPOS)`,
+      };
+    } else {
+      const totalSlots = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
+        ? Number(found.max_uses)
+        : defaultData.totalSlots;
+      const usedSlots = Number(found.used_count) || 0;
+      const remainingSlots = Math.max(0, totalSlots - usedSlots);
+      const isActive = Boolean(found.is_active) && remainingSlots > 0;
+      const rawVal = Number(found.discount_value) || 1000;
+      const promoPrice = rawVal > 1500 ? rawVal : Math.max(1000, regularPrice - rawVal);
+
+      promosMap[planId] = {
+        planId,
+        isActive,
+        promoPrice,
+        regularPrice,
+        totalSlots,
+        usedSlots,
+        remainingSlots,
+        badgeText: `🔥 PRECIO DE LANZAMIENTO (${totalSlots} CUPOS)`,
+      };
+    }
   }
 
-  const totalSlots = (found.max_uses !== null && found.max_uses !== undefined && Number(found.max_uses) > 0)
-    ? Number(found.max_uses)
-    : 10;
-  const usedSlots = Number(found.used_count) || 0;
-  const remainingSlots = Math.max(0, totalSlots - usedSlots);
-  const isActive = Boolean(found.is_active) && remainingSlots > 0;
-  const discount = Number(found.discount_value) || 1000;
-  const regularPrice = 7990;
-  const promoPrice = Math.max(1000, regularPrice - discount);
-
-  return {
-    isActive,
-    targetPlan: 'premium',
-    promoPrice,
-    regularPrice,
-    totalSlots,
-    usedSlots,
-    remainingSlots,
-    badgeText: `🔥 PRECIO DE LANZAMIENTO (${totalSlots} CUPOS)`,
-  };
+  return promosMap;
 }
 
-export async function updateLaunchPromo(config: {
+export async function updatePlanPromo(planId: string, config: {
   isActive: boolean;
   promoPrice?: number;
+  regularPrice?: number;
   totalSlots?: number;
   usedSlots?: number;
 }): Promise<boolean> {
+  const code = PLAN_PROMO_CODES[planId] || `__SYS_PROMO_${planId.toUpperCase()}__`;
   const coupons = await getCoupons(true);
-  const found = coupons.find(c => c.code.toUpperCase() === LAUNCH_PROMO_CODE);
-  const promoPrice = config.promoPrice !== undefined ? Number(config.promoPrice) : 6990;
-  const regularPrice = 7990;
-  const discountValue = Math.max(0, regularPrice - promoPrice);
-  const totalSlots = config.totalSlots !== undefined ? Number(config.totalSlots) : (found?.max_uses || 10);
+  const found = coupons.find(c => 
+    c.code.toUpperCase() === code || 
+    (planId === 'premium' && c.code.toUpperCase() === LAUNCH_PROMO_CODE)
+  );
+
+  const defaultData = DEFAULT_PLAN_CONFIGS[planId] || { regularPrice: 7990, promoPrice: 6990, totalSlots: 10, defaultActive: false };
+  const promoPrice = config.promoPrice !== undefined ? Number(config.promoPrice) : defaultData.promoPrice;
+  const regularPrice = config.regularPrice !== undefined ? Number(config.regularPrice) : defaultData.regularPrice;
+  const totalSlots = config.totalSlots !== undefined ? Number(config.totalSlots) : (found?.max_uses || defaultData.totalSlots);
   const usedSlots = config.usedSlots !== undefined ? Number(config.usedSlots) : (found?.used_count || 0);
+
+  // If regularPrice changed, update the product price in products table too!
+  if (config.regularPrice !== undefined && config.regularPrice > 0) {
+    await updateProductPrice(planId, config.regularPrice);
+  }
 
   if (!found) {
     const newCoupon: Coupon = {
       id: generateUUID(),
-      code: LAUNCH_PROMO_CODE,
+      code,
       discount_type: 'fixed',
-      discount_value: discountValue,
+      discount_value: promoPrice,
       max_uses: totalSlots,
       used_count: usedSlots,
       is_active: config.isActive,
@@ -1402,7 +1450,7 @@ export async function updateLaunchPromo(config: {
       try {
         await supabase.from('coupons').upsert(newCoupon);
       } catch (err) {
-        console.warn('Error creating launch promo coupon in Supabase:', err);
+        console.warn(`Error creating promo coupon ${code} in Supabase:`, err);
       }
     }
     if (typeof window !== 'undefined') {
@@ -1411,7 +1459,8 @@ export async function updateLaunchPromo(config: {
   } else {
     const updated: Coupon = {
       ...found,
-      discount_value: discountValue,
+      code,
+      discount_value: promoPrice,
       max_uses: totalSlots,
       used_count: usedSlots,
       is_active: config.isActive,
@@ -1419,13 +1468,14 @@ export async function updateLaunchPromo(config: {
     if (!isMockMode) {
       try {
         await supabase.from('coupons').update({
-          discount_value: discountValue,
+          code,
+          discount_value: promoPrice,
           max_uses: totalSlots,
           used_count: usedSlots,
           is_active: config.isActive,
         }).eq('id', found.id);
       } catch (err) {
-        console.warn('Error updating launch promo in Supabase:', err);
+        console.warn(`Error updating promo ${code} in Supabase:`, err);
       }
     }
     if (typeof window !== 'undefined') {
@@ -1435,14 +1485,41 @@ export async function updateLaunchPromo(config: {
   return true;
 }
 
-export async function recordLaunchPromoSale(): Promise<void> {
+export async function recordPlanPromoSale(planId: string): Promise<void> {
   try {
-    const promo = await getLaunchPromo();
-    if (!promo.isActive) return;
-    await redeemCoupon(LAUNCH_PROMO_CODE);
+    const cleanPlan = planId === 'digital' ? 'basic' : planId === 'card' ? 'medium' : planId;
+    const promos = await getPlanPromos();
+    const promo = promos[cleanPlan];
+    if (!promo || !promo.isActive) return;
+
+    const code = PLAN_PROMO_CODES[cleanPlan];
+    if (code) {
+      await redeemCoupon(code);
+    }
+    if (cleanPlan === 'premium') {
+      await redeemCoupon(LAUNCH_PROMO_CODE);
+    }
   } catch (err) {
-    console.error('Error recording launch promo sale:', err);
+    console.error(`Error recording promo sale for plan ${planId}:`, err);
   }
+}
+
+// Backwards compatibility alias for single premium promo
+export type LaunchPromoConfig = PlanPromoConfig;
+export async function getLaunchPromo(): Promise<LaunchPromoConfig> {
+  const map = await getPlanPromos();
+  return map['premium'];
+}
+export async function updateLaunchPromo(config: {
+  isActive: boolean;
+  promoPrice?: number;
+  totalSlots?: number;
+  usedSlots?: number;
+}): Promise<boolean> {
+  return updatePlanPromo('premium', config);
+}
+export async function recordLaunchPromoSale(): Promise<void> {
+  return recordPlanPromoSale('premium');
 }
 
 

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { sanitizeText } from '@/lib/sanitize';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { getLaunchPromo } from '@/lib/db';
+import { getPlanPromos } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
     // 🔒 SEGURIDAD: Verificar el precio real en la base de datos (NUNCA confiar en body.total)
     const supabase = createServerSupabaseClient();
-    const launchPromo = await getLaunchPromo();
+    const planPromos = await getPlanPromos();
     
     // 1. Buscar la orden real en la base de datos
     const { data: order } = await supabase
@@ -39,10 +39,13 @@ export async function POST(request: Request) {
 
     if (order) {
       // 🎟️ Priorizar el total real de la orden (con cupón o precio de lanzamiento aplicado)
+      const orderPlan = order.product_id || 'basic';
+      const orderPromo = planPromos[orderPlan];
+
       if (order.total !== undefined && order.total !== null && Number(order.total) > 0) {
         verifiedPrice = Math.round(Number(order.total));
-      } else if (order.product_id === 'premium' && launchPromo.isActive) {
-        verifiedPrice = launchPromo.promoPrice;
+      } else if (orderPromo?.isActive && orderPromo.remainingSlots > 0) {
+        verifiedPrice = orderPromo.promoPrice;
       } else if (order.products && order.products.price) {
         verifiedPrice = Number(order.products.price);
       }
@@ -53,11 +56,11 @@ export async function POST(request: Request) {
     } else {
       // Fallback a precios oficiales verificados por el servidor
       const planPrices: Record<string, number> = { 
-        basic: 4990, 
-        digital: 4990, 
-        medium: 6990, 
-        card: 6990, 
-        premium: launchPromo.isActive ? launchPromo.promoPrice : 7990 
+        basic: (planPromos.basic?.isActive && planPromos.basic.remainingSlots > 0) ? planPromos.basic.promoPrice : 4990, 
+        digital: (planPromos.basic?.isActive && planPromos.basic.remainingSlots > 0) ? planPromos.basic.promoPrice : 4990, 
+        medium: (planPromos.medium?.isActive && planPromos.medium.remainingSlots > 0) ? planPromos.medium.promoPrice : 6990, 
+        card: (planPromos.medium?.isActive && planPromos.medium.remainingSlots > 0) ? planPromos.medium.promoPrice : 6990, 
+        premium: (planPromos.premium?.isActive && planPromos.premium.remainingSlots > 0) ? planPromos.premium.promoPrice : 7990 
       };
       const fallbackPlan = body.productName?.toLowerCase().includes('máximo') || body.productName?.toLowerCase().includes('premium') ? 'premium'
         : body.productName?.toLowerCase().includes('medio') ? 'medium' : 'basic';

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAdminStore } from '@/lib/store';
-import { updateProduct, Product, getLaunchPromo, updateLaunchPromo, LaunchPromoConfig } from '@/lib/db';
+import { updateProduct, Product, getPlanPromos, updatePlanPromo, PlanPromosMap, PlanPromoConfig } from '@/lib/db';
 import { 
   DollarSign, 
   Save, 
@@ -15,9 +15,19 @@ import {
   FileText,
   RefreshCw,
   Flame,
-  Zap
+  Zap,
+  Check,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+interface PromoCardState {
+  isActive: boolean;
+  promoPrice: number;
+  regularPrice: number;
+  totalSlots: number;
+  usedSlots: number;
+}
 
 export default function AdminPlansPanel() {
   const { products, setProducts, updateProductLocal } = useAdminStore();
@@ -25,72 +35,113 @@ export default function AdminPlansPanel() {
   const [isSaving, setIsSaving] = useState(false);
   const [newFeatureText, setNewFeatureText] = useState('');
 
-  // Estados de Oferta de Lanzamiento Automática
-  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
-  const [promoForm, setPromoForm] = useState<{
-    isActive: boolean;
-    promoPrice: number;
-    totalSlots: number;
-    usedSlots: number;
-  }>({
-    isActive: true,
-    promoPrice: 6990,
-    totalSlots: 10,
-    usedSlots: 0,
+  // Promos para los 3 planes
+  const [promos, setPromos] = useState<Record<string, PromoCardState>>({
+    basic: { isActive: false, promoPrice: 3990, regularPrice: 4990, totalSlots: 10, usedSlots: 0 },
+    medium: { isActive: false, promoPrice: 5990, regularPrice: 6990, totalSlots: 10, usedSlots: 0 },
+    premium: { isActive: true, promoPrice: 6990, regularPrice: 7990, totalSlots: 10, usedSlots: 0 },
   });
-  const [isSavingPromo, setIsSavingPromo] = useState(false);
+  const [savingPlanId, setSavingPlanId] = useState<string | null>(null);
+
+  const loadPromos = async () => {
+    try {
+      const data = await getPlanPromos();
+      const next: Record<string, PromoCardState> = {};
+      ['basic', 'medium', 'premium'].forEach(pid => {
+        const p = data[pid];
+        if (p) {
+          next[pid] = {
+            isActive: p.isActive,
+            promoPrice: p.promoPrice,
+            regularPrice: p.regularPrice,
+            totalSlots: p.totalSlots,
+            usedSlots: p.usedSlots,
+          };
+        }
+      });
+      setPromos(prev => ({ ...prev, ...next }));
+    } catch (err) {
+      console.error('Error fetching plan promos:', err);
+    }
+  };
 
   useEffect(() => {
-    getLaunchPromo().then((data) => {
-      setLaunchPromo(data);
-      setPromoForm({
-        isActive: data.isActive,
-        promoPrice: data.promoPrice,
-        totalSlots: data.totalSlots,
-        usedSlots: data.usedSlots,
-      });
-    }).catch(() => {});
+    loadPromos();
   }, []);
 
-  const handleSavePromo = async () => {
-    setIsSavingPromo(true);
+  const handleUpdateField = (planId: string, field: keyof PromoCardState, val: any) => {
+    setPromos(prev => ({
+      ...prev,
+      [planId]: {
+        ...prev[planId],
+        [field]: val
+      }
+    }));
+  };
+
+  const handleTogglePromo = (planId: string) => {
+    setPromos(prev => ({
+      ...prev,
+      [planId]: {
+        ...prev[planId],
+        isActive: !prev[planId].isActive
+      }
+    }));
+  };
+
+  const handleSavePlanPromo = async (planId: string, planName: string) => {
+    const item = promos[planId];
+    if (!item) return;
+    setSavingPlanId(planId);
     try {
-      const ok = await updateLaunchPromo({
-        isActive: promoForm.isActive,
-        promoPrice: promoForm.promoPrice,
-        totalSlots: promoForm.totalSlots,
-        usedSlots: promoForm.usedSlots,
+      const ok = await updatePlanPromo(planId, {
+        isActive: item.isActive,
+        promoPrice: item.promoPrice,
+        regularPrice: item.regularPrice,
+        totalSlots: item.totalSlots,
+        usedSlots: item.usedSlots,
       });
       if (ok) {
-        const updated = await getLaunchPromo();
-        setLaunchPromo(updated);
-        toast.success('¡Configuración de Oferta de Lanzamiento guardada con éxito! 🔥');
+        await loadPromos();
+        // Sincronizar en store local si se cambió el precio normal
+        const prod = products.find(p => p.id === planId);
+        if (prod && item.regularPrice && prod.price !== item.regularPrice) {
+          updateProductLocal({ ...prod, price: item.regularPrice });
+        }
+        toast.success(`¡Oferta para ${planName} guardada y activada con éxito! 🔥`);
       } else {
-        toast.error('Error al guardar la oferta');
+        toast.error(`Error al guardar la oferta para ${planName}`);
       }
     } catch {
       toast.error('Error al guardar la oferta');
     } finally {
-      setIsSavingPromo(false);
+      setSavingPlanId(null);
     }
   };
 
-  const handleResetPromoSlots = async () => {
-    if (!confirm('¿Deseas reiniciar los cupos vendidos a 0 para empezar una nueva tanda de ventas con oferta?')) return;
-    setIsSavingPromo(true);
+  const handleResetSlots = async (planId: string, planName: string) => {
+    const item = promos[planId];
+    if (!item) return;
+    if (!confirm(`¿Deseas reiniciar los cupos vendidos a 0 para el ${planName}?`)) return;
+    setSavingPlanId(planId);
     try {
-      await updateLaunchPromo({
+      const ok = await updatePlanPromo(planId, {
         isActive: true,
-        promoPrice: promoForm.promoPrice,
-        totalSlots: promoForm.totalSlots,
+        promoPrice: item.promoPrice,
+        regularPrice: item.regularPrice,
+        totalSlots: item.totalSlots,
         usedSlots: 0,
       });
-      const updated = await getLaunchPromo();
-      setLaunchPromo(updated);
-      setPromoForm(prev => ({ ...prev, usedSlots: 0, isActive: true }));
-      toast.success('Cupos de lanzamiento reiniciados a 0 con éxito');
+      if (ok) {
+        setPromos(prev => ({
+          ...prev,
+          [planId]: { ...prev[planId], usedSlots: 0, isActive: true }
+        }));
+        await loadPromos();
+        toast.success(`Cupos para ${planName} reiniciados a 0`);
+      }
     } finally {
-      setIsSavingPromo(false);
+      setSavingPlanId(null);
     }
   };
 
@@ -157,116 +208,190 @@ export default function AdminPlansPanel() {
         </div>
       </div>
 
-      {/* SECCIÓN OFERTA DE LANZAMIENTO AUTOMÁTICA */}
-      <div className="bg-gradient-to-br from-amber-500/10 via-rose-500/10 to-amber-500/5 rounded-3xl p-6 border-2 border-amber-400/60 shadow-md space-y-5">
+      {/* SECCIÓN GESTIÓN DE OFERTAS DE LANZAMIENTO INDEPENDIENTES */}
+      <div className="bg-gradient-to-br from-amber-500/10 via-rose-500/5 to-amber-500/10 rounded-3xl p-6 border-2 border-amber-400/60 shadow-md space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-200/60 pb-4">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="p-1.5 bg-amber-100 rounded-xl text-amber-800">
                 <Flame className="w-5 h-5 fill-amber-500 text-amber-600" />
               </span>
-              <h3 className="font-serif font-bold text-base text-gray-950">
-                Oferta de Lanzamiento Automática (Sin Cupones)
+              <h3 className="font-serif font-bold text-lg text-gray-950">
+                Ofertas de Lanzamiento por Plan (Sin Cupones)
               </h3>
-              <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                promoForm.isActive && (promoForm.totalSlots - promoForm.usedSlots) > 0
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                  : 'bg-gray-100 text-gray-600 border border-gray-300'
-              }`}>
-                {promoForm.isActive && (promoForm.totalSlots - promoForm.usedSlots) > 0 ? '● Activa en la web' : '○ Pausada / Finalizada'}
-              </span>
             </div>
-            <p className="text-xs text-gray-600 font-light">
-              Muestra el Plan Máximo a precio especial rebajado. Al alcanzar el límite de cupos, la web <strong>vuelve sola automáticamente a $7.990</strong> sin que tengas que hacer nada.
+            <p className="text-xs text-gray-600 font-light max-w-2xl">
+              Activa promociones de estreno independientes para cualquier plan (Básico, Medio o Máximo) o combina varios a la vez. Puedes modificar el <strong>Precio Normal (Precio de Antes)</strong> y el <strong>Precio de Oferta</strong>. Cuando los cupos lleguen a 0 o desactives la oferta, la web <strong>elimina automáticamente</strong> los textos de oferta y muestra el plan limpio.
             </p>
           </div>
-
-          {/* Switch Activar / Pausar */}
-          <button
-            type="button"
-            onClick={() => setPromoForm(prev => ({ ...prev, isActive: !prev.isActive }))}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-xs shrink-0 ${
-              promoForm.isActive
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-            }`}
-          >
-            <span>{promoForm.isActive ? 'Oferta Activada ✓' : 'Oferta Pausada ✕'}</span>
-          </button>
         </div>
 
-        {/* Formulario y Métricas */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Precio de Oferta */}
-          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
-              Precio Oferta Plan Máximo (CLP)
-            </label>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold text-gray-400">$</span>
-              <input
-                type="number"
-                value={promoForm.promoPrice}
-                onChange={(e) => setPromoForm(prev => ({ ...prev, promoPrice: Number(e.target.value) }))}
-                className="w-full text-base font-extrabold text-gray-900 border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500"
-              />
-            </div>
-            <p className="text-[9px] text-gray-500">Precio normal: $7.990 CLP</p>
-          </div>
+        {/* 3 Tarjetas de Oferta Independientes */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {[
+            { id: 'basic', name: 'Plan Básico', tag: 'Esencial' },
+            { id: 'medium', name: 'Plan Medio', tag: 'Más Popular' },
+            { id: 'premium', name: 'Plan Máximo', tag: 'Completo VIP' },
+          ].map((item) => {
+            const p = promos[item.id] || { isActive: false, promoPrice: 4990, regularPrice: 4990, totalSlots: 10, usedSlots: 0 };
+            const remaining = Math.max(0, p.totalSlots - p.usedSlots);
+            const isLive = p.isActive && remaining > 0;
+            const isSavingThis = savingPlanId === item.id;
 
-          {/* Cupos Totales */}
-          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
-              Límite de Cupos de Lanzamiento
-            </label>
-            <input
-              type="number"
-              value={promoForm.totalSlots}
-              onChange={(e) => setPromoForm(prev => ({ ...prev, totalSlots: Number(e.target.value) }))}
-              className="w-full text-base font-extrabold text-gray-900 border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500"
-            />
-            <p className="text-[9px] text-gray-500">Ejemplo: 10 o 20 pedidos</p>
-          </div>
-
-          {/* Contador en Vivo */}
-          <div className="bg-white/90 p-4 rounded-2xl border border-amber-200 shadow-2xs space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="text-gray-600 uppercase">Ventas de Estreno</span>
-              <span className="text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full font-extrabold">
-                {promoForm.usedSlots} / {promoForm.totalSlots} vendidos
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-amber-500 to-rose-500 h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, Math.max(0, (promoForm.usedSlots / promoForm.totalSlots) * 100))}%` }}
-              />
-            </div>
-            <div className="flex justify-between items-center text-[9px] text-gray-500">
-              <span>Restantes: <strong>{Math.max(0, promoForm.totalSlots - promoForm.usedSlots)}</strong></span>
-              <button
-                type="button"
-                onClick={handleResetPromoSlots}
-                className="text-rose-600 font-bold hover:underline cursor-pointer flex items-center gap-1"
+            return (
+              <div 
+                key={item.id}
+                className={`bg-white rounded-2xl p-5 border-2 transition-all flex flex-col justify-between gap-4 shadow-xs ${
+                  isLive 
+                    ? 'border-amber-400 ring-2 ring-amber-400/20 shadow-md' 
+                    : 'border-gray-200 opacity-90'
+                }`}
               >
-                <RefreshCw className="w-2.5 h-2.5" />
-                <span>Reiniciar a 0</span>
-              </button>
-            </div>
-          </div>
-        </div>
+                {/* Cabecera de la Tarjeta con Switch */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                        {item.tag}
+                      </span>
+                      <h4 className="font-serif font-bold text-base text-gray-900 mt-1">
+                        {item.name}
+                      </h4>
+                    </div>
 
-        {/* Botón Guardar Oferta */}
-        <div className="flex justify-end pt-2">
-          <button
-            type="button"
-            onClick={handleSavePromo}
-            disabled={isSavingPromo}
-            className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            <span>{isSavingPromo ? 'Guardando...' : 'Guardar Configuración de Oferta'}</span>
-          </button>
+                    {/* Switch ON/OFF */}
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePromo(item.id)}
+                      className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs ${
+                        p.isActive
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      }`}
+                      title={p.isActive ? 'Clic para desactivar oferta' : 'Clic para activar oferta'}
+                    >
+                      {p.isActive ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>OFERTA ON</span>
+                        </>
+                      ) : (
+                        <>
+                          <X className="w-3.5 h-3.5" />
+                          <span>OFERTA OFF</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Estado en vivo */}
+                  <div className="flex items-center gap-1.5 text-[10px]">
+                    <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
+                    <span className={isLive ? 'text-emerald-700 font-bold' : 'text-gray-500'}>
+                      {isLive ? `Activa en la web (${remaining} cupos rest.)` : (p.isActive ? 'Cupos agotados (Inactiva)' : 'Desactivada')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Campos de Edición: Precios y Cupos */}
+                <div className="space-y-3 bg-gray-50/80 p-3 rounded-xl border border-gray-100 text-xs">
+                  {/* Precio Normal (Precio de Antes) */}
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide block mb-1">
+                      Precio Normal (Precio de Antes tachado)
+                    </label>
+                    <div className="flex items-center gap-1 bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 focus-within:border-amber-500">
+                      <span className="text-gray-400 font-bold">$</span>
+                      <input
+                        type="number"
+                        value={p.regularPrice}
+                        onChange={(e) => handleUpdateField(item.id, 'regularPrice', Number(e.target.value))}
+                        className="w-full font-bold text-gray-700 outline-none"
+                        placeholder="Ej: 7990"
+                      />
+                      <span className="text-[10px] text-gray-400 font-medium">CLP</span>
+                    </div>
+                  </div>
+
+                  {/* Precio de Oferta */}
+                  <div>
+                    <label className="text-[10px] font-bold text-amber-900 uppercase tracking-wide block mb-1">
+                      Precio de Oferta (Lo que paga el cliente)
+                    </label>
+                    <div className="flex items-center gap-1 bg-white border border-amber-300 rounded-lg px-2.5 py-1.5 focus-within:border-amber-500 ring-1 ring-amber-400/20">
+                      <span className="text-amber-600 font-extrabold">$</span>
+                      <input
+                        type="number"
+                        value={p.promoPrice}
+                        onChange={(e) => handleUpdateField(item.id, 'promoPrice', Number(e.target.value))}
+                        className="w-full font-extrabold text-amber-950 outline-none"
+                        placeholder="Ej: 6990"
+                      />
+                      <span className="text-[10px] text-amber-700 font-bold">CLP</span>
+                    </div>
+                  </div>
+
+                  {/* Límite de Cupos */}
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide block mb-1">
+                      Cupos Totales de Lanzamiento
+                    </label>
+                    <div className="flex items-center gap-1 bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 focus-within:border-amber-500">
+                      <input
+                        type="number"
+                        value={p.totalSlots}
+                        onChange={(e) => handleUpdateField(item.id, 'totalSlots', Number(e.target.value))}
+                        className="w-full font-bold text-gray-800 outline-none"
+                        placeholder="Ej: 10"
+                      />
+                      <span className="text-[10px] text-gray-400 font-medium">cupos</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contador de Ventas y Barra de Progreso */}
+                <div className="space-y-1.5 bg-amber-50/50 p-2.5 rounded-xl border border-amber-200/50 text-[10px]">
+                  <div className="flex justify-between items-center font-bold">
+                    <span className="text-gray-700">Ventas Registradas:</span>
+                    <span className="text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-full font-extrabold">
+                      {p.usedSlots} / {p.totalSlots} vendidos
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-amber-500 to-rose-500 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, Math.max(0, (p.usedSlots / Math.max(1, p.totalSlots)) * 100))}%` }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center text-gray-500 pt-0.5">
+                    <span>Quedan: <strong>{remaining} cupos</strong></span>
+                    <button
+                      type="button"
+                      onClick={() => handleResetSlots(item.id, item.name)}
+                      disabled={isSavingThis}
+                      className="text-rose-600 hover:text-rose-700 font-bold hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <RefreshCw className="w-2.5 h-2.5" />
+                      <span>Reiniciar a 0</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Botón Guardar Oferta de este Plan */}
+                <button
+                  type="button"
+                  onClick={() => handleSavePlanPromo(item.id, item.name)}
+                  disabled={isSavingThis}
+                  className="w-full py-2.5 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{isSavingThis ? 'Guardando...' : `Guardar Oferta ${item.name}`}</span>
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 

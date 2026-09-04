@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Product, getLaunchPromo, LaunchPromoConfig } from '@/lib/db';
+import { Product, getPlanPromos, PlanPromosMap } from '@/lib/db';
 import { Check, CheckCircle2, Sparkles, Image as ImageIcon, Music, Heart, Mic, Video, MapPin, KeyRound, Calendar, Flame } from 'lucide-react';
 import { THEME_HIGHLIGHTS } from './Step1Tematica';
 
@@ -19,15 +19,11 @@ export default function Step2Plan({
   selectedTheme,
 }: Step2PlanProps) {
   const themeInfo = THEME_HIGHLIGHTS[selectedTheme] || THEME_HIGHLIGHTS['anniversary'];
-  const [launchPromo, setLaunchPromo] = useState<LaunchPromoConfig | null>(null);
+  const [planPromos, setPlanPromos] = useState<PlanPromosMap>({});
 
   useEffect(() => {
-    getLaunchPromo().then(setLaunchPromo).catch(() => {});
+    getPlanPromos().then(setPlanPromos).catch(() => {});
   }, []);
-
-  const isPromoActive = Boolean(launchPromo?.isActive);
-  const promoPrice = launchPromo?.promoPrice || 6990;
-  const regularPremiumPrice = products.find(p => p.id === 'premium')?.price || 7990;
 
   const basicFeatures = themeInfo?.plans?.basic || [
     '📸 Hasta 10 Fotos en Polaroid & Collage',
@@ -57,44 +53,64 @@ export default function Step2Plan({
     '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
   ];
 
+  const isBasicPromo = Boolean(planPromos['basic']?.isActive && planPromos['basic']?.remainingSlots > 0);
+  const isMediumPromo = Boolean(planPromos['medium']?.isActive && planPromos['medium']?.remainingSlots > 0);
+  const isPremiumPromo = Boolean(planPromos['premium']?.isActive && planPromos['premium']?.remainingSlots > 0);
+
   const planItems = [
     {
       id: 'basic',
       name: 'Plan Básico',
-      subtitle: 'El detalle romántico esencial',
+      subtitle: isBasicPromo 
+        ? `🔥 ¡Precio Lanzamiento! Quedan ${planPromos['basic'].remainingSlots} cupos`
+        : 'El detalle romántico esencial',
       photoBadge: '10 Fotos',
-      price: products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990,
-      regularPrice: null,
-      isPromo: false,
+      price: isBasicPromo 
+        ? planPromos['basic'].promoPrice 
+        : (products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990),
+      regularPrice: isBasicPromo 
+        ? (planPromos['basic'].regularPrice || products.find(p => p.id === 'basic' || p.id === 'digital')?.price || 4990) 
+        : null,
+      isPromo: isBasicPromo,
       description: `Página web con la interacción clave de ${themeInfo.name}, dedicatoria y tarjeta digital.`,
       features: basicFeatures,
-      badge: null,
+      badge: isBasicPromo ? `🔥 LANZAMIENTO (${planPromos['basic'].remainingSlots} CUPOS)` : null,
     },
     {
       id: 'medium',
       name: 'Plan Medio',
-      subtitle: 'Música Oficial + 145 Personajes',
+      subtitle: isMediumPromo 
+        ? `🔥 ¡Precio Lanzamiento! Quedan ${planPromos['medium'].remainingSlots} cupos`
+        : 'Música Oficial + 145 Personajes',
       photoBadge: '20 Fotos',
-      price: products.find(p => p.id === 'medium' || p.id === 'card')?.price || 6990,
-      regularPrice: null,
-      isPromo: false,
+      price: isMediumPromo 
+        ? planPromos['medium'].promoPrice 
+        : (products.find(p => p.id === 'medium' || p.id === 'card')?.price || 6990),
+      regularPrice: isMediumPromo 
+        ? (planPromos['medium'].regularPrice || products.find(p => p.id === 'medium' || p.id === 'card')?.price || 6990) 
+        : null,
+      isPromo: isMediumPromo,
       description: `La opción más recomendada: incluye música de fondo oficial y tarjeta con 145 personajes temáticos.`,
       features: mediumFeatures,
-      badge: 'Más Recomendado',
+      badge: isMediumPromo ? `🔥 LANZAMIENTO (${planPromos['medium'].remainingSlots} CUPOS)` : 'Más Recomendado',
     },
     {
       id: 'premium',
       name: 'Plan Máximo',
-      subtitle: isPromoActive 
-        ? `🔥 ¡Precio Lanzamiento! Quedan ${launchPromo?.remainingSlots} cupos`
+      subtitle: isPremiumPromo 
+        ? `🔥 ¡Precio Lanzamiento! Quedan ${planPromos['premium'].remainingSlots} cupos`
         : 'Nota de Voz + Video + 40 Fotos 👑',
       photoBadge: '40 Fotos Dual',
-      price: isPromoActive ? promoPrice : regularPremiumPrice,
-      regularPrice: isPromoActive ? regularPremiumPrice : null,
-      isPromo: isPromoActive,
+      price: isPremiumPromo 
+        ? planPromos['premium'].promoPrice 
+        : (products.find(p => p.id === 'premium')?.price || 7990),
+      regularPrice: isPremiumPromo 
+        ? (planPromos['premium'].regularPrice || products.find(p => p.id === 'premium')?.price || 7990) 
+        : null,
+      isPromo: isPremiumPromo,
       description: `La experiencia definitiva: nota de voz grabada estilo WhatsApp, video HD, línea de tiempo y rincón secreto.`,
       features: premiumFeatures,
-      badge: isPromoActive ? `🔥 LANZAMIENTO (${launchPromo?.remainingSlots} CUPOS)` : 'Experiencia Pro',
+      badge: isPremiumPromo ? `🔥 LANZAMIENTO (${planPromos['premium'].remainingSlots} CUPOS)` : 'Experiencia Pro',
     },
   ];
 
