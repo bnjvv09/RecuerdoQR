@@ -153,9 +153,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 font-light">
+        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-light">
           <p>© {new Date().getFullYear()} RecuerdoQR. Todos los derechos reservados.</p>
-          <p>Desarrollado con pasión para enamorar.</p>
+          <p className="flex items-center gap-1.5">
+            Página diseñada por el creador <span className="text-rose-400 font-medium">@Bnjvv09</span>
+          </p>
         </div>
       </div>
 
