@@ -828,7 +828,7 @@ export default function Step4Preview({
         {/* 9. VALENTINES */}
         {isValentines && (
           <div
-            className="rounded-3xl p-4 border shadow-xs space-y-3 transition-colors duration-300"
+            className="rounded-3xl p-4 border shadow-xs space-y-3 transition-colors duration-300 text-center"
             style={{
               backgroundColor: `${themeColor}12`,
               borderColor: `${themeColor}35`,
@@ -836,26 +836,72 @@ export default function Step4Preview({
             }}
           >
             <span className="text-3xl select-none">🌹🍫</span>
-            <h3 className="font-bold text-xs" style={{ color: themeColor, fontFamily: activeFontFamily }}>{valentineBoxTitle}</h3>
+            <h3 className="font-bold text-xs" style={{ color: themeColor, fontFamily: activeFontFamily }}>
+              {valentineBoxTitle || 'Caja de Bombones de San Valentín 🍫'}
+            </h3>
             
-            {/* VALE ROMÁNTICO VIP */}
-            <div className="p-3.5 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
-              <div className="flex justify-between items-center border-b border-rose-200 pb-1">
-                <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
-                  <span>🎟️</span> VALE ROMÁNTICO OFICIAL
-                </span>
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
-                  SAN VALENTÍN
-                </span>
+            {!isBoxOpened ? (
+              /* CAJA DE BOMBONES CERRADA */
+              <div
+                onClick={() => {
+                  setIsBoxOpened(true);
+                  confetti({ particleCount: 60, spread: 60, colors: [themeColor, '#f43f5e', '#fbbf24'] });
+                }}
+                className="p-4 bg-white/95 rounded-2xl border-2 border-dashed border-rose-300 text-center cursor-pointer space-y-2 hover:bg-rose-50/50 transition group shadow-sm"
+              >
+                <div className="text-4xl animate-bounce group-hover:scale-110 transition-transform">
+                  🎁🍫
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-[10px] font-bold text-rose-900">
+                    Toca la caja de bombones para abrirla
+                  </p>
+                  <p className="text-[8px] text-gray-500 font-light">
+                    Tiene una sorpresa especial adentro para ti ✨
+                  </p>
+                </div>
               </div>
-              <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900" style={{ fontFamily: activeFontFamily }}>
-                &quot;{valentineCoupon || 'Vale por una cena romántica a la luz de las velas'}&quot;
-              </p>
-              <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
-                <span>Válido para canjear cuando tú quieras ❤️</span>
-                <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+            ) : (
+              /* CAJA ABIERTA CON BOMBONES Y VALE ROMÁNTICO */
+              <div className="space-y-3 animate-fade-in">
+                <div
+                  onClick={() => setIsBoxOpened(false)}
+                  className="flex items-center justify-between px-3 py-1.5 bg-white/80 rounded-xl border border-rose-200 cursor-pointer text-[8px] font-bold text-gray-600 hover:bg-white transition"
+                >
+                  <span className="flex items-center gap-1.5 text-rose-800">
+                    <span>🍫</span> <span>Caja abierta con bombones</span>
+                  </span>
+                  <span className="text-rose-600 hover:underline">Volver a cerrar ✕</span>
+                </div>
+
+                {/* Bandeja de Bombones Surtidos */}
+                <div className="grid grid-cols-4 gap-1.5 p-2 bg-gradient-to-r from-amber-950 via-zinc-900 to-amber-950 rounded-xl text-center shadow-inner border border-amber-900/50">
+                  <span className="text-lg animate-pulse" title="Bombón de Avellana">🍬</span>
+                  <span className="text-lg animate-pulse" title="Trufa de Chocolate">🍫</span>
+                  <span className="text-lg animate-pulse" title="Corazón de Frutilla">💖</span>
+                  <span className="text-lg animate-pulse" title="Bombón Dorado">🍩</span>
+                </div>
+
+                {/* VALE ROMÁNTICO VIP */}
+                <div className="p-3.5 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
+                  <div className="flex justify-between items-center border-b border-rose-200 pb-1">
+                    <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
+                      <span>🎟️</span> VALE ROMÁNTICO OFICIAL
+                    </span>
+                    <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
+                      SAN VALENTÍN
+                    </span>
+                  </div>
+                  <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900" style={{ fontFamily: activeFontFamily }}>
+                    &quot;{valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️'}&quot;
+                  </p>
+                  <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
+                    <span>Válido para canjear cuando tú quieras ❤️</span>
+                    <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -1347,21 +1393,8 @@ export default function Step4Preview({
                         </div>
                       );
                     } else if (isPregnancy) {
-                      counterTitle = '👣 Cuenta Regresiva al Nacimiento';
-                      const target = specialDate ? new Date(specialDate).getTime() : 0;
-                      const diff = target - new Date().getTime();
-                      if (diff > 0) {
-                        const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-                        firstColVal = Math.floor(totalDays / 7).toString();
-                        secondColVal = (totalDays % 7).toString();
-                        firstColLabel = 'Semanas';
-                        secondColLabel = 'Días';
-                      } else {
-                        firstColVal = '0';
-                        secondColVal = '0';
-                        firstColLabel = 'Semanas';
-                        secondColLabel = 'Días';
-                      }
+                      // La temática de Embarazo ya incluye su propia cuenta regresiva interactiva en el bloque temático
+                      return null;
                     } else if (selectedTheme === 'love-confession') {
                       counterTitle = '💭 Días que Llevo Pensando en Ti';
                     } else if (selectedTheme === 'special') {

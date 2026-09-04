@@ -131,6 +131,7 @@ export default function AmorExperiencePage() {
   const [crystalUnlocked, setCrystalUnlocked] = useState(false);
   const [starsRevealed, setStarsRevealed] = useState<number[]>([]);
   const [heartUnited, setHeartUnited] = useState(false);
+  const [isValentineBoxOpened, setIsValentineBoxOpened] = useState(false);
 
   // Custom apartados states
   const [secretUnlocked, setSecretUnlocked] = useState(false);
@@ -1403,24 +1404,68 @@ export default function AmorExperiencePage() {
                   {experience.config?.valentineBoxTitle || 'Caja de Bombones de San Valentín 🍫'}
                 </h3>
                 
-                {/* VALE ROMÁNTICO VIP */}
-                <div className="p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
-                  <div className="flex justify-between items-center border-b border-rose-200 pb-1">
-                    <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
-                      <span>🎟️</span> VALE ROMÁNTICO OFICIAL
-                    </span>
-                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
-                      SAN VALENTÍN
-                    </span>
+                {!isValentineBoxOpened ? (
+                  /* CAJA DE BOMBONES CERRADA */
+                  <div
+                    onClick={() => {
+                      setIsValentineBoxOpened(true);
+                      confetti({ particleCount: 70, spread: 70, colors: [primaryColor, '#f43f5e', '#fbbf24'] });
+                    }}
+                    className="p-5 bg-white/95 rounded-2xl border-2 border-dashed border-rose-300 text-center cursor-pointer space-y-2 hover:bg-rose-50/60 transition group shadow-sm"
+                  >
+                    <div className="text-5xl animate-bounce group-hover:scale-110 transition-transform">
+                      🎁🍫
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-rose-950">
+                        Toca la caja de bombones para abrirla
+                      </p>
+                      <p className="text-[10px] text-gray-500 font-light">
+                        Tiene una sorpresa especial adentro para ti ✨
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900">
-                    &quot;{experience.config?.valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️'}&quot;
-                  </p>
-                  <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
-                    <span>Válido para canjear en cualquier momento ❤️</span>
-                    <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+                ) : (
+                  /* CAJA ABIERTA CON BOMBONES Y VALE ROMÁNTICO */
+                  <div className="space-y-4 animate-fade-in">
+                    <div
+                      onClick={() => setIsValentineBoxOpened(false)}
+                      className="flex items-center justify-between px-3.5 py-2 bg-white/80 rounded-xl border border-rose-200 cursor-pointer text-[9px] font-bold text-gray-600 hover:bg-white transition"
+                    >
+                      <span className="flex items-center gap-1.5 text-rose-800">
+                        <span>🍫</span> <span>Caja abierta con bombones</span>
+                      </span>
+                      <span className="text-rose-600 hover:underline">Volver a cerrar ✕</span>
+                    </div>
+
+                    {/* Bandeja de Bombones Surtidos */}
+                    <div className="grid grid-cols-4 gap-2 p-3 bg-gradient-to-r from-amber-950 via-zinc-900 to-amber-950 rounded-2xl text-center shadow-inner border border-amber-900/50">
+                      <span className="text-2xl animate-pulse" title="Bombón de Avellana">🍬</span>
+                      <span className="text-2xl animate-pulse" title="Trufa de Chocolate">🍫</span>
+                      <span className="text-2xl animate-pulse" title="Corazón de Frutilla">💖</span>
+                      <span className="text-2xl animate-pulse" title="Bombón Dorado">🍩</span>
+                    </div>
+
+                    {/* VALE ROMÁNTICO VIP */}
+                    <div className="p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl border-2 border-dashed border-rose-300 shadow-md text-left space-y-2 relative overflow-hidden">
+                      <div className="flex justify-between items-center border-b border-rose-200 pb-1">
+                        <span className="text-[9px] font-extrabold uppercase tracking-widest text-rose-800 flex items-center gap-1">
+                          <span>🎟️</span> VALE ROMÁNTICO OFICIAL
+                        </span>
+                        <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono">
+                          SAN VALENTÍN
+                        </span>
+                      </div>
+                      <p className="text-xs font-serif font-bold italic leading-relaxed text-gray-900">
+                        &quot;{experience.config?.valentineCoupon || 'Vale por nuestra cita soñada de San Valentín ❤️'}&quot;
+                      </p>
+                      <div className="flex justify-between items-center text-[7px] text-gray-500 font-light pt-1 border-t border-rose-100">
+                        <span>Válido para canjear en cualquier momento ❤️</span>
+                        <span className="font-mono font-bold text-rose-700">100% AMOR</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
@@ -1656,6 +1701,9 @@ export default function AmorExperiencePage() {
               }
 
               if (sec.type === 'contador') {
+                // If it's pregnancy theme, the dedicated baby arrival countdown widget is already rendered above
+                if (themeId === 'pregnancy') return null;
+
                 let counterHeader = sec.title;
                 if (themeId === 'birthday') {
                   let calculatedAge = 0;
