@@ -1415,7 +1415,7 @@ export default function Step2Personalizacion({
                               {photos.map((p, pIdx) => (
                                 <div key={pIdx} className="rounded-xl overflow-hidden border border-gray-200 shadow-2xs bg-white flex flex-col group hover:border-rose-300 transition">
                                   <div className="relative h-28 w-full bg-gray-100">
-                                    <Image src={p.previewUrl} alt={`Foto ${pIdx + 1}`} fill sizes="140px" className="object-cover" />
+                                    <Image src={p.previewUrl} alt={`Foto ${pIdx + 1}`} fill sizes="140px" className="object-cover" unoptimized decoding="async" />
                                     <button
                                       type="button"
                                       onClick={() => removePhoto(pIdx)}
@@ -1495,7 +1495,7 @@ export default function Step2Personalizacion({
                               {secondaryPhotos.map((p, pIdx) => (
                                 <div key={pIdx} className="rounded-xl overflow-hidden border border-teal-200 shadow-2xs bg-white flex flex-col group hover:border-teal-400 transition">
                                   <div className="relative h-28 w-full bg-teal-50/50">
-                                    <Image src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} fill sizes="140px" className="object-cover" />
+                                    <Image src={p.previewUrl} alt={`Foto 2da Galería ${pIdx + 1}`} fill sizes="140px" className="object-cover" unoptimized decoding="async" />
                                     <button
                                       type="button"
                                       onClick={() => removeSecondaryPhoto && removeSecondaryPhoto(pIdx)}

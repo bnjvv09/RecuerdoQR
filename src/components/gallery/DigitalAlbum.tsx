@@ -101,7 +101,9 @@ export default function DigitalAlbum({
                         src={photos[currentPage - 1].url}
                         alt={photos[currentPage - 1]?.caption || `Página ${currentPage}`}
                         fill
-                        sizes="300px"
+                        sizes="(max-width: 640px) 280px, 340px"
+                        loading="lazy"
+                        decoding="async"
                         className="object-cover group-hover:scale-105 transition duration-300"
                       />
                     )}

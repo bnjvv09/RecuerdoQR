@@ -151,7 +151,9 @@ export default function PolaroidGallery({
                     src={p.url} 
                     alt={p.caption || `Foto ${idx + 1}`} 
                     fill 
-                    sizes="150px"
+                    sizes="(max-width: 640px) 140px, 180px"
+                    loading="lazy"
+                    decoding="async"
                     className="object-cover" 
                   />
                 )}

@@ -50,6 +50,8 @@ export default function MasonryGallery({
                   alt={p.caption || `Foto ${originalIndex + 1}`}
                   fill
                   sizes="(max-width: 768px) 50vw, 300px"
+                  loading="lazy"
+                  decoding="async"
                   className="object-cover group-hover:scale-105 transition duration-300"
                 />
 

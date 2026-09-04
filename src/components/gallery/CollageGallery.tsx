@@ -80,6 +80,8 @@ export default function CollageGallery({
                   alt={p.caption || `Recuerdo ${idx + 1}`}
                   fill
                   sizes={isWide ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 50vw, 200px"}
+                  loading="lazy"
+                  decoding="async"
                   className="object-cover group-hover:scale-105 transition duration-300"
                 />
               </div>

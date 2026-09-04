@@ -85,43 +85,48 @@ function PersonalizarContent() {
       const cleanUser = sanitizeText(form.userName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'pareja';
       const slug = `${cleanPartner}-${cleanUser}-${Math.floor(100 + Math.random() * 900)}`;
 
-      // Upload photos
-      const uploadedPhotosList: Array<{ url: string; caption?: string }> = [];
-      for (const p of form.photos) {
-        if (p.file) {
-          const publicUrl = await uploadImage(p.file, slug);
-          uploadedPhotosList.push({ url: publicUrl, caption: sanitizeText(p.caption) });
-        } else {
-          uploadedPhotosList.push({ url: p.previewUrl, caption: sanitizeText(p.caption) });
-        }
-      }
-
-      // Upload milestones
-      const formattedMilestones: Array<{ title: string; date: string; description: string; image_url: string }> = [];
-      for (const m of form.milestones) {
-        let imgUrl = m.previewUrl || '';
-        if (m.image) {
-          imgUrl = await uploadImage(m.image, slug);
-        }
-        formattedMilestones.push({
-          title: sanitizeText(m.title),
-          date: m.date,
-          description: sanitizeText(m.description),
-          image_url: imgUrl,
-        });
-      }
-
-      // Upload Voice Note (Audio) if present in Premium
-      let uploadedVoiceNoteUrl = '';
-      if (form.voiceNoteFile) {
-        uploadedVoiceNoteUrl = await uploadImage(form.voiceNoteFile, slug);
-      }
-
-      // Upload video if provided in Premium plan
-      let uploadedVideoUrl = form.youtubeVideoUrl || '';
-      if (form.uploadedVideoFile) {
-        uploadedVideoUrl = await uploadImage(form.uploadedVideoFile, slug);
-      }
+      // 🚀 UPLOAD ULTRA-RÁPIDO EN PARALELO SIMULTÁNEO
+      const [uploadedPhotosList, uploadedSecondaryPhotosList, formattedMilestones, uploadedVoiceNoteUrl, uploadedVideoUrl] = await Promise.all([
+        // 1. Fotos primarias en paralelo
+        Promise.all(
+          form.photos.map(async (p) => {
+            if (p.file) {
+              const publicUrl = await uploadImage(p.file, slug);
+              return { url: publicUrl, caption: sanitizeText(p.caption) };
+            }
+            return { url: p.previewUrl, caption: sanitizeText(p.caption) };
+          })
+        ),
+        // 2. Fotos secundarias en paralelo
+        Promise.all(
+          form.secondaryPhotos.map(async (p) => {
+            if (p.file) {
+              const publicUrl = await uploadImage(p.file, `${slug}-sec`);
+              return { url: publicUrl, caption: sanitizeText(p.caption) };
+            }
+            return { url: p.previewUrl, caption: sanitizeText(p.caption) };
+          })
+        ),
+        // 3. Hitos (Timeline) en paralelo
+        Promise.all(
+          form.milestones.map(async (m) => {
+            let imgUrl = m.previewUrl || '';
+            if (m.image) {
+              imgUrl = await uploadImage(m.image, `${slug}-hito`);
+            }
+            return {
+              title: sanitizeText(m.title),
+              date: m.date,
+              description: sanitizeText(m.description),
+              image_url: imgUrl,
+            };
+          })
+        ),
+        // 4. Nota de voz
+        form.voiceNoteFile ? uploadImage(form.voiceNoteFile, slug) : Promise.resolve(''),
+        // 5. Video subido
+        form.uploadedVideoFile ? uploadImage(form.uploadedVideoFile, slug) : Promise.resolve(form.youtubeVideoUrl || '')
+      ]);
 
       // Create Order
       const finalAmount = finalDiscountPrice !== undefined ? finalDiscountPrice : form.totalPrice;
@@ -173,7 +178,7 @@ function PersonalizarContent() {
             photoStyle: form.photoStyle,
             secondaryPhotoStyle: form.secondaryPhotoStyle,
             enableDualPhotoStyle: form.enableDualPhotoStyle,
-            secondaryPhotos: form.secondaryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption })),
+            secondaryPhotos: uploadedSecondaryPhotosList,
             selectedCharacter: form.selectedCharacter,
             cardPalette: form.cardPalette,
             cardOrientation: form.cardOrientation,

@@ -86,7 +86,9 @@ export default function FilmStrip({
                     src={p.url}
                     alt={p.caption || `Fotograma ${idx + 1}`}
                     fill
-                    sizes="220px"
+                    sizes="(max-width: 640px) 190px, 240px"
+                    loading="lazy"
+                    decoding="async"
                     className="object-cover group-hover:opacity-90 transition"
                   />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center z-10">

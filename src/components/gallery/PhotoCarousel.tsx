@@ -52,6 +52,8 @@ export default function PhotoCarousel({
                 alt="Anterior" 
                 fill 
                 sizes="180px"
+                loading="lazy"
+                decoding="async"
                 className="object-cover" 
               />
             )}
@@ -116,6 +118,8 @@ export default function PhotoCarousel({
                 alt="Siguiente" 
                 fill 
                 sizes="180px"
+                loading="lazy"
+                decoding="async"
                 className="object-cover" 
               />
             )}

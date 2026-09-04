@@ -16,11 +16,23 @@ import {
 } from '@/lib/db';
 import dynamic from 'next/dynamic';
 import AdminHeader from '@/components/admin/AdminHeader';
-import AdminOrdersTable from '@/components/admin/AdminOrdersTable';
-import AdminThemesPanel from '@/components/admin/AdminThemesPanel';
-import AdminPlansPanel from '@/components/admin/AdminPlansPanel';
-import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel';
 
+const AdminOrdersTable = dynamic(() => import('@/components/admin/AdminOrdersTable'), {
+  loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando pedidos...</div>,
+  ssr: false,
+});
+const AdminThemesPanel = dynamic(() => import('@/components/admin/AdminThemesPanel'), {
+  loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando temáticas...</div>,
+  ssr: false,
+});
+const AdminPlansPanel = dynamic(() => import('@/components/admin/AdminPlansPanel'), {
+  loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando planes y ofertas...</div>,
+  ssr: false,
+});
+const AdminSettingsPanel = dynamic(() => import('@/components/admin/AdminSettingsPanel'), {
+  loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando ajustes...</div>,
+  ssr: false,
+});
 const AdminCreatorStudio = dynamic(() => import('@/components/admin/AdminCreatorStudio'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando estudio de creación...</div>,
   ssr: false,
