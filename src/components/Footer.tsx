@@ -156,7 +156,15 @@ export default function Footer() {
         <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-light">
           <p>© {new Date().getFullYear()} RecuerdoQR. Todos los derechos reservados.</p>
           <p className="flex items-center gap-1.5">
-            Página diseñada por el creador <span className="text-rose-400 font-medium">@Bnjvv09</span>
+            Página diseñada por{' '}
+            <a 
+              href="https://b9studio.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-rose-400 hover:text-rose-300 font-medium transition-colors underline decoration-rose-400/40 hover:decoration-rose-300"
+            >
+              @Bnjvv09
+            </a>
           </p>
         </div>
       </div>
