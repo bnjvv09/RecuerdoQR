@@ -153,7 +153,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-light">
+        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-light relative z-20">
           <p>© {new Date().getFullYear()} RecuerdoQR. Todos los derechos reservados.</p>
           <p className="flex items-center gap-1.5">
             Página diseñada por{' '}
@@ -161,7 +161,7 @@ export default function Footer() {
               href="https://b9studio.vercel.app" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-rose-400 hover:text-rose-300 font-medium transition-colors underline decoration-rose-400/40 hover:decoration-rose-300"
+              className="inline-flex items-center gap-1 text-rose-400 hover:text-rose-300 font-bold transition-all underline decoration-rose-400/50 hover:decoration-rose-300 cursor-pointer pointer-events-auto relative z-30 py-1 px-1.5 rounded-md hover:bg-rose-500/10 active:scale-95"
             >
               @Bnjvv09
             </a>

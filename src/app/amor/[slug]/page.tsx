@@ -2360,10 +2360,21 @@ export default function AmorExperiencePage() {
             });
           })()}
 
-            {/* Scroll instruction at bottom */}
-            <div className="pt-12 pb-6 flex flex-col items-center text-gray-400 gap-1 select-none">
-              <Heart className="w-6 h-6 animate-pulse" />
-              <span className="text-[9px] uppercase tracking-wider font-extrabold mt-1">Con amor, {experience.user_name}</span>
+            {/* Scroll instruction at bottom & creator attribution */}
+            <div className="pt-12 pb-8 flex flex-col items-center text-gray-400 gap-1.5 select-none relative z-30">
+              <Heart className="w-5 h-5 animate-pulse text-rose-400 fill-rose-400" />
+              <span className="text-[10px] uppercase tracking-wider font-extrabold text-gray-500">Con amor, {experience.user_name}</span>
+              <p className="text-[11px] text-gray-400 pt-1 font-light">
+                Página diseñada por{' '}
+                <a 
+                  href="https://b9studio.vercel.app" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center text-rose-400 hover:text-rose-300 font-bold transition-all underline decoration-rose-400/50 hover:decoration-rose-300 cursor-pointer pointer-events-auto relative z-40 py-1 px-1.5 rounded-md hover:bg-rose-500/10 active:scale-95"
+                >
+                  @Bnjvv09
+                </a>
+              </p>
             </div>
 
           </motion.div>
