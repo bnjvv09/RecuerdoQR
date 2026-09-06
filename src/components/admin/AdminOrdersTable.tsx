@@ -483,7 +483,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                       {selectedOrder.customer_phone && (
                         <a
                           href={`https://wa.me/${selectedOrder.customer_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                            `¡Hola ${selectedOrder.customer_name}! ❤️ Tu Recuerdo QR ya está listo. Puedes ver tu página en vivo aquí: https://recuerdoqr.cl/amor/${selectedExp.slug} ¡Esperamos que les encante!`
+                            `¡Hola ${selectedOrder.customer_name}! ❤️ Tu Recuerdo QR ya está listo. Puedes ver tu página en vivo aquí: https://recuerdo-qr.vercel.app/amor/${selectedExp.slug} ¡Esperamos que les encante!`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"

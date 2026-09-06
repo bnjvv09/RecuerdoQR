@@ -37,7 +37,7 @@ function getGmailTransporter() {
  */
 export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
   const apiKey = process.env.RESEND_API_KEY;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
   const experienceUrl = `${appUrl}/amor/${data.slug}`;
 
   const htmlContent = `
@@ -172,7 +172,7 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
 export async function sendAdminSalesNotification(data: OrderEmailData) {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'somosrecuerdosqr@gmail.com';
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
   const experienceUrl = `${appUrl}/amor/${data.slug}`;
 
   // Extraer dígitos para link de WhatsApp directo
