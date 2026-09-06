@@ -18,7 +18,8 @@ import {
   Check,
   Star,
   Lock,
-  Unlock
+  Unlock,
+  Scissors
 } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
@@ -194,7 +195,7 @@ function GraciasContent() {
     );
   }
 
-  const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.cl';
+  const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
   const experienceLink = `${appUrl}/amor/${experience.slug}`;
   const formattedDate = experience.special_date || new Date().toLocaleDateString('es-CL');
 
@@ -590,6 +591,16 @@ function GraciasContent() {
                   <Printer className="w-4 h-4" />
                   <span>🖨️ Imprimir Tarjeta Postal en PDF</span>
                 </button>
+
+                <a
+                  href={`/imprimir/${experience.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-[#a21232] font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-rose-200 transition"
+                >
+                  <Scissors className="w-3.5 h-3.5" />
+                  <span>📄 Descargar Tarjeta para Cortar (PDF) ✂️</span>
+                </a>
 
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(`❤️ ¡Hola ${experience.partner_name || 'mi amor'}! Te preparé una sorpresa muy especial hecha con todo mi corazón: ${experienceLink}`)}`}

@@ -39,6 +39,7 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
   const apiKey = process.env.RESEND_API_KEY;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
   const experienceUrl = `${appUrl}/amor/${data.slug}`;
+  const printUrl = `${appUrl}/imprimir/${data.slug}`;
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -52,8 +53,8 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
         .header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         .header p { margin: 8px 0 0; font-size: 14px; opacity: 0.9; }
         .body { padding: 32px 28px; }
-        .box { background: #fff1f2; border: 1.5px dashed #f43f5e; border-radius: 18px; padding: 20px; text-align: center; margin: 24px 0; }
-        .btn { display: inline-block; background-color: #a21232; color: #ffffff !important; padding: 14px 32px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 15px; margin: 12px 0; box-shadow: 0 4px 14px rgba(162, 18, 50, 0.3); }
+        .box { background: #fff1f2; border: 1.5px dashed #f43f5e; border-radius: 18px; padding: 20px; text-align: center; margin: 20px 0; }
+        .btn { display: inline-block; background-color: #a21232; color: #ffffff !important; padding: 14px 32px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 15px; margin: 10px 0; box-shadow: 0 4px 14px rgba(162, 18, 50, 0.3); }
         .footer { background: #fdf2f4; padding: 20px 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #ffe4e6; }
         .details-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
         .details-table td { padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
@@ -71,10 +72,21 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
           <p>Hola <strong>${data.customerName}</strong>,</p>
           <p>¡Muchas gracias por tu compra! Tu experiencia personalizada para <strong>${data.partnerName}</strong> ha sido creada y publicada en vivo.</p>
           
+          <!-- Botón de Descargar Tarjeta para Imprimir y Cortar -->
+          <div class="box" style="background: #ffffff; border: 2px dashed #a21232; padding: 22px;">
+            <h3 style="margin: 0 0 6px; color: #a21232; font-size: 17px; font-weight: 800;">📄 Tarjeta de Regalo para Imprimir y Cortar ✂️</h3>
+            <p style="margin: 0 0 14px; font-size: 13px; color: #4b5563; line-height: 1.5;">
+              Tu tarjeta postal con dedicatoria, temática, código QR y <strong>guías punteadas para cortar con tijeras</strong>. Puedes guardarla en PDF o imprimirla directamente:
+            </p>
+            <a href="${printUrl}" class="btn" style="background-color: #a21232; color: #ffffff !important;" target="_blank">
+              📄 Descargar Tarjeta para Imprimir y Cortar (PDF) ✂️
+            </a>
+          </div>
+
           <div class="box">
-            <h3 style="margin: 0 0 8px; color: #9f1239; font-size: 16px;">✨ Tu Enlace Directo</h3>
+            <h3 style="margin: 0 0 8px; color: #9f1239; font-size: 16px;">✨ Tu Enlace Directo Online</h3>
             <p style="margin: 0; font-size: 12px; color: #6b7280;">Puedes abrirlo desde cualquier celular, tablet o computador:</p>
-            <a href="${experienceUrl}" class="btn" target="_blank">Abrir Experiencia Romántica 🎁</a>
+            <a href="${experienceUrl}" class="btn" style="background-color: #ffffff; color: #a21232 !important; border: 2px solid #a21232; box-shadow: none;" target="_blank">Abrir Experiencia Romántica 🎁</a>
             <p style="margin: 4px 0 0; font-size: 11px; color: #9ca3af; word-break: break-all;">${experienceUrl}</p>
           </div>
 
@@ -103,10 +115,10 @@ export async function sendCustomerConfirmationEmail(data: OrderEmailData) {
 
           <div style="margin-top: 24px; padding: 16px; background-color: #f9fafb; border-radius: 12px; font-size: 12px; color: #6b7280;">
             <p style="margin: 0 0 6px; font-weight: 700; color: #374151;">💡 ¿Cómo sorprender a tu pareja?</p>
-            <ul style="margin: 0; padding-left: 18px;">
-              <li>Imprime la tarjeta con código QR o envíale el enlace por WhatsApp.</li>
-              <li>Pídele que escanee el código con la cámara de su celular.</li>
-              <li>¡Disfruten juntos de la música, fotos y dedicatoria!</li>
+            <ul style="margin: 0; padding-left: 18px; line-height: 1.6;">
+              <li><strong>Imprime la tarjeta:</strong> Haz clic en el botón de arriba, imprímela en hoja Carta o A4 y recórtala con tijeras por la línea punteada ✂️.</li>
+              <li><strong>O envíale el enlace:</strong> También puedes compartirle el enlace directo por WhatsApp.</li>
+              <li><strong>¡Disfruten juntos!</strong> Pídele que escanee el código con la cámara de su celular para vivir la experiencia ❤️.</li>
             </ul>
           </div>
         </div>

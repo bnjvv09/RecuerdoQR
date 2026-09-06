@@ -136,7 +136,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
 
   const handleDownloadQr = async (slug: string) => {
     try {
-      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.cl';
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
       const liveUrl = `${origin}/amor/${slug}`;
       const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2 });
       const link = document.createElement('a');
@@ -439,7 +439,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                       <button
                         type="button"
                         onClick={async () => {
-                          const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.cl';
+                          const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
                           const liveUrl = `${origin}/amor/${selectedExp.slug}`;
                           const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2, color: { dark: '#a21232', light: '#ffffff' } });
                           const expConfig = (selectedExp.config as any) || {};
@@ -461,11 +461,21 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                             cardFrom: expConfig.cardFrom,
                           });
                         }}
-                        className="w-full py-2.5 bg-rose-50 border border-rose-200 text-[#a21232] font-bold rounded-xl text-xs hover:bg-rose-100 transition flex items-center justify-center gap-1.5"
+                        className="w-full py-2.5 bg-rose-50 border border-rose-200 text-[#a21232] font-bold rounded-xl text-xs hover:bg-rose-100 transition flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <span>🎁</span>
                         <span>Imprimir Tarjeta Postal de Regalo</span>
                       </button>
+
+                      <a
+                        href={`/imprimir/${selectedExp.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-2 bg-purple-50 border border-purple-200 text-purple-800 font-bold rounded-xl text-xs hover:bg-purple-100 transition flex items-center justify-center gap-1.5"
+                      >
+                        <span>✂️</span>
+                        <span>Abrir Hoja de Impresión & Corte (PDF)</span>
+                      </a>
 
                       {/* Edit Experience Button */}
                       {onEditExperience && selectedExp && (
