@@ -112,6 +112,7 @@ export async function POST(request: Request) {
         },
         auto_return: 'approved',
         external_reference: orderId,
+        notification_url: `${appUrl}/api/checkout/webhook`,
         payer: {
           email: customerEmail || order?.customer_email || 'cliente@recuerdoqr.cl',
         },

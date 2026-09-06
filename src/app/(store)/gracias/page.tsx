@@ -64,6 +64,14 @@ function GraciasContent() {
         if (matchedOrder) {
           setOrder(matchedOrder);
 
+          // 🛡️ Auto-confirmación inmediata de respaldo para enviar correos y asegurar estado pagado
+          const paymentIdParam = searchParams.get('payment_id') || searchParams.get('collection_id') || 'mercadopago_approved';
+          fetch('/api/checkout/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, paymentId: paymentIdParam }),
+          }).catch(err => console.warn('Could not trigger order confirmation backup:', err));
+
           const matchedExp = await getExperienceByOrderId(orderId);
           if (matchedExp) {
             setExperience(matchedExp);

@@ -18,7 +18,8 @@ import {
   Edit3,
   MessageCircle,
   Trash2,
-  RefreshCw
+  RefreshCw,
+  Mail
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
@@ -59,6 +60,28 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
   } = useAdminStore();
 
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
+
+  const handleResendEmail = async (orderId: string) => {
+    setIsResendingEmail(true);
+    const toastId = toast.loading('Reenviando correo de confirmación al cliente...');
+    try {
+      const res = await fetch('/api/admin/resend-order-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'No se pudo enviar el correo');
+      }
+      toast.success(data.message || '¡Correo reenviado con éxito!', { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || 'Error al enviar correo', { id: toastId });
+    } finally {
+      setIsResendingEmail(false);
+    }
+  };
 
   // Filter orders
   const filteredOrders = orders.filter((o) => {
@@ -262,7 +285,17 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                                 : 'bg-amber-100 text-amber-800'
                             }`}
                           >
-                            {o.status}
+                            {o.status === 'paid'
+                              ? 'Pagado ✓'
+                              : o.status === 'shipped'
+                              ? 'Enviado'
+                              : o.status === 'ready'
+                              ? 'Listo'
+                              : o.status === 'in_preparation'
+                              ? 'En Preparación'
+                              : o.status === 'completed'
+                              ? 'Completado'
+                              : 'Pendiente'}
                           </span>
                         </td>
                         <td className="p-3.5 text-[10px] text-gray-400 font-mono">
@@ -460,6 +493,17 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                           <span>Enviar Enlace por WhatsApp</span>
                         </a>
                       )}
+
+                      {/* Resend Email Button */}
+                      <button
+                        type="button"
+                        disabled={isResendingEmail}
+                        onClick={() => handleResendEmail(selectedOrder.id)}
+                        className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-[#a21232] border border-rose-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-[#a21232]" />
+                        <span>{isResendingEmail ? 'Reenviando Correo...' : 'Reenviar Correo al Cliente'}</span>
+                      </button>
 
                       {/* Status Change Controls */}
                       {selectedOrder.status !== 'shipped' && selectedOrder.status !== 'completed' && (
