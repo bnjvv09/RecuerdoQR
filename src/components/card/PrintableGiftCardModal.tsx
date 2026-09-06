@@ -173,10 +173,6 @@ export default function PrintableGiftCardModal({
                         «{quoteText}»
                       </p>
                     </div>
-
-                    <p className="text-[9px] text-gray-400 font-mono">
-                      📅 {formattedDate}
-                    </p>
                   </div>
 
                   <div className="w-36 flex flex-col items-center justify-center p-3 rounded-2xl bg-white border-2 border-dashed shadow-xs shrink-0" style={{ borderColor: primaryColor }}>
@@ -281,9 +277,6 @@ export default function PrintableGiftCardModal({
                     <p className="text-[10px] font-bold flex items-center justify-center gap-1" style={{ color: primaryColor }}>
                       <span>📱</span>
                       <span>Escanea con la cámara de tu celular para abrir tu sorpresa</span>
-                    </p>
-                    <p className="text-[9px] text-gray-400 font-mono">
-                      {formattedDate}
                     </p>
                   </div>
                 </>

@@ -355,7 +355,11 @@ function GraciasContent() {
   const activeFontFamily = getFontFamily(expConfig.cardFont || 'great-vibes');
   const displayTitle = expConfig.cardTitle || `Para ${experience.partner_name || 'Mi Amor'}`;
   const displayFrom = expConfig.cardFrom || experience.user_name || 'Alguien que te ama';
-  const quoteText = expConfig.cardMessage || (selectedCharacter ? selectedCharacter.quote : (experience.message || 'Hoy es el día más especial con mi persona favorita ❤️'));
+  const defaultGeneric = 'Escanea este código QR con tu celular para descubrir una sorpresa inolvidable...';
+  const isGeneric = !expConfig.cardMessage || expConfig.cardMessage.trim() === defaultGeneric.trim();
+  const quoteText = isGeneric
+    ? (experience.message || (selectedCharacter ? selectedCharacter.quote : 'Hoy es el día más especial con mi persona favorita ❤️'))
+    : expConfig.cardMessage;
 
   return (
     <div className="py-10 md:py-16 bg-rose-50/15">
@@ -464,10 +468,6 @@ function GraciasContent() {
                         «{quoteText}»
                       </p>
                     </div>
-
-                    <p className="text-[9px] text-gray-400 font-mono">
-                      📅 {formattedDate}
-                    </p>
                   </div>
 
                   <div className="w-36 flex flex-col items-center justify-center p-3 rounded-2xl bg-white border-2 border-dashed shadow-xs shrink-0" style={{ borderColor: primaryColor }}>
@@ -566,9 +566,6 @@ function GraciasContent() {
                     <p className="text-[9px] font-bold flex items-center justify-center gap-1" style={{ color: primaryColor }}>
                       <span>📱</span>
                       <span>Escanea con tu celular para abrir tu sorpresa</span>
-                    </p>
-                    <p className="text-[8px] text-gray-400 font-mono">
-                      {formattedDate}
                     </p>
                   </div>
                 </>

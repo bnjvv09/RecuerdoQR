@@ -106,8 +106,11 @@ export default function ImprimirTarjetaPage() {
   const cardFont = expConfig.cardFont || 'great-vibes';
   const displayTitle = expConfig.cardTitle || `Para ${experience.partner_name || 'Mi Amor'}`;
   const displayFrom = expConfig.cardFrom || experience.user_name || 'Alguien que te ama';
-  const quoteText = expConfig.cardMessage || (foundChar ? foundChar.quote : (experience.message || 'Hoy es el día más especial con mi persona favorita ❤️'));
-  const formattedDate = experience.special_date || new Date().toISOString().split('T')[0];
+  const defaultGeneric = 'Escanea este código QR con tu celular para descubrir una sorpresa inolvidable...';
+  const isGeneric = !expConfig.cardMessage || expConfig.cardMessage.trim() === defaultGeneric.trim();
+  const quoteText = isGeneric
+    ? (experience.message || (foundChar ? foundChar.quote : 'Hoy es el día más especial con mi persona favorita ❤️'))
+    : expConfig.cardMessage;
 
   const primaryColor = foundChar ? foundChar.primary : cardPalette;
   const accentColor = foundChar ? foundChar.accent : primaryColor;
@@ -297,10 +300,6 @@ export default function ImprimirTarjetaPage() {
                       «{quoteText}»
                     </p>
                   </div>
-
-                  <p className="text-[10px] text-gray-400 font-mono">
-                    📅 {formattedDate}
-                  </p>
                 </div>
 
                 <div
@@ -413,9 +412,6 @@ export default function ImprimirTarjetaPage() {
                   <p className="text-[10px] font-bold flex items-center justify-center gap-1.5" style={{ color: primaryColor }}>
                     <span>📱</span>
                     <span>Escanea con la cámara de tu celular para abrir tu sorpresa</span>
-                  </p>
-                  <p className="text-[9px] text-gray-400 font-mono">
-                    {formattedDate}
                   </p>
                 </div>
               </>

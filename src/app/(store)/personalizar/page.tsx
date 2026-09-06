@@ -154,12 +154,20 @@ function PersonalizarContent() {
       });
 
       // Construct Sections
+      let galleryCounter = 0;
       const constructedSections = form.sections.map((sec) => {
         if (sec.type === 'portada') return { ...sec, content: { title: form.title, message: form.message } };
         if (sec.type === 'tematica') return { ...sec, content: { theme: form.selectedTheme } };
         if (sec.type === 'carta') return { ...sec, content: { text: form.historyText } };
         if (sec.type === 'contador') return { ...sec, content: { date: form.specialDate } };
-        if (sec.type === 'galeria') return { ...sec, content: { photos: uploadedPhotosList, photoStyle: form.photoStyle } };
+        if (sec.type === 'galeria') {
+          galleryCounter++;
+          if (galleryCounter === 1) {
+            return { ...sec, content: { photos: uploadedPhotosList, photoStyle: form.photoStyle } };
+          } else {
+            return { ...sec, content: { photos: uploadedSecondaryPhotosList, photoStyle: form.secondaryPhotoStyle || 'collage' } };
+          }
+        }
         if (sec.type === 'musica') return { ...sec, content: { url: form.songUrl } };
         if (sec.type === 'audio') return { ...sec, content: { url: uploadedVoiceNoteUrl } };
         if (sec.type === 'video') return { ...sec, content: { url: uploadedVideoUrl } };

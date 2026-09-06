@@ -351,10 +351,6 @@ export default function Step4TarjetaRegalo({
                   <p className="text-[9px] italic text-gray-700 font-serif leading-relaxed line-clamp-3 bg-gray-50/80 p-2 rounded-xl border border-gray-100">
                     &quot;{displayMessage}&quot;
                   </p>
-
-                  <span className="text-[8px] font-mono text-gray-400 font-light block">
-                    📅 {specialDate}
-                  </span>
                 </div>
 
                 {/* Right Side: QR Code Frame */}
@@ -418,9 +414,6 @@ export default function Step4TarjetaRegalo({
                   </div>
                   <span className="text-[8px] font-sans font-bold uppercase tracking-wider text-gray-600 block">
                     Escanea con la cámara de tu celular 📱
-                  </span>
-                  <span className="text-[7px] font-mono text-gray-400 font-light block">
-                    Fecha especial: {specialDate}
                   </span>
                 </div>
               </div>

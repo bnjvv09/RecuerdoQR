@@ -2099,7 +2099,7 @@ export default function AmorExperiencePage() {
                 publicGalleryIdx++;
                 const isSecondGallery = publicGalleryIdx > 1;
                 const rawPhotos = isSecondGallery
-                  ? (experience.config?.secondaryPhotos || sec.content?.secondaryPhotos || [])
+                  ? (experience.config?.secondaryPhotos || sec.content?.secondaryPhotos || sec.content?.photos || [])
                   : (sec.content?.photos || experience.photos || []);
 
                 const galleryPhotos = rawPhotos.map((p: any, pIdx: number) => ({
@@ -2107,9 +2107,14 @@ export default function AmorExperiencePage() {
                   caption: p.caption,
                   id: p.id || `photo-${pIdx}`
                 }));
-                const galleryStyle = (isSecondGallery && experience.config?.enableDualPhotoStyle && experience.config?.secondaryPhotoStyle) 
-                  ? experience.config.secondaryPhotoStyle 
+
+                const galleryStyle = isSecondGallery
+                  ? (experience.config?.secondaryPhotoStyle || sec.content?.photoStyle || 'polaroid')
                   : (sec.content?.photoStyle || experience.config?.photoStyle || 'polaroid');
+
+                const dualSecondaryStyle = (!isSecondGallery && experience.config?.enableDualPhotoStyle)
+                  ? (experience.config?.secondaryPhotoStyle || null)
+                  : null;
 
                 return (
                   <div key={sec.id} className={`rounded-3xl p-2 sm:p-4 shadow-md border text-center space-y-2 ${style.cardClass}`}>
@@ -2118,6 +2123,7 @@ export default function AmorExperiencePage() {
                       <PhotoGallery
                         photos={galleryPhotos}
                         style={galleryStyle}
+                        secondaryStyle={dualSecondaryStyle}
                         theme={themeId}
                         primaryColor={primaryColor}
                         fontFamily={selectedFontFamily}

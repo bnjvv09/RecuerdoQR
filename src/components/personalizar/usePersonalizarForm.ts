@@ -199,7 +199,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     surpriseBg: ''
   });
   const [photoStyle, setPhotoStyle] = useState<PhotoStyle>('polaroid');
-  const [secondaryPhotoStyle, setSecondaryPhotoStyle] = useState<PhotoStyle | null>(null);
+  const [secondaryPhotoStyle, setSecondaryPhotoStyle] = useState<PhotoStyle | null>('collage');
   const [enableDualPhotoStyle, setEnableDualPhotoStyle] = useState(false);
 
   // Modular Sections Builder (with movable tematica section)
