@@ -346,9 +346,10 @@ function GraciasContent() {
 
   const expConfig = (experience.config as any) || {};
   const isHorizontal = expConfig.cardOrientation === 'horizontal';
-  const selectedCharacter = expConfig.selectedCharacterId 
-    ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) 
-    : expConfig.selectedCharacter;
+  const selectedCharacter = expConfig.selectedCharacter 
+    || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
+    || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+    || null;
   const primaryColor = selectedCharacter ? selectedCharacter.primary : (expConfig.cardPalette || themeDetails.accentColor);
   const accentColor = selectedCharacter ? selectedCharacter.accent : primaryColor;
   const activeFontFamily = getFontFamily(expConfig.cardFont || 'great-vibes');

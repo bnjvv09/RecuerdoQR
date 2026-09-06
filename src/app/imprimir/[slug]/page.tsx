@@ -31,7 +31,15 @@ export default function ImprimirTarjetaPage() {
             const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
             const liveUrl = `${domain}/${exp.theme || 'amor'}/${exp.slug}`;
             const expConfig = (exp.config as any) || {};
-            const primaryColor = expConfig.cardPalette || '#a21232';
+
+            // Resuelve el personaje tanto por objeto completo como por ID
+            const foundChar: CharacterTheme | null = 
+              expConfig.selectedCharacter 
+              || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
+              || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+              || null;
+
+            const primaryColor = foundChar ? foundChar.primary : (expConfig.cardPalette || '#a21232');
             
             const qr = await QRCode.toDataURL(liveUrl, {
               width: 800,
@@ -85,16 +93,20 @@ export default function ImprimirTarjetaPage() {
   }
 
   const expConfig = (experience.config as any) || {};
-  const foundChar: CharacterTheme | null = expConfig.selectedCharacterId 
-    ? (CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) || null)
-    : null;
+  
+  // Resuelve el personaje de forma infalible
+  const foundChar: CharacterTheme | null = 
+    expConfig.selectedCharacter 
+    || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
+    || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+    || null;
 
   const cardPalette = expConfig.cardPalette || '#a21232';
   const cardOrientation: 'vertical' | 'horizontal' = expConfig.cardOrientation || 'vertical';
   const cardFont = expConfig.cardFont || 'great-vibes';
   const displayTitle = expConfig.cardTitle || `Para ${experience.partner_name || 'Mi Amor'}`;
   const displayFrom = expConfig.cardFrom || experience.user_name || 'Alguien que te ama';
-  const quoteText = expConfig.cardMessage || experience.message || (foundChar ? foundChar.quote : 'Hoy es el día más especial con mi persona favorita ❤️');
+  const quoteText = expConfig.cardMessage || (foundChar ? foundChar.quote : (experience.message || 'Hoy es el día más especial con mi persona favorita ❤️'));
   const formattedDate = experience.special_date || new Date().toISOString().split('T')[0];
 
   const primaryColor = foundChar ? foundChar.primary : cardPalette;
@@ -140,6 +152,7 @@ export default function ImprimirTarjetaPage() {
           .cutting-box {
             box-shadow: none !important;
             background: white !important;
+            border-color: #9ca3af !important;
           }
         }
       `}</style>
@@ -155,8 +168,15 @@ export default function ImprimirTarjetaPage() {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Ver Experiencia Online</span>
             </Link>
-            <span className="text-xs font-bold text-[#a21232] bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
-              RecuerdoQR Chile 🎁
+            <span
+              className="text-xs font-bold px-2.5 py-1 rounded-full border"
+              style={{
+                backgroundColor: `${primaryColor}15`,
+                borderColor: `${primaryColor}40`,
+                color: primaryColor
+              }}
+            >
+              {foundChar ? `Tarjeta Temática: ${foundChar.name}` : 'RecuerdoQR Chile 🎁'}
             </span>
           </div>
 
@@ -164,7 +184,8 @@ export default function ImprimirTarjetaPage() {
             <button
               onClick={handlePrint}
               type="button"
-              className="flex-1 sm:flex-initial px-5 py-2.5 bg-[#a21232] hover:bg-[#880e28] text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+              style={{ backgroundColor: primaryColor }}
+              className="flex-1 sm:flex-initial px-5 py-2.5 hover:opacity-90 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Guardar como PDF / Imprimir</span>
@@ -234,13 +255,19 @@ export default function ImprimirTarjetaPage() {
                 <div className="flex-1 space-y-2.5 z-10">
                   <div className="flex items-center gap-3">
                     {foundChar ? (
-                      <Image
-                        src={`/personajes/${foundChar.file}`}
-                        alt={foundChar.name}
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 object-contain filter drop-shadow-md shrink-0"
-                      />
+                      <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                        <div
+                          className="absolute inset-0 rounded-full filter blur-sm opacity-35"
+                          style={{ backgroundColor: primaryColor }}
+                        />
+                        <Image
+                          src={`/personajes/${foundChar.file}`}
+                          alt={foundChar.name}
+                          width={64}
+                          height={64}
+                          className="relative z-10 w-16 h-16 object-contain filter drop-shadow-md shrink-0"
+                        />
+                      </div>
                     ) : (
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-sm shrink-0"
@@ -262,7 +289,7 @@ export default function ImprimirTarjetaPage() {
                   <div
                     className="rounded-2xl p-3 border backdrop-blur-xs"
                     style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.92)',
                       borderColor: accentColor
                     }}
                   >
@@ -334,7 +361,7 @@ export default function ImprimirTarjetaPage() {
                   className="text-[9px] font-bold uppercase tracking-[0.25em] select-none"
                   style={{ color: primaryColor }}
                 >
-                  — UN REGALO DIGITAL ESPECIAL —
+                  {foundChar ? `— TARJETA TEMÁTICA: ${foundChar.name.toUpperCase()} —` : '— UN REGALO DIGITAL ESPECIAL —'}
                 </div>
 
                 {/* Titles */}
@@ -351,7 +378,7 @@ export default function ImprimirTarjetaPage() {
                 <div
                   className="rounded-2xl p-3 border backdrop-blur-xs mx-auto max-w-[320px]"
                   style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
                     borderColor: accentColor
                   }}
                 >

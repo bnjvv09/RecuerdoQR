@@ -441,9 +441,13 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                         onClick={async () => {
                           const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
                           const liveUrl = `${origin}/amor/${selectedExp.slug}`;
-                          const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2, color: { dark: '#a21232', light: '#ffffff' } });
                           const expConfig = (selectedExp.config as any) || {};
-                          const foundChar = expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null;
+                          const foundChar = expConfig.selectedCharacter 
+                            || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
+                            || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+                            || null;
+                          const primaryColor = foundChar ? foundChar.primary : (expConfig.cardPalette || '#a21232');
+                          const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2, color: { dark: primaryColor, light: '#ffffff' } });
 
                           onOpenPrintableModal({
                             partnerName: selectedExp.partner_name,
