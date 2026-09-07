@@ -181,6 +181,7 @@ export default function AmorExperiencePage() {
   // Background Audio State (Direct native audio player)
   const [audioFileUrl, setAudioFileUrl] = useState<string | null>(null);
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
+  const wasBgMusicPlayingBeforeMediaRef = useRef(false);
 
   // Map of preset YouTube video IDs & IDs to local direct full audio files (3-4 mins)
   const PRESET_AUDIO_MAP: Record<string, string> = {
@@ -337,15 +338,126 @@ export default function AmorExperiencePage() {
     triggerCelebrationConfetti();
   };
 
+  const pauseBgMusicForMedia = (activeElement?: HTMLElement | null) => {
+    // 1. Pause any other media element currently playing on the page (e.g. video pauses voice notes and vice versa)
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('video, audio').forEach((el) => {
+        const media = el as HTMLMediaElement;
+        if (media !== activeElement && media !== bgAudioRef.current && !media.paused) {
+          media.pause();
+        }
+      });
+    }
+
+    // 2. If background music is playing, pause it and record that it was playing
+    if (isPlaying || (bgAudioRef.current && !bgAudioRef.current.paused)) {
+      wasBgMusicPlayingBeforeMediaRef.current = true;
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+      }
+      setIsPlaying(false);
+    }
+  };
+
+  const resumeBgMusicAfterMedia = () => {
+    setTimeout(() => {
+      // Check if any other media element is still playing
+      let isAnyMediaActive = false;
+      if (typeof document !== 'undefined') {
+        document.querySelectorAll('video, audio').forEach((el) => {
+          const media = el as HTMLMediaElement;
+          if (media !== bgAudioRef.current && !media.paused && !media.ended) {
+            isAnyMediaActive = true;
+          }
+        });
+      }
+
+      if (!isAnyMediaActive && wasBgMusicPlayingBeforeMediaRef.current) {
+        wasBgMusicPlayingBeforeMediaRef.current = false;
+        if (bgAudioRef.current) {
+          bgAudioRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch(() => {});
+        } else {
+          setIsPlaying(true);
+        }
+      }
+    }, 200);
+  };
+
   const toggleMusic = () => {
+    // Manual user override: reset the auto-resume flag
+    wasBgMusicPlayingBeforeMediaRef.current = false;
     if (isPlaying) {
       if (bgAudioRef.current) bgAudioRef.current.pause();
       setIsPlaying(false);
     } else {
+      // If user plays bg music, pause any active video or audio
+      if (typeof document !== 'undefined') {
+        document.querySelectorAll('video, audio').forEach((el) => {
+          const media = el as HTMLMediaElement;
+          if (media !== bgAudioRef.current && !media.paused) {
+            media.pause();
+          }
+        });
+      }
+      setIsVoiceNotePlaying(false);
       if (bgAudioRef.current) bgAudioRef.current.play().catch(() => {});
       setIsPlaying(true);
     }
   };
+
+  // Global capture-phase media listener for seamless cross-media audio control
+  useEffect(() => {
+    const handleGlobalPlay = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!target || target === bgAudioRef.current) return;
+      if (target.tagName === 'VIDEO' || target.tagName === 'AUDIO') {
+        pauseBgMusicForMedia(target);
+      }
+    };
+
+    const handleGlobalPauseOrEnded = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!target || target === bgAudioRef.current) return;
+      if (target.tagName === 'VIDEO' || target.tagName === 'AUDIO') {
+        resumeBgMusicAfterMedia();
+      }
+    };
+
+    const handleWindowMessage = (event: MessageEvent) => {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (!data) return;
+
+        let playerState: number | undefined;
+        if (data.event === 'onStateChange') {
+          playerState = typeof data.info === 'number' ? data.info : undefined;
+        } else if (data.event === 'infoDelivery' && data.info && typeof data.info.playerState === 'number') {
+          playerState = data.info.playerState;
+        }
+
+        // YT.PlayerState: 1 = PLAYING, 2 = PAUSED, 0 = ENDED
+        if (playerState === 1) {
+          pauseBgMusicForMedia();
+        } else if (playerState === 2 || playerState === 0) {
+          resumeBgMusicAfterMedia();
+        }
+      } catch {}
+    };
+
+    window.addEventListener('play', handleGlobalPlay, true);
+    window.addEventListener('pause', handleGlobalPauseOrEnded, true);
+    window.addEventListener('ended', handleGlobalPauseOrEnded, true);
+    window.addEventListener('message', handleWindowMessage);
+
+    return () => {
+      window.removeEventListener('play', handleGlobalPlay, true);
+      window.removeEventListener('pause', handleGlobalPauseOrEnded, true);
+      window.removeEventListener('ended', handleGlobalPauseOrEnded, true);
+      window.removeEventListener('message', handleWindowMessage);
+    };
+  }, [isPlaying]);
 
   const triggerCelebrationConfetti = () => {
     const duration = 4 * 1000;
@@ -2017,16 +2129,24 @@ export default function AmorExperiencePage() {
                           preload="metadata"
                           playsInline
                           className="w-full max-h-72 object-cover" 
+                          onPlay={(e) => pauseBgMusicForMedia(e.currentTarget)}
+                          onPause={() => resumeBgMusicAfterMedia()}
+                          onEnded={() => resumeBgMusicAfterMedia()}
                         />
                       </div>
                     ) : videoCode ? (
                       <div className="aspect-video rounded-2xl overflow-hidden shadow-inner border border-gray-100 bg-black">
                         <iframe
-                          src={`https://www.youtube.com/embed/${videoCode}`}
+                          src={`https://www.youtube.com/embed/${videoCode}?enablejsapi=1`}
                           title="Video dedicado"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                           className="w-full h-full"
+                          onLoad={(e) => {
+                            try {
+                              e.currentTarget.contentWindow?.postMessage('{"event":"listening"}', '*');
+                            } catch {}
+                          }}
                         ></iframe>
                       </div>
                     ) : null}
@@ -2047,11 +2167,12 @@ export default function AmorExperiencePage() {
                           const audioEl = document.getElementById(`audio-player-${sec.id}`) as HTMLAudioElement;
                           if (audioEl) {
                             if (audioEl.paused) {
-                              audioEl.play();
-                              setIsVoiceNotePlaying(true);
+                              pauseBgMusicForMedia(audioEl);
+                              audioEl.play().then(() => setIsVoiceNotePlaying(true)).catch(() => {});
                             } else {
                               audioEl.pause();
                               setIsVoiceNotePlaying(false);
+                              resumeBgMusicAfterMedia();
                             }
                           }
                         }}
@@ -2088,7 +2209,18 @@ export default function AmorExperiencePage() {
                         id={`audio-player-${sec.id}`}
                         src={audioSource} 
                         className="hidden" 
-                        onEnded={() => setIsVoiceNotePlaying(false)} 
+                        onPlay={() => {
+                          setIsVoiceNotePlaying(true);
+                          pauseBgMusicForMedia(document.getElementById(`audio-player-${sec.id}`));
+                        }}
+                        onPause={() => {
+                          setIsVoiceNotePlaying(false);
+                          resumeBgMusicAfterMedia();
+                        }}
+                        onEnded={() => {
+                          setIsVoiceNotePlaying(false);
+                          resumeBgMusicAfterMedia();
+                        }} 
                       />
                     )}
                   </div>
