@@ -183,7 +183,17 @@ export default function ImprimirTarjetaPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+            {qrDataUrl && (
+              <a
+                href={qrDataUrl}
+                download={`QR-${experience.slug}.png`}
+                className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer"
+                title="Descargar solo el código QR en alta calidad"
+              >
+                <span>💾 Descargar QR (HD)</span>
+              </a>
+            )}
             <button
               onClick={handlePrint}
               type="button"
@@ -197,23 +207,41 @@ export default function ImprimirTarjetaPage() {
         </div>
       </header>
 
-      {/* Screen Instructional Banner */}
-      <section className="no-print max-w-3xl mx-auto px-4 pt-6 pb-2">
+      {/* Screen Instructional Banner & Recommendations */}
+      <section className="no-print max-w-3xl mx-auto px-4 pt-6 pb-2 space-y-3">
         <div className="bg-gradient-to-r from-rose-50 via-white to-rose-50 border border-rose-200 rounded-2xl p-4 sm:p-5 shadow-xs">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-rose-100 rounded-xl text-[#a21232] shrink-0">
               <Scissors className="w-5 h-5" />
             </div>
-            <div>
+            <div className="space-y-2 flex-1">
               <h2 className="font-bold text-sm sm:text-base text-gray-900 flex items-center gap-2">
                 <span>¡Tu Tarjeta de Regalo lista para Imprimir y Cortar!</span>
                 <Sparkles className="w-4 h-4 text-amber-500" />
               </h2>
-              <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+              <p className="text-xs text-gray-600 leading-relaxed">
                 1. Presiona el botón <strong>&quot;Guardar como PDF / Imprimir&quot;</strong>.<br />
                 2. En la ventana de impresión, selecciona <strong>&quot;Guardar como PDF&quot;</strong> o tu impresora en hoja tamaño Carta o A4.<br />
-                3. Una vez impresa, recorta la tarjeta con tijeras siguiendo la <strong>línea punteada con tijeritas</strong> ✂️.
+                3. Una vez impresa, recorta la tarjeta con tijeras siguiendo la <strong>línea punteada exterior</strong> ✂️.
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Tips & Recommendations Pill */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-2.5 shadow-2xs">
+            <span className="text-base">📄</span>
+            <div>
+              <p className="font-bold text-gray-800 text-[11px]">Papel Recomendado</p>
+              <p className="text-gray-500 text-[10px]">Papel fotográfico satinado o cartulina (200g - 300g) para acabado premium.</p>
+            </div>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-2.5 shadow-2xs">
+            <span className="text-base">📱</span>
+            <div>
+              <p className="font-bold text-gray-800 text-[11px]">¿Estás desde el Celular?</p>
+              <p className="text-gray-500 text-[10px]">Al presionar imprimir, en el menú de impresora elige &quot;Guardar como archivo PDF&quot;.</p>
             </div>
           </div>
         </div>

@@ -440,6 +440,7 @@ export default function AdminPage() {
                     <th className="p-3.5">Pareja</th>
                     <th className="p-3.5">Título</th>
                     <th className="p-3.5">Enlace Slug</th>
+                    <th className="p-3.5">Visitas QR</th>
                     <th className="p-3.5">Fecha Creado</th>
                     <th className="p-3.5 text-right">Acciones</th>
                   </tr>
@@ -452,6 +453,12 @@ export default function AdminPage() {
                       </td>
                       <td className="p-3.5 text-gray-600 truncate max-w-xs">{exp.title}</td>
                       <td className="p-3.5 font-mono text-[10px] text-rose-600">/amor/{exp.slug}</td>
+                      <td className="p-3.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-[#a21232] border border-rose-200">
+                          <span>👁️</span>
+                          <span>{(exp.config as any)?.views_count || 0}</span>
+                        </span>
+                      </td>
                       <td className="p-3.5 text-gray-400 font-mono text-[10px]">
                         {new Date(exp.created_at).toLocaleDateString('es-CL')}
                       </td>

@@ -1,43 +1,38 @@
-/**
- * Utilidad de compresión inteligente de imágenes en el navegador
- * Reduce fotos pesadas de smartphones (10MB-15MB) a ~200KB-300KB en milisegundos
- * manteniendo nitidez cristalina en pantallas Retina, móviles e impresión.
+﻿/**
+ * Utilidad de compresión de imágenes en el cliente (Browser Canvas).
+ * Reduce fotos pesadas de teléfonos (8-15 MB) a tamaños óptimos (~300-500 KB)
+ * manteniendo nitidez visual excelente y acelerando la subida hasta 20 veces.
  */
-
-export async function compressImageFile(
+export async function compressImage(
   file: File,
   maxWidth = 1600,
   maxHeight = 1600,
-  quality = 0.85
-): Promise<{ file: File; previewUrl: string }> {
-  // Si no es imagen o es SVG/GIF animado, no alterar
-  if (!file.type.startsWith('image/') || file.type.includes('gif') || file.type.includes('svg')) {
-    return {
-      file,
-      previewUrl: URL.createObjectURL(file),
-    };
+  quality = 0.82
+): Promise<File> {
+  if (typeof window === 'undefined' || !file || !file.type.startsWith('image/')) {
+    return file;
+  }
+
+  // Si ya pesa menos de 400KB y es JPEG/WebP, no requiere compresión
+  if (file.size < 400 * 1024 && (file.type === 'image/jpeg' || file.type === 'image/webp')) {
+    return file;
   }
 
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-
-    reader.onload = (event) => {
+    reader.onload = (e) => {
       const img = new Image();
-      img.src = event.target?.result as string;
-
+      img.src = e.target?.result as string;
       img.onload = () => {
         let width = img.width;
         let height = img.height;
 
-        // Calcular escala proporcional
-        if (width > height) {
-          if (width > maxWidth) {
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
             height = Math.round((height * maxWidth) / width);
             width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
+          } else {
             width = Math.round((width * maxHeight) / height);
             height = maxHeight;
           }
@@ -46,46 +41,31 @@ export async function compressImageFile(
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          resolve({ file, previewUrl: URL.createObjectURL(file) });
-          return;
+          return resolve(file);
         }
 
-        // Suavizado de imagen de alta calidad
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convertir a blob comprimido (JPEG/WebP)
         canvas.toBlob(
           (blob) => {
-            if (!blob) {
-              resolve({ file, previewUrl: URL.createObjectURL(file) });
-              return;
+            if (!blob || blob.size >= file.size) {
+              return resolve(file);
             }
-
-            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), {
+            const cleanName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            const compressedFile = new File([blob], cleanName, {
               type: 'image/jpeg',
               lastModified: Date.now(),
             });
-
-            const previewUrl = canvas.toDataURL('image/jpeg', quality);
-            resolve({ file: compressedFile, previewUrl });
+            resolve(compressedFile);
           },
           'image/jpeg',
           quality
         );
       };
-
-      img.onerror = () => {
-        resolve({ file, previewUrl: URL.createObjectURL(file) });
-      };
+      img.onerror = () => resolve(file);
     };
-
-    reader.onerror = () => {
-      resolve({ file, previewUrl: URL.createObjectURL(file) });
-    };
+    reader.onerror = () => resolve(file);
   });
 }

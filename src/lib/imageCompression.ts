@@ -208,7 +208,27 @@ export async function compressImageToBlob(
       img.onerror = () => resolve(file);
       img.src = e.target?.result as string;
     };
-    reader.onerror = () => resolve(file);
-    reader.readAsDataURL(file);
   });
 }
+
+/**
+ * Compresses a File object and returns an ultra-lightweight File object ready for direct upload.
+ */
+export async function compressImageToFile(
+  file: File,
+  maxWidth = 1600,
+  maxHeight = 1600,
+  quality = 0.82
+): Promise<File> {
+  if (!file || !file.type.startsWith('image/')) return file;
+  if (file.size < 400 * 1024 && (file.type === 'image/webp' || file.type === 'image/jpeg')) return file;
+
+  try {
+    const blob = await compressImageToBlob(file, maxWidth, maxHeight, quality);
+    const cleanName = file.name.replace(/\.[^/.]+$/, '') + '.webp';
+    return new File([blob], cleanName, { type: blob.type || 'image/webp', lastModified: Date.now() });
+  } catch {
+    return file;
+  }
+}
+

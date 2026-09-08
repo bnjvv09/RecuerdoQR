@@ -25,6 +25,7 @@ const Step4Checkout = dynamic(() => import('@/components/personalizar/Step4Check
 });
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { uploadImage } from '@/lib/upload';
+import { compressImageToFile } from '@/lib/imageCompression';
 import { createOrder, createExperience, redeemCoupon } from '@/lib/db';
 import { sanitizeText, sanitizeObject } from '@/lib/sanitize';
 import { toast } from 'sonner';
@@ -99,23 +100,25 @@ function PersonalizarContent() {
       const cleanUser = sanitizeText(form.userName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'pareja';
       const slug = `${cleanPartner}-${cleanUser}-${Math.floor(100 + Math.random() * 900)}`;
 
-      // 🚀 UPLOAD ULTRA-RÁPIDO EN PARALELO SIMULTÁNEO
+      // 🚀 UPLOAD ULTRA-RÁPIDO EN PARALELO SIMULTÁNEO (con compresión previa)
       const [uploadedPhotosList, uploadedSecondaryPhotosList, formattedMilestones, uploadedVoiceNoteUrl, uploadedVideoUrl] = await Promise.all([
-        // 1. Fotos primarias en paralelo
+        // 1. Fotos primarias en paralelo con compresión previa
         Promise.all(
           form.photos.map(async (p) => {
             if (p.file) {
-              const publicUrl = await uploadImage(p.file, slug);
+              const fileToUpload = await compressImageToFile(p.file);
+              const publicUrl = await uploadImage(fileToUpload, slug);
               return { url: publicUrl, caption: sanitizeText(p.caption) };
             }
             return { url: p.previewUrl, caption: sanitizeText(p.caption) };
           })
         ),
-        // 2. Fotos secundarias en paralelo
+        // 2. Fotos secundarias en paralelo con compresión previa
         Promise.all(
           form.secondaryPhotos.map(async (p) => {
             if (p.file) {
-              const publicUrl = await uploadImage(p.file, `${slug}-sec`);
+              const fileToUpload = await compressImageToFile(p.file);
+              const publicUrl = await uploadImage(fileToUpload, `${slug}-sec`);
               return { url: publicUrl, caption: sanitizeText(p.caption) };
             }
             return { url: p.previewUrl, caption: sanitizeText(p.caption) };
@@ -126,7 +129,8 @@ function PersonalizarContent() {
           form.milestones.map(async (m) => {
             let imgUrl = m.previewUrl || '';
             if (m.image) {
-              imgUrl = await uploadImage(m.image, `${slug}-hito`);
+              const fileToUpload = await compressImageToFile(m.image);
+              imgUrl = await uploadImage(fileToUpload, `${slug}-hito`);
             }
             return {
               title: sanitizeText(m.title),
@@ -281,6 +285,8 @@ function PersonalizarContent() {
 
       const payData = await payResponse.json();
 
+      form.clearDraft();
+
       if (payData.init_point) {
         window.location.href = payData.init_point;
       } else {
@@ -314,10 +320,10 @@ function PersonalizarContent() {
             <span className="text-xl">✨</span>
             <div>
               <h4 className="text-xs font-bold text-rose-950">
-                Tienes un recuerdo en progreso guardado
+                {form.draftPartnerName ? `¿Deseas continuar tu diseño para ${form.draftPartnerName}?` : 'Tienes un recuerdo en progreso guardado'}
               </h4>
               <p className="text-[11px] text-rose-800 font-light">
-                Puedes restaurar tus textos, dedicatorias y fotos anteriores con un solo clic.
+                Detectamos tus fotos y textos guardados en este dispositivo. Puedes restaurarlos con un solo clic o empezar de cero.
               </p>
             </div>
           </div>
@@ -327,14 +333,14 @@ function PersonalizarContent() {
               onClick={form.clearDraft}
               className="px-3 py-1.5 text-rose-700 hover:bg-rose-100 rounded-xl text-xs font-medium transition cursor-pointer"
             >
-              Descartar
+              Empezar de cero
             </button>
             <button
               type="button"
               onClick={form.restoreDraft}
               className="px-4 py-1.5 bg-[#a21232] hover:bg-[#850e28] text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer"
             >
-              Restaurar Borrador
+              Continuar mi diseño
             </button>
           </div>
         </div>

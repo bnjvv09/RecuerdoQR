@@ -251,6 +251,15 @@ export default function AmorExperiencePage() {
           const musicSec = res.sections?.find((s: any) => s.type === 'musica');
           const songUrlToUse = res.song_url || musicSec?.content?.url || '';
           resolveMusicSource(songUrlToUse);
+
+          // Register QR / page visit
+          try {
+            const sessionKey = `visited_exp_${res.id}`;
+            if (typeof window !== 'undefined' && !sessionStorage.getItem(sessionKey)) {
+              sessionStorage.setItem(sessionKey, '1');
+              fetch(`/api/experiences/${res.id}/view`, { method: 'POST' }).catch(() => {});
+            }
+          } catch {}
         }
         setLoading(false);
       }

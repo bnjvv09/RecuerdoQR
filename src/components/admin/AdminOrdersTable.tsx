@@ -297,6 +297,15 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                               ? 'Completado'
                               : 'Pendiente'}
                           </span>
+                          {(() => {
+                            const linkedExp = experiences.find((e) => e.order_id === o.id);
+                            const views = (linkedExp?.config as any)?.views_count;
+                            return typeof views === 'number' ? (
+                              <span className="block text-[9px] text-gray-500 font-semibold mt-0.5">
+                                👁️ {views} {views === 1 ? 'visita' : 'visitas'}
+                              </span>
+                            ) : null;
+                          })()}
                         </td>
                         <td className="p-3.5 text-[10px] text-gray-400 font-mono">
                           {new Date(o.created_at).toLocaleDateString('es-CL')}
@@ -384,7 +393,13 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                 {selectedExp && (
                   <div className="border-t border-gray-100 pt-3 space-y-3">
                     <div>
-                      <span className="text-[10px] text-gray-400 font-bold uppercase block">Pareja & Experiencia</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase block">Pareja & Experiencia</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-[#a21232] border border-rose-200">
+                          <span>👁️</span>
+                          <span>{((selectedExp.config as any)?.views_count || 0)} visitas</span>
+                        </span>
+                      </div>
                       <p className="font-serif font-bold text-sm text-rose-700">
                         {selectedExp.partner_name} & {selectedExp.user_name}
                       </p>

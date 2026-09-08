@@ -84,6 +84,11 @@ export default function Footer() {
             <h4 className="text-white font-semibold text-sm mb-4 tracking-wider uppercase font-serif">Soporte y Legal</h4>
             <ul className="space-y-2.5 text-sm">
               <li>
+                <Link href="/recuperar" className="text-rose-400 hover:text-rose-300 font-bold transition-colors flex items-center gap-1">
+                  <span>💌 Recuperar mi Pedido</span>
+                </Link>
+              </li>
+              <li>
                 <button
                   type="button"
                   onClick={() => openModal('Preguntas Frecuentes', settings.faq_content, <HelpCircle className="w-5 h-5 text-rose-500" />)}
