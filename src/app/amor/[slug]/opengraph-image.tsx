@@ -1,138 +1,113 @@
 import { ImageResponse } from 'next/og';
-import { getExperienceBySlug } from '@/lib/db';
 
-export const runtime = 'edge';
-
-export const alt = 'Nuestra Historia de Amor ❤️ | RecuerdoQR';
-export const size = {
-  width: 1200,
-  height: 630,
-};
+export const runtime = 'nodejs';
+export const alt = 'RecuerdoQR — Experiencia Romántica Personalizada';
+export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
+const THEME_META: Record<string, { bg: string; emoji: string; label: string }> = {
+  anniversary: { bg: '#a21232', emoji: '❤️', label: 'Aniversario' },
+  birthday: { bg: '#db2777', emoji: '🎂', label: 'Cumpleaños' },
+  'dating-proposal': { bg: '#be185d', emoji: '💕', label: 'Propuesta de Noviazgo' },
+  'marriage-proposal': { bg: '#92400e', emoji: '💍', label: 'Propuesta de Matrimonio' },
+  'love-confession': { bg: '#e11d48', emoji: '🔥', label: 'Confesión de Amor' },
+  'love-letter': { bg: '#78350f', emoji: '💌', label: 'Carta de Amor' },
+  surprise: { bg: '#4338ca', emoji: '🎁', label: 'Sorpresa' },
+  valentines: { bg: '#9f1239', emoji: '💝', label: 'San Valentín' },
+  pregnancy: { bg: '#0e7490', emoji: '👶', label: 'Anuncio de Embarazo' },
+  special: { bg: '#b45309', emoji: '✨', label: 'Momento Especial' },
+  gratitude: { bg: '#0f766e', emoji: '🙏', label: 'Gratitud' },
+  reconciliation: { bg: '#374151', emoji: '🤝', label: 'Reconciliación' },
+};
+
 export default async function Image({ params }: { params: { slug: string } }) {
-  const exp = await getExperienceBySlug(params.slug);
-  const partnerName = exp?.partner_name || 'Mi Amor';
-  const userName = exp?.user_name || 'Tu Pareja';
-  const specialDate = exp?.special_date || '';
+  const { slug } = params;
+  let partnerName = '';
+  let userName = '';
+  let theme = 'anniversary';
+  let title = 'Una experiencia romántica especial';
+
+  if (!slug.startsWith('ejemplo-')) {
+    try {
+      const { createServerSupabaseClient } = await import('@/lib/supabaseServer');
+      const supabase = createServerSupabaseClient();
+      const { data: exp } = await supabase
+        .from('experiences')
+        .select('partner_name, user_name, theme, title')
+        .eq('slug', slug)
+        .single();
+      if (exp) {
+        partnerName = exp.partner_name || '';
+        userName = exp.user_name || '';
+        theme = exp.theme || 'anniversary';
+        title = exp.title || `Para ${partnerName} con amor`;
+      }
+    } catch {}
+  }
+
+  const meta = THEME_META[theme] || THEME_META.anniversary;
 
   return new ImageResponse(
     (
       <div
         style={{
-          background: 'linear-gradient(135deg, #1c0308 0%, #4a0614 40%, #880e28 75%, #a21232 100%)',
+          background: `linear-gradient(135deg, ${meta.bg}ee 0%, ${meta.bg} 50%, #0d0205 100%)`,
           width: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 40px',
-          fontFamily: 'sans-serif',
+          padding: '70px',
           color: 'white',
           position: 'relative',
-          textAlign: 'center',
+          overflow: 'hidden',
         }}
       >
-        {/* Glow Effects */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '600px',
-            height: '600px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(244,63,94,0.3) 0%, rgba(244,63,94,0) 70%)',
-          }}
-        />
-
-        {/* Floating Heart Icon */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80px',
-            height: '80px',
-            borderRadius: '24px',
-            background: 'rgba(255, 255, 255, 0.15)',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
-            fontSize: '40px',
-            marginBottom: '20px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-          }}
-        >
-          ❤️
+        {/* Background glow */}
+        <div style={{
+          position: 'absolute', top: '-100px', right: '-100px',
+          width: '500px', height: '500px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)',
+        }} />
+        {/* Theme badge */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '12px',
+          background: 'rgba(255,255,255,0.15)',
+          borderRadius: '999px', padding: '10px 24px',
+          fontSize: '18px', fontWeight: 700, letterSpacing: '3px',
+          textTransform: 'uppercase', marginBottom: '28px', border: '1px solid rgba(255,255,255,0.2)',
+        }}>
+          <span>{meta.emoji}</span>
+          <span>{meta.label}</span>
         </div>
-
-        {/* Small Tag */}
-        <div
-          style={{
-            fontSize: '20px',
-            color: '#fda4af',
-            fontWeight: 700,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-            marginBottom: '12px',
-          }}
-        >
-          Un Regalo Especial Para Ti
+        {/* Title */}
+        <div style={{
+          fontSize: title.length > 40 ? '52px' : '66px', fontWeight: 900,
+          textAlign: 'center', lineHeight: 1.1, marginBottom: '20px',
+          textShadow: '0 4px 24px rgba(0,0,0,0.4)', maxWidth: '950px',
+        }}>
+          {title}
         </div>
-
-        {/* Couple Names */}
-        <div
-          style={{
-            fontSize: '58px',
-            fontWeight: 900,
-            lineHeight: 1.1,
-            color: '#ffffff',
-            marginBottom: '16px',
-            maxWidth: '900px',
-            textShadow: '0 4px 20px rgba(0,0,0,0.5)',
-          }}
-        >
-          {partnerName} & {userName}
-        </div>
-
-        {specialDate && (
-          <div
-            style={{
-              fontSize: '22px',
-              color: '#ffe4e6',
-              fontWeight: 500,
-              marginBottom: '24px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              padding: '6px 20px',
-              borderRadius: '9999px',
-            }}
-          >
-            Juntos desde el {specialDate}
+        {/* Subtitle */}
+        {(partnerName || userName) && (
+          <div style={{
+            fontSize: '24px', opacity: 0.8, marginBottom: '36px', fontStyle: 'italic',
+          }}>
+            {userName ? `De ${userName} para ${partnerName}` : `Para ${partnerName}`}
           </div>
         )}
-
-        {/* CTA box */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: 'linear-gradient(90deg, #e11d48 0%, #f43f5e 100%)',
-            color: 'white',
-            padding: '14px 36px',
-            borderRadius: '9999px',
-            fontSize: '22px',
-            fontWeight: 800,
-            boxShadow: '0 10px 25px rgba(225,29,72,0.5)',
-            border: '2px solid rgba(255, 255, 255, 0.4)',
-          }}
-        >
-          <span>Toca para abrir nuestro recuerdo 🎁</span>
+        {/* Divider */}
+        <div style={{ width: '80px', height: '3px', background: 'rgba(255,255,255,0.35)', marginBottom: '30px', borderRadius: '9999px' }} />
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '22px' }}>❤️</span>
+          <span style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '1px' }}>RecuerdoQR</span>
+          <span style={{ opacity: 0.4, fontSize: '20px' }}>•</span>
+          <span style={{ fontSize: '17px', opacity: 0.7 }}>Experiencias Románticas</span>
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   );
 }

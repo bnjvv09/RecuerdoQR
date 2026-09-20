@@ -314,6 +314,13 @@ export default function AdminEditExperienceModal({
         }))
       };
 
+      // Notificar al cliente que su experiencia fue actualizada
+      fetch('/api/admin/notify-updated', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ experienceId: experience.id }),
+      }).catch(() => {}); // Silent fail
+
       onSaved(updatedExp);
       toast.dismiss(toastId);
       toast.success('¡Experiencia actualizada con éxito!');

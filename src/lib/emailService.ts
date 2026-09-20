@@ -18,7 +18,7 @@ export interface OrderEmailData {
 
 function getGmailTransporter() {
   const user = process.env.GMAIL_USER || 'somosrecuerdosqr@gmail.com';
-  const pass = (process.env.GMAIL_APP_PASSWORD || 'khilsnssdjzucdtg').replace(/\s+/g, '');
+  const pass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
 
   if (user && pass) {
     return nodemailer.createTransport({

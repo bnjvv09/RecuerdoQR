@@ -88,6 +88,7 @@ export default function AdminPage() {
 
   // Experience editing modal state
   const [editingExperience, setEditingExperience] = useState<Experiencia | null>(null);
+  const [expSearchQuery, setExpSearchQuery] = useState<string>('');
 
   // Printable card modal state
   const [printableCardData, setPrintableCardData] = useState<{
@@ -326,6 +327,16 @@ export default function AdminPage() {
   const bestPlanId = Object.keys(planCounts).sort((a, b) => planCounts[b] - planCounts[a])[0] || 'medio';
   const bestPlanName = bestPlanId === 'basico' ? 'Plan Básico' : bestPlanId === 'premium' ? 'Plan Máximo' : 'Plan Medio';
 
+  // Filtered experiences for search
+  const filteredExperiences = expSearchQuery.trim()
+    ? experiences.filter(exp =>
+        exp.partner_name?.toLowerCase().includes(expSearchQuery.toLowerCase()) ||
+        exp.user_name?.toLowerCase().includes(expSearchQuery.toLowerCase()) ||
+        exp.slug?.toLowerCase().includes(expSearchQuery.toLowerCase()) ||
+        exp.title?.toLowerCase().includes(expSearchQuery.toLowerCase())
+      )
+    : experiences;
+
   return (
     <div className="min-h-screen bg-gray-50/50 pb-16">
       
@@ -336,7 +347,7 @@ export default function AdminPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         
         {/* 📊 Métricas Financieras y de Crecimiento */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
           {/* Card 1: Ingresos Totales */}
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
@@ -408,6 +419,25 @@ export default function AdminPage() {
               </p>
             </div>
           </div>
+
+          {/* Card 5: Tasa de Conversión */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Conversión</span>
+              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <p className="font-serif font-black text-xl text-gray-900 tracking-tight">
+                {orders.length > 0 ? Math.round((paidOrders.length / orders.length) * 100) : 0}
+                <span className="text-xs font-normal text-gray-500">%</span>
+              </p>
+              <p className="text-[10px] text-purple-600 font-semibold mt-0.5">
+                {paidOrders.length} de {orders.length} pedidos
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Tab 1: Orders & Shipments */}
@@ -425,12 +455,35 @@ export default function AdminPage() {
               <div>
                 <h2 className="font-serif text-lg font-bold text-gray-900 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#a21232]" />
-                  <span>Experiencias QR Activas ({experiences.length})</span>
+                  <span>Experiencias QR Activas ({filteredExperiences.length}{expSearchQuery ? ` de ${experiences.length}` : ''})</span>
                 </h2>
                 <p className="text-xs text-gray-500 font-light mt-0.5">
                   Lista de todas las páginas de recuerdos románticos creadas en el sistema.
                 </p>
               </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="relative flex-1 max-w-sm">
+                <input
+                  type="text"
+                  value={expSearchQuery}
+                  onChange={e => setExpSearchQuery(e.target.value)}
+                  placeholder="Buscar por nombre, slug, título..."
+                  className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-200 bg-white"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+              </div>
+              {expSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setExpSearchQuery('')}
+                  className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
+                >
+                  Limpiar
+                </button>
+              )}
             </div>
 
             <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xs">
@@ -446,7 +499,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {experiences.map((exp) => (
+                  {filteredExperiences.map((exp) => (
                     <tr key={exp.id} className="hover:bg-rose-50/20 transition">
                       <td className="p-3.5 font-bold text-gray-900 font-serif">
                         {exp.partner_name} & {exp.user_name}
@@ -454,10 +507,17 @@ export default function AdminPage() {
                       <td className="p-3.5 text-gray-600 truncate max-w-xs">{exp.title}</td>
                       <td className="p-3.5 font-mono text-[10px] text-rose-600">/amor/{exp.slug}</td>
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-[#a21232] border border-rose-200">
-                          <span>👁️</span>
-                          <span>{(exp.config as any)?.views_count || 0}</span>
-                        </span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-[#a21232] border border-rose-200 w-fit">
+                            <span>👁️</span>
+                            <span>{(exp.config as any)?.views_count || 0} vistas</span>
+                          </span>
+                          {(exp.config as any)?.last_viewed_at && (
+                            <span className="text-[9px] text-gray-400 font-light pl-1">
+                              Últ: {new Date((exp.config as any).last_viewed_at).toLocaleDateString('es-CL', { day: '2-digit', month: 'short' })}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-3.5 text-gray-400 font-mono text-[10px]">
                         {new Date(exp.created_at).toLocaleDateString('es-CL')}

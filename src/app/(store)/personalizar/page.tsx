@@ -42,6 +42,65 @@ function PersonalizarContent() {
   const stepParam = searchParams.get('step');
   const statusParam = searchParams.get('status');
 
+  // 💾 Auto-guardado de progreso del formulario
+  const PROGRESS_KEY = 'recuerdo_form_progress';
+
+  useEffect(() => {
+    if (!form.partnerName && !form.userName) return;
+    try {
+      const progress: Record<string, any> = {
+        savedAt: new Date().toISOString(),
+      };
+      // Solo guarda campos que existan en form
+      if ('selectedPlan' in form) progress.selectedPlan = form.selectedPlan;
+      if ('selectedTheme' in form) progress.selectedTheme = form.selectedTheme;
+      if ('partnerName' in form) progress.partnerName = form.partnerName;
+      if ('userName' in form) progress.userName = form.userName;
+      if ('title' in form) progress.title = form.title;
+      if ('message' in form) progress.message = form.message;
+      if ('songUrl' in form) progress.songUrl = form.songUrl;
+      if ('specialDate' in form) progress.specialDate = form.specialDate;
+      if ('customerName' in form) progress.customerName = form.customerName;
+      if ('customerEmail' in form) progress.customerEmail = form.customerEmail;
+      if ('customerPhone' in form) progress.customerPhone = form.customerPhone;
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.partnerName, form.userName, form.title, form.message, form.songUrl, form.specialDate, form.customerEmail]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(PROGRESS_KEY);
+      if (!saved) return;
+      const progress = JSON.parse(saved);
+      const savedAt = new Date(progress.savedAt).getTime();
+      if (Date.now() - savedAt > 48 * 60 * 60 * 1000) {
+        localStorage.removeItem(PROGRESS_KEY);
+        return;
+      }
+      if (!progress.partnerName && !progress.userName) return;
+      const confirmed = window.confirm(
+        `¿Quieres continuar donde lo dejaste?\nPara: ${progress.partnerName || progress.userName || 'Formulario guardado'}`
+      );
+      if (!confirmed) {
+        localStorage.removeItem(PROGRESS_KEY);
+        return;
+      }
+      if (progress.selectedPlan && 'setSelectedPlan' in form) (form as any).setSelectedPlan(progress.selectedPlan);
+      if (progress.selectedTheme && 'setSelectedTheme' in form) (form as any).setSelectedTheme(progress.selectedTheme);
+      if (progress.partnerName && 'setPartnerName' in form) (form as any).setPartnerName(progress.partnerName);
+      if (progress.userName && 'setUserName' in form) (form as any).setUserName(progress.userName);
+      if (progress.title && 'setTitle' in form) (form as any).setTitle(progress.title);
+      if (progress.message && 'setMessage' in form) (form as any).setMessage(progress.message);
+      if (progress.songUrl && 'setSongUrl' in form) (form as any).setSongUrl(progress.songUrl);
+      if (progress.specialDate && 'setSpecialDate' in form) (form as any).setSpecialDate(progress.specialDate);
+      if (progress.customerName && 'setCustomerName' in form) (form as any).setCustomerName(progress.customerName);
+      if (progress.customerEmail && 'setCustomerEmail' in form) (form as any).setCustomerEmail(progress.customerEmail);
+      if (progress.customerPhone && 'setCustomerPhone' in form) (form as any).setCustomerPhone(progress.customerPhone);
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (stepParam) {
       const numStep = Number(stepParam);

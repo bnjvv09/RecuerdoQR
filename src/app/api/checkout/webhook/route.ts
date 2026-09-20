@@ -32,6 +32,12 @@ export async function POST(request: Request) {
       }
     }
 
+    // 🔒 En producción, si no hay MERCADO_PAGO_WEBHOOK_SECRET configurado, rechazar
+    if (!webhookSecret && process.env.NODE_ENV === 'production') {
+      console.warn('⚠️ Webhook rechazado: MERCADO_PAGO_WEBHOOK_SECRET no está configurado en producción.');
+      return NextResponse.json({ error: 'Webhook no autorizado' }, { status: 401 });
+    }
+
     const body = await request.json().catch(() => ({}));
     console.log('Received Mercado Pago Webhook:', body);
 

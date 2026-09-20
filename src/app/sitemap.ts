@@ -41,5 +41,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // 12 ejemplos de temáticas
+    ...[
+      'ejemplo-aniversario',
+      'ejemplo-cumpleanos',
+      'ejemplo-propuesta-noviazgo',
+      'ejemplo-propuesta-matrimonio',
+      'ejemplo-confesion-amor',
+      'ejemplo-carta-amor',
+      'ejemplo-sorpresa',
+      'ejemplo-san-valentin',
+      'ejemplo-embarazo',
+      'ejemplo-especial',
+      'ejemplo-gratitud',
+      'ejemplo-reconciliacion',
+    ].map(slug => ({
+      url: `${baseUrl}/amor/${slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
   ];
 }

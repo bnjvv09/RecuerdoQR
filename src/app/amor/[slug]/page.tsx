@@ -528,10 +528,26 @@ export default function AmorExperiencePage() {
 
   if (!experience) {
     return (
-      <div className="min-h-screen bg-rose-50/20 flex flex-col items-center justify-center px-4 text-center">
-        <Heart className="w-12 h-12 text-gray-300 mb-4" />
-        <h1 className="font-serif text-lg font-bold text-gray-900">Recuerdo no encontrado</h1>
-        <p className="text-xs text-gray-550 mt-2 max-w-xs font-light">Este enlace QR no apunta a una experiencia activa o válida.</p>
+      <div className="min-h-screen bg-rose-50/20 flex flex-col items-center justify-center px-4 text-center space-y-4">
+        <Heart className="w-12 h-12 text-gray-300" />
+        <div>
+          <h1 className="font-serif text-lg font-bold text-gray-900">Recuerdo no encontrado</h1>
+          <p className="text-xs text-gray-500 mt-2 max-w-xs font-light leading-relaxed">
+            Este enlace QR no apunta a una experiencia activa o válida.
+          </p>
+        </div>
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 max-w-xs text-left space-y-2">
+          <p className="text-xs font-bold text-[#a21232]">¿Compraste una experiencia?</p>
+          <p className="text-[11px] text-gray-600 font-light leading-relaxed">
+            Puedes recuperar el enlace de tu recuerdo ingresando el correo con el que realizaste la compra.
+          </p>
+          <a
+            href="/recuperar"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#a21232] hover:underline"
+          >
+            🔍 Recuperar mi pedido aquí →
+          </a>
+        </div>
       </div>
     );
   }
@@ -926,25 +942,20 @@ export default function AmorExperiencePage() {
                 <Heart className={`w-24 h-24 fill-[#a21232] text-[#a21232] relative z-10 drop-shadow-lg transition-transform group-hover:scale-110`} />
               </motion.div>
 
-              {/* Progress Heart Dots */}
-              <div className="flex gap-2 justify-center items-center">
-                {[1, 2, 3, 4, 5].map((dot) => (
-                  <div
-                    key={dot}
-                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 flex items-center justify-center text-[8px] ${
-                      heartTaps >= dot 
-                        ? 'bg-[#a21232] text-white scale-110 shadow-sm' 
-                        : 'bg-gray-200 text-gray-400'
-                    }`}
-                  >
-                    ❤️
-                  </div>
+              {/* Progress dots indicator */}
+              <div className="flex items-center gap-2 mt-8">
+                {[...Array(5)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{
+                      scale: i < heartTaps ? 1.3 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                    className="w-2.5 h-2.5 rounded-full transition-colors duration-300"
+                    style={{ backgroundColor: i < heartTaps ? '#a21232' : '#e5e7eb' }}
+                  />
                 ))}
               </div>
-              
-              <span className="text-[10px] text-gray-400 font-bold uppercase mt-3 tracking-wider">
-                {heartTaps} de 5 toques
-              </span>
             </div>
           </motion.div>
         )}

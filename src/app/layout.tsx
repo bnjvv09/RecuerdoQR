@@ -16,7 +16,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://recuerdo-qr.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl'),
   title: {
     default: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
     template: '%s | RecuerdoQR',
@@ -42,13 +42,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_CL',
-    url: 'https://recuerdo-qr.vercel.app',
+    url: process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl',
     siteName: 'RecuerdoQR',
     title: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
     description: 'Transforma tus fotos, canción especial y carta en una experiencia digital inolvidable con contador de amor en vivo y código QR permanente. 🎁✨',
     images: [
       {
-        url: 'https://recuerdo-qr.vercel.app/og-image.jpg',
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl'}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: 'RecuerdoQR - Experiencias Románticas Personalizadas',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'RecuerdoQR ❤️ | El Regalo Más Romántico para tu Pareja',
     description: 'Transforma tus fotos, canción especial y carta en una experiencia digital inolvidable con contador de amor en vivo y código QR permanente. 🎁✨',
-    images: ['https://recuerdo-qr.vercel.app/og-image.jpg'],
+    images: [`${process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.cl'}/og-image.jpg`],
   },
 };
 

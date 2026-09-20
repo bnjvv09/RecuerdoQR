@@ -124,6 +124,55 @@ export default function ImprimirTarjetaPage() {
     window.print();
   };
 
+  const handleDownloadPDF = async () => {
+    const element = document.getElementById('printable-card');
+    if (!element) {
+      const { toast } = await import('sonner');
+      toast.error('No se pudo generar el PDF. Intenta con el botón de imprimir.');
+      return;
+    }
+    const { toast } = await import('sonner');
+    const toastId = toast.loading('Generando PDF...');
+    try {
+      const html2canvasModule = await import('html2canvas');
+      const jsPDFModule = await import('jspdf');
+      const html2canvas = html2canvasModule.default;
+      const jsPDF = jsPDFModule.default;
+
+      const canvas = await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const isHoriz = imgWidth > imgHeight;
+      const pdf = new jsPDF({
+        orientation: isHoriz ? 'landscape' : 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const ratio = Math.min(pageWidth / (imgWidth / 3.7795), pageHeight / (imgHeight / 3.7795));
+      const finalW = (imgWidth / 3.7795) * ratio;
+      const finalH = (imgHeight / 3.7795) * ratio;
+      const x = (pageWidth - finalW) / 2;
+      const y = (pageHeight - finalH) / 2;
+      pdf.addImage(imgData, 'JPEG', x, y, finalW, finalH);
+      pdf.save(`TarjetaRegalo-${experience?.slug || 'recuerdo'}.pdf`);
+      toast.dismiss(toastId);
+      toast.success('¡PDF descargado exitosamente! 🎁');
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error('Error al generar el PDF. Usa el botón de imprimir.');
+      console.error('PDF generation error:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Print Stylesheet */}
@@ -195,6 +244,15 @@ export default function ImprimirTarjetaPage() {
               </a>
             )}
             <button
+              onClick={handleDownloadPDF}
+              type="button"
+              className="flex-1 sm:flex-initial px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              title="Descarga directa sin abrir ventana de impresión (ideal para celular)"
+            >
+              <span>📥</span>
+              <span>Descargar PDF Directo</span>
+            </button>
+            <button
               onClick={handlePrint}
               type="button"
               style={{ backgroundColor: primaryColor }}
@@ -241,7 +299,7 @@ export default function ImprimirTarjetaPage() {
             <span className="text-base">📱</span>
             <div>
               <p className="font-bold text-gray-800 text-[11px]">¿Estás desde el Celular?</p>
-              <p className="text-gray-500 text-[10px]">Al presionar imprimir, en el menú de impresora elige &quot;Guardar como archivo PDF&quot;.</p>
+              <p className="text-gray-500 text-[10px]">Usa el botón verde &quot;Descargar PDF Directo&quot; para guardar sin menús ni pasos extra.</p>
             </div>
           </div>
         </div>

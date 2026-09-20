@@ -61,6 +61,28 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
 
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [isResendingEmail, setIsResendingEmail] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState<string | null>(null);
+
+  const handleResendEmailRow = async (orderId: string) => {
+    setResendingEmail(orderId);
+    const toastId = toast.loading('Reenviando correo de confirmación...');
+    try {
+      const res = await fetch('/api/admin/resend-order-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'No se pudo enviar el correo');
+      }
+      toast.success(data.message || '¡Correo reenviado con éxito!', { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || 'Error al enviar correo', { id: toastId });
+    } finally {
+      setResendingEmail(null);
+    }
+  };
 
   const handleResendEmail = async (orderId: string) => {
     setIsResendingEmail(true);
@@ -310,7 +332,21 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                         <td className="p-3.5 text-[10px] text-gray-400 font-mono">
                           {new Date(o.created_at).toLocaleDateString('es-CL')}
                         </td>
-                        <td className="p-3.5 text-right">
+                        <td className="p-3.5 text-right flex items-center justify-end gap-2">
+                          {(o.status === 'paid' || o.status === 'completed' || o.status === 'shipped') && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleResendEmailRow(o.id);
+                              }}
+                              disabled={resendingEmail === o.id}
+                              className="p-1 text-blue-500 hover:text-blue-700 disabled:opacity-50"
+                              title="Reenviar email de confirmación"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -318,6 +354,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                               setSelectedOrder(o);
                             }}
                             className="p-1 text-gray-500 hover:text-[#a21232]"
+                            title="Ver detalle"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
