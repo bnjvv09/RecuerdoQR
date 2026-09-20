@@ -15,14 +15,14 @@ import {
   Sparkles,
   MessageCircle
 } from 'lucide-react';
-import { getSiteSettings, SiteSettings, DEFAULT_SETTINGS } from '@/lib/db';
+import { obtenerConfigSitio, ConfigSitio, CONFIG_SITIO_PREDETERMINADA } from '@/lib/bd';
 
 export default function Footer() {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<ConfigSitio>(CONFIG_SITIO_PREDETERMINADA);
   const [legalModal, setLegalModal] = useState<{ title: string; content: string; icon: React.ReactNode } | null>(null);
 
   useEffect(() => {
-    getSiteSettings().then(setSettings).catch(console.error);
+    obtenerConfigSitio().then(setSettings).catch(console.error);
   }, []);
 
   const openModal = (title: string, content: string | undefined, icon: React.ReactNode) => {

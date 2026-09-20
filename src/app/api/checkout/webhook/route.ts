@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { updateOrderPayment, getOrderById, getExperienceByOrderId } from '@/lib/db';
-import { sendCustomerConfirmationEmail, sendAdminSalesNotification } from '@/lib/emailService';
+import { actualizarPagoPedido, obtenerPedidoPorId, obtenerExperienciaPorPedidoId } from '@/lib/bd';
+import { enviarEmailConfirmacionCliente, enviarNotificacionVentaAdmin } from '@/lib/servicioEmail';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
@@ -58,13 +58,13 @@ export async function POST(request: Request) {
 
         // Si el estado es aprobado, actualizar a pagado y despachar emails automáticos
         if (status === 'approved' && orderId) {
-          await updateOrderPayment(orderId, String(paymentId), 'paid');
+          await actualizarPagoPedido(orderId, String(paymentId), 'paid');
           console.log(`Order ${orderId} successfully marked as PAID via verified webhook for payment ${paymentId}`);
 
           // Enviar confirmación al cliente y alerta al administrador
           try {
-            const order = await getOrderById(orderId);
-            const exp = await getExperienceByOrderId(orderId);
+            const order = await obtenerPedidoPorId(orderId);
+            const exp = await obtenerExperienciaPorPedidoId(orderId);
             if (order && exp) {
               const emailPayload = {
                 orderId: order.id,
@@ -80,8 +80,8 @@ export async function POST(request: Request) {
                 couponCode: (exp.config as any)?.couponCode,
               };
               await Promise.allSettled([
-                sendCustomerConfirmationEmail(emailPayload),
-                sendAdminSalesNotification(emailPayload)
+                enviarEmailConfirmacionCliente(emailPayload),
+                enviarNotificacionVentaAdmin(emailPayload)
               ]);
             }
           } catch (emailErr) {

@@ -232,3 +232,8 @@ export async function compressImageToFile(
   }
 }
 
+export const comprimirImagen = compressImage;
+export const comprimirImagenABlob = compressImageToBlob;
+export const comprimirImagenAArchivo = compressImageToFile;
+
+

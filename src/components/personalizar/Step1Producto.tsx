@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Product, Theme } from '@/lib/db';
+import { Producto, Tema } from '@/lib/bd';
 import { Sparkles, Check, CheckCircle2 } from 'lucide-react';
 
 interface Step1ProductoProps {
-  products: Product[];
-  themes: Theme[];
+  products: Producto[];
+  themes: Tema[];
   selectedPlan: string;
   setSelectedPlan: (id: string) => void;
   selectedTheme: string;

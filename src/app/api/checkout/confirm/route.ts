@@ -1,6 +1,6 @@
-﻿import { NextResponse } from 'next/server';
-import { updateOrderPayment, getOrderById, getExperienceByOrderId, recordPlanPromoSale } from '@/lib/db';
-import { sendCustomerConfirmationEmail, sendAdminSalesNotification } from '@/lib/emailService';
+import { NextResponse } from 'next/server';
+import { actualizarPagoPedido, obtenerPedidoPorId, obtenerExperienciaPorPedidoId, registrarVentaPromocionPlan } from '@/lib/bd';
+import { enviarEmailConfirmacionCliente, enviarNotificacionVentaAdmin } from '@/lib/servicioEmail';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'orderId es requerido' }, { status: 400 });
     }
 
-    const order = await getOrderById(orderId);
+    const order = await obtenerPedidoPorId(orderId);
     if (!order) {
       return NextResponse.json({ error: 'Pedido no encontrado' }, { status: 404 });
     }
@@ -20,13 +20,13 @@ export async function POST(request: Request) {
     const isAlreadyPaid = order.status === 'paid' || order.status === 'shipped';
 
     if (!isAlreadyPaid) {
-      await updateOrderPayment(orderId, String(paymentId), 'paid');
+      await actualizarPagoPedido(orderId, String(paymentId), 'paid');
       const planId = order.product_id || 'basic';
-      await recordPlanPromoSale(planId).catch(() => {});
+      await registrarVentaPromocionPlan(planId).catch(() => {});
     }
 
     // Despachar correos si aún no se han enviado para esta orden
-    const exp = await getExperienceByOrderId(orderId);
+    const exp = await obtenerExperienciaPorPedidoId(orderId);
     if (exp) {
       const emailPayload = {
         orderId: order.id,
@@ -43,8 +43,8 @@ export async function POST(request: Request) {
       };
 
       await Promise.allSettled([
-        sendCustomerConfirmationEmail(emailPayload),
-        sendAdminSalesNotification(emailPayload)
+        enviarEmailConfirmacionCliente(emailPayload),
+        enviarNotificacionVentaAdmin(emailPayload)
       ]);
     }
 

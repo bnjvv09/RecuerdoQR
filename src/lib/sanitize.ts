@@ -89,3 +89,9 @@ export function hashPin(pin: string): string {
   if (!pin) return '';
   return crypto.createHash('sha256').update(`recuerdoqr_salt_${pin.trim()}`).digest('hex');
 }
+
+export const sanitizarTexto = sanitizeText;
+export const sanitizarObjeto = sanitizeObject;
+export const sanitizarSlug = sanitizeSlug;
+export const hashearPin = hashPin;
+

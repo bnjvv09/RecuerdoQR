@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getProducts, Product, getThemes, Theme, getCreatedExperiencesCount } from '@/lib/db';
+import { obtenerProductos, Producto, obtenerTemas, Tema, obtenerConteoExperienciasCreadas } from '@/lib/bd';
 import { 
   Heart, 
   QrCode, 
@@ -38,16 +38,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LandingPage() {
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [themes, setThemes] = useState<Theme[]>([]);
+  const [products, setProducts] = useState<Producto[]>([]);
+  const [themes, setThemes] = useState<Tema[]>([]);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [experiencesCount, setExperiencesCount] = useState<number>(10);
   const [customerReviews, setCustomerReviews] = useState<any[]>([]);
 
   useEffect(() => {
-    getProducts().then(setProducts);
-    getThemes().then(data => setThemes(data.filter(t => t.is_active)));
-    getCreatedExperiencesCount().then(setExperiencesCount).catch(() => setExperiencesCount(10));
+    obtenerProductos().then(setProducts);
+    obtenerTemas().then(data => setThemes(data.filter(t => t.is_active)));
+    obtenerConteoExperienciasCreadas().then(setExperiencesCount).catch(() => setExperiencesCount(10));
 
     try {
       const stored = JSON.parse(localStorage.getItem('recuerdo_customer_reviews') || '[]');

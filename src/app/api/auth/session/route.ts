@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { handleApiError } from '@/lib/errors';
+import { manejarErrorApi } from '@/lib/errores';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +19,6 @@ export async function GET(req: NextRequest) {
       user: data.session?.user || null,
     });
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }

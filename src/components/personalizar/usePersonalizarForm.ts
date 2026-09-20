@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Product, Theme, getProducts, getThemes, getPlanPromos, PlanPromosMap } from '@/lib/db';
-import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
-import { PhotoStyle } from '@/types/gallery';
-import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
-import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
-import { compressImage } from '@/lib/imageCompression';
+import { Producto, Tema, obtenerProductos, obtenerTemas, obtenerPromocionesPlan, MapaPromocionesPlanes } from '@/lib/bd';
+import { BASE_DATOS_PERSONAJES, TemaPersonaje } from '@/data/datosPersonajes';
+import { EstiloFoto } from '@/types/galeria';
+import { EntradaFoto, EntradaHito, SeccionExperiencia, ColoresPersonalizados } from './tipos';
+import { validarTelefonoChileno, validarSintaxisYDominioEmail } from '@/lib/ayudantesValidacion';
+import { comprimirImagen } from '@/lib/compresionImagenes';
 import { toast } from 'sonner';
 
-function getDefaultSectionsForPlan(plan: string): ExperienceSection[] {
+function getDefaultSectionsForPlan(plan: string): SeccionExperiencia[] {
   if (plan === 'basic') {
     return [
       { id: 'sec-portada', type: 'portada', content: {} },
@@ -55,12 +55,12 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   const [loading, setLoading] = useState(false);
 
   // Products and themes
-  const [products, setProducts] = useState<Product[]>([]);
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [planPromos, setPlanPromos] = useState<PlanPromosMap | null>(null);
+  const [products, setProducts] = useState<Producto[]>([]);
+  const [themes, setThemes] = useState<Tema[]>([]);
+  const [planPromos, setPlanPromos] = useState<MapaPromocionesPlanes | null>(null);
   const [selectedPlan, setSelectedPlanState] = useState<string>(initialPlan || 'basic');
   const [selectedTheme, setSelectedTheme] = useState<string>(initialTheme || 'anniversary');
-  const [selectedCharacter, setSelectedCharacter] = useState<CharacterTheme | null>(CHARACTERS_DATABASE[0] || null);
+  const [selectedCharacter, setSelectedCharacter] = useState<TemaPersonaje | null>(BASE_DATOS_PERSONAJES[0] || null);
   const [cardPalette, setCardPalette] = useState<string>('#a21232');
 
   // Customer Contact Fields for Checkout
@@ -189,7 +189,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   // Visual Styling (100% Free Custom Colors + Independent Surprise & Dedication)
   const [customFont, setCustomFont] = useState('great-vibes');
   const [colorPreset, setColorPreset] = useState('rose');
-  const [customColors, setCustomColors] = useState<CustomColors>({
+  const [customColors, setCustomColors] = useState<ColoresPersonalizados>({
     primary: '#a21232',
     bg: '#fffcfd',
     text: '#111827',
@@ -198,27 +198,27 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     surprisePrimary: '',
     surpriseBg: ''
   });
-  const [photoStyle, setPhotoStyle] = useState<PhotoStyle>('polaroid');
-  const [secondaryPhotoStyle, setSecondaryPhotoStyle] = useState<PhotoStyle | null>('collage');
+  const [photoStyle, setPhotoStyle] = useState<EstiloFoto>('polaroid');
+  const [secondaryPhotoStyle, setSecondaryPhotoStyle] = useState<EstiloFoto | null>('collage');
   const [enableDualPhotoStyle, setEnableDualPhotoStyle] = useState(false);
 
   // Modular Sections Builder (with movable tematica section)
-  const [sections, setSections] = useState<ExperienceSection[]>(getDefaultSectionsForPlan(initialPlan || 'basic'));
+  const [sections, setSections] = useState<SeccionExperiencia[]>(getDefaultSectionsForPlan(initialPlan || 'basic'));
   const [expandedSection, setExpandedSection] = useState<string | null>('sec-tematica');
 
   // Media (Primary and Secondary Gallery)
-  const [photos, setPhotos] = useState<PhotoInput[]>([
+  const [photos, setPhotos] = useState<EntradaFoto[]>([
     { previewUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop', caption: '' },
     { previewUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop', caption: '' },
     { previewUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop', caption: '' }
   ]);
 
-  const [secondaryPhotos, setSecondaryPhotos] = useState<PhotoInput[]>([
+  const [secondaryPhotos, setSecondaryPhotos] = useState<EntradaFoto[]>([
     { previewUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop', caption: '' },
     { previewUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop', caption: '' }
   ]);
 
-  const [milestones, setMilestones] = useState<MilestoneInput[]>([
+  const [milestones, setMilestones] = useState<EntradaHito[]>([
     { title: 'El día que nos conocimos', date: '2022-05-18', description: 'Nuestras miradas se cruzaron y todo cambió.', previewUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop' },
     { title: 'Nuestro primer viaje', date: '2023-01-10', description: 'Una escapada inolvidable al mar.', previewUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop' }
   ]);
@@ -307,7 +307,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   useEffect(() => {
     async function loadData() {
       try {
-        const [prodList, themeList, promos] = await Promise.all([getProducts(), getThemes(), getPlanPromos()]);
+        const [prodList, themeList, promos] = await Promise.all([obtenerProductos(), obtenerTemas(), obtenerPromocionesPlan()]);
         setProducts(prodList);
         setThemes(themeList);
         setPlanPromos(promos);
@@ -481,7 +481,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
   const maxSecondaryPhotos = 20;
 
   // Section Handlers (Unique Blocks & Strict Plan Enforcement)
-  const addSection = (type: ExperienceSection['type']) => {
+  const addSection = (type: SeccionExperiencia['type']) => {
     // 1. Check if already added (only galeria can have 2 in premium)
     const activeCount = sections.filter(s => s.type === type).length;
     if (type !== 'galeria' && activeCount >= 1) {
@@ -568,10 +568,10 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     const toastId = toast.loading('Optimizando fotos para máxima velocidad...');
 
     try {
-      const compressedItems: PhotoInput[] = await Promise.all(
+      const compressedItems: EntradaFoto[] = await Promise.all(
         toProcess.map(async (f) => {
           try {
-            const dataUrl = await compressImage(f, 1280, 1280, 0.78);
+            const dataUrl = await comprimirImagen(f, 1280, 1280, 0.78);
             return {
               file: f,
               previewUrl: dataUrl,
@@ -592,7 +592,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       toast.success(`Se agregaron ${compressedItems.length} foto(s) en alta velocidad.`);
     } catch (err) {
       toast.dismiss(toastId);
-      const fallbackItems: PhotoInput[] = toProcess.map((f) => ({
+      const fallbackItems: EntradaFoto[] = toProcess.map((f) => ({
         file: f,
         previewUrl: URL.createObjectURL(f),
         caption: '',
@@ -633,10 +633,10 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     const toastId = toast.loading('Optimizando fotos de 2da galería...');
 
     try {
-      const compressedItems: PhotoInput[] = await Promise.all(
+      const compressedItems: EntradaFoto[] = await Promise.all(
         toProcess.map(async (f) => {
           try {
-            const dataUrl = await compressImage(f, 1280, 1280, 0.78);
+            const dataUrl = await comprimirImagen(f, 1280, 1280, 0.78);
             return {
               file: f,
               previewUrl: dataUrl,
@@ -657,7 +657,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       toast.success(`Se agregaron ${compressedItems.length} foto(s) a la Segunda Galería.`);
     } catch {
       toast.dismiss(toastId);
-      const fallbackItems: PhotoInput[] = toProcess.map((f) => ({
+      const fallbackItems: EntradaFoto[] = toProcess.map((f) => ({
         file: f,
         previewUrl: URL.createObjectURL(f),
         caption: '',
@@ -693,7 +693,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     setMilestones(milestones.filter((_, i) => i !== idx));
   };
 
-  const updateMilestone = (idx: number, field: keyof MilestoneInput, value: any) => {
+  const updateMilestone = (idx: number, field: keyof EntradaHito, value: any) => {
     const next = [...milestones];
     next[idx] = { ...next[idx], [field]: value };
     setMilestones(next);
@@ -703,7 +703,7 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     const file = e.target.files?.[0];
     if (file) {
       try {
-        const compressedUrl = await compressImage(file, 1200, 1200, 0.85);
+        const compressedUrl = await comprimirImagen(file, 1200, 1200, 0.85);
         const next = [...milestones];
         next[idx].image = file;
         next[idx].previewUrl = compressedUrl;
@@ -751,13 +751,13 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
       toast.error('Por favor ingresa tu nombre y apellido');
       return false;
     }
-    const emailCheck = validateEmailSyntaxAndDomain(customerEmail);
+    const emailCheck = validarSintaxisYDominioEmail(customerEmail);
     if (!emailCheck.valid) {
       toast.error(emailCheck.error || 'Por favor ingresa un correo electrónico real');
       return false;
     }
     const cleanDigits = customerPhone.replace(/\D/g, '');
-    const phoneCheck = validateChileanPhone(cleanDigits);
+    const phoneCheck = validarTelefonoChileno(cleanDigits);
     if (!phoneCheck.valid) {
       toast.error(phoneCheck.error || 'Por favor ingresa un número móvil chileno válido de 9 dígitos (+56 9 XXXX XXXX)');
       return false;
@@ -962,3 +962,6 @@ export function usePersonalizarForm(initialPlan?: string, initialTheme?: string)
     validateStep4,
   };
 }
+
+export const usarFormularioPersonalizar = usePersonalizarForm;
+

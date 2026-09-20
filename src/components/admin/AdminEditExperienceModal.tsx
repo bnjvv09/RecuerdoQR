@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Experience } from '@/lib/db';
+import { Experiencia } from '@/lib/bd';
 import { 
   X, 
   Save, 
@@ -23,10 +23,10 @@ import {
 import { toast } from 'sonner';
 
 interface AdminEditExperienceModalProps {
-  experience: Experience | null;
+  experience: Experiencia | null;
   isOpen: boolean;
   onClose: () => void;
-  onSaved: (updatedExp: Experience) => void;
+  onSaved: (updatedExp: Experiencia) => void;
 }
 
 export default function AdminEditExperienceModal({
@@ -294,7 +294,7 @@ export default function AdminEditExperienceModal({
         throw new Error(json.error || 'Error al actualizar experiencia');
       }
 
-      const updatedExp: Experience = {
+      const updatedExp: Experiencia = {
         ...experience,
         partner_name: partnerName.trim(),
         user_name: userName.trim(),
@@ -1034,3 +1034,5 @@ export default function AdminEditExperienceModal({
     </div>
   );
 }
+
+export const AdminModalEditarExperiencia = AdminEditExperienceModal;

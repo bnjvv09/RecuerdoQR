@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { CharacterTheme } from '@/data/charactersData';
+import { TemaPersonaje } from '@/data/datosPersonajes';
 import { Printer, Sparkles, Edit3, Heart, Eye, Type, Palette, QrCode as QrIcon } from 'lucide-react';
-import PrintableGiftCardModal from '@/components/card/PrintableGiftCardModal';
-import { getFontFamily } from '@/lib/fonts';
+import ModalTarjetaRegaloImprimible from '@/components/card/ModalTarjetaRegaloImprimible';
+import { obtenerFamiliaFuente } from '@/lib/fuentes';
 
-const CharacterThemeSelector = dynamic(() => import('./CharacterThemeSelector'), {
+const CharacterThemeSelector = dynamic(() => import('./SelectorTemaPersonaje'), {
   ssr: false,
   loading: () => (
     <div className="py-12 text-center text-xs text-gray-400 font-light animate-pulse">
@@ -19,8 +19,8 @@ const CharacterThemeSelector = dynamic(() => import('./CharacterThemeSelector'),
 
 interface Step4TarjetaRegaloProps {
   selectedPlan: string;
-  selectedCharacter: CharacterTheme | null;
-  setSelectedCharacter: (char: CharacterTheme | null) => void;
+  selectedCharacter: TemaPersonaje | null;
+  setSelectedCharacter: (char: TemaPersonaje | null) => void;
   cardPalette: string;
   setCardPalette: (color: string) => void;
   cardOrientation?: 'vertical' | 'horizontal';
@@ -83,7 +83,7 @@ export default function Step4TarjetaRegalo({
   const displayTitle = cardTitle || `Para ${partnerName || 'Mi Amor'}`;
   const displayFrom = cardFrom || (userName || 'Alguien que te ama');
   const displayMessage = cardMessage || (selectedCharacter ? selectedCharacter.quote : 'Hoy es el día más especial con mi persona favorita ❤️');
-  const activeFont = getFontFamily(cardFont);
+  const activeFont = obtenerFamiliaFuente(cardFont);
   const isHorizontal = cardOrientation === 'horizontal';
 
   return (
@@ -237,7 +237,7 @@ export default function Step4TarjetaRegalo({
                         : 'border-gray-200 bg-white hover:border-rose-200 text-gray-700'
                     }`}
                   >
-                    <span className="text-xs block truncate" style={{ fontFamily: getFontFamily(font.id) }}>
+                    <span className="text-xs block truncate" style={{ fontFamily: obtenerFamiliaFuente(font.id) }}>
                       {font.name}
                     </span>
                     <span className="text-[8px] text-gray-400 font-light block mt-0.5">Ejemplo de letra</span>
@@ -430,7 +430,7 @@ export default function Step4TarjetaRegalo({
 
       {/* Full Size Printable Modal */}
       {isModalOpen && (
-        <PrintableGiftCardModal
+        <ModalTarjetaRegaloImprimible
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           partnerName={partnerName}
@@ -451,3 +451,5 @@ export default function Step4TarjetaRegalo({
     </div>
   );
 }
+
+export const Paso4TarjetaRegalo = Step4TarjetaRegalo;

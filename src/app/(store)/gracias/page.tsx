@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { getOrderById, getExperienceByOrderId, Order, Experience } from '@/lib/db';
+import { obtenerPedidoPorId, obtenerExperienciaPorPedidoId, Pedido, Experiencia } from '@/lib/bd';
 import QRCode from 'qrcode';
 import { 
   Heart, 
@@ -12,7 +12,7 @@ import {
   CheckCircle, 
   Printer, 
   MessageCircle, 
-  Sparkles,
+  Sparkles, 
   Share2,
   Copy,
   Check,
@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
-import { CHARACTERS_DATABASE } from '@/data/charactersData';
-import { getFontFamily } from '@/lib/fonts';
+import { BASE_DATOS_PERSONAJES } from '@/data/datosPersonajes';
+import { obtenerFamiliaFuente } from '@/lib/fuentes';
 
 function GraciasContent() {
   const searchParams = useSearchParams();
@@ -32,8 +32,8 @@ function GraciasContent() {
   const cardPrintRef = useRef<HTMLDivElement>(null);
   const orderId = searchParams.get('orderId') || '';
 
-  const [order, setOrder] = useState<Order | null>(null);
-  const [experience, setExperience] = useState<Experience | null>(null);
+  const [order, setOrder] = useState<Pedido | null>(null);
+  const [experience, setExperience] = useState<Experiencia | null>(null);
   const [loading, setLoading] = useState(true);
   const [qrDataUrl, setQrDataUrl] = useState('');
 
@@ -60,7 +60,7 @@ function GraciasContent() {
 
     const loadData = async () => {
       try {
-        const matchedOrder = await getOrderById(orderId);
+        const matchedOrder = await obtenerPedidoPorId(orderId);
 
         if (matchedOrder) {
           setOrder(matchedOrder);
@@ -73,7 +73,7 @@ function GraciasContent() {
             body: JSON.stringify({ orderId, paymentId: paymentIdParam }),
           }).catch(err => console.warn('Could not trigger order confirmation backup:', err));
 
-          const matchedExp = await getExperienceByOrderId(orderId);
+          const matchedExp = await obtenerExperienciaPorPedidoId(orderId);
           if (matchedExp) {
             setExperience(matchedExp);
 
@@ -99,6 +99,7 @@ function GraciasContent() {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
 
   const handleDownloadQr = () => {
@@ -347,12 +348,12 @@ function GraciasContent() {
   const expConfig = (experience.config as any) || {};
   const isHorizontal = expConfig.cardOrientation === 'horizontal';
   const selectedCharacter = expConfig.selectedCharacter 
-    || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
-    || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+    || (expConfig.selectedCharacterId ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacterId) : null)
+    || (expConfig.selectedCharacter?.id ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacter.id) : null)
     || null;
   const primaryColor = selectedCharacter ? selectedCharacter.primary : (expConfig.cardPalette || themeDetails.accentColor);
   const accentColor = selectedCharacter ? selectedCharacter.accent : primaryColor;
-  const activeFontFamily = getFontFamily(expConfig.cardFont || 'great-vibes');
+  const activeFontFamily = obtenerFamiliaFuente(expConfig.cardFont || 'great-vibes');
   const displayTitle = expConfig.cardTitle || `Para ${experience.partner_name || 'Mi Amor'}`;
   const displayFrom = expConfig.cardFrom || experience.user_name || 'Alguien que te ama';
   const defaultGeneric = 'Escanea este código QR con tu celular para descubrir una sorpresa inolvidable...';

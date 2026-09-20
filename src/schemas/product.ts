@@ -5,3 +5,8 @@ export const priceUpdateSchema = z.object({
 });
 
 export type PriceUpdateInput = z.infer<typeof priceUpdateSchema>;
+
+export const esquemaActualizarPrecio = priceUpdateSchema;
+export const esquemaActualizacionPrecio = priceUpdateSchema;
+export type EntradaActualizarPrecio = PriceUpdateInput;
+

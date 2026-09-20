@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Theme } from '@/lib/db';
+import { Tema } from '@/lib/bd';
 import { Sparkles, Check, Heart, Cake, Gift, Baby, Mail, Gem, Smile } from 'lucide-react';
 
 interface Step2TematicaProps {
-  themes: Theme[];
+  themes: Tema[];
   selectedTheme: string;
   setSelectedTheme: (id: string) => void;
   selectedPlan: string;

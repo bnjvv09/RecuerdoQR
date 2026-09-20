@@ -2191,3 +2191,7 @@ export const CHARACTERS_DATABASE: CharacterTheme[] = [
     "file": "150_doraemon.png"
   }
 ];
+
+export type TemaPersonaje = CharacterTheme;
+export const BASE_DATOS_PERSONAJES = CHARACTERS_DATABASE;
+

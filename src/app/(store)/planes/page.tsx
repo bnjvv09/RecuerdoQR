@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProducts, Product, getPlanPromos, PlanPromosMap } from '@/lib/db';
+import { obtenerProductos, Producto, obtenerPromocionesPlan, MapaPromocionesPlanes } from '@/lib/bd';
 import { CheckCircle, ShieldCheck, Heart, Sparkles, Send, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function PlanesPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [planPromos, setPlanPromos] = useState<PlanPromosMap>({});
+  const [products, setProducts] = useState<Producto[]>([]);
+  const [planPromos, setPlanPromos] = useState<MapaPromocionesPlanes>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      getProducts(),
-      getPlanPromos()
+      obtenerProductos(),
+      obtenerPromocionesPlan()
     ]).then(([productsData, promosData]) => {
       setProducts(productsData);
       setPlanPromos(promosData);

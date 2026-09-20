@@ -40,3 +40,6 @@ export function useAsyncData<T>(asyncFn: () => Promise<T>, immediate: boolean = 
     setData: (data: T | null) => setState(prev => ({ ...prev, data })),
   };
 }
+
+export const usarDatosAsync = useAsyncData;
+

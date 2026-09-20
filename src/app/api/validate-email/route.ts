@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns/promises';
-import { checkRateLimit } from '@/lib/rateLimit';
-import { validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
+import { verificarLimitePeticiones } from '@/lib/limitePeticiones';
+import { validarSintaxisYDominioEmail } from '@/lib/ayudantesValidacion';
 
 // Errores tipograficos comunes en dominios populares
 const TYPO_MAP: Record<string, string> = {
@@ -29,7 +29,7 @@ const CACHE_TTL = 24 * 60 * 60 * 1000;
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
-    const rateCheck = checkRateLimit('email-val-' + ip, 40, 60 * 1000);
+    const rateCheck = verificarLimitePeticiones('email-val-' + ip, 40, 60 * 1000);
     if (!rateCheck.success) {
       return NextResponse.json({ valid: true, rateLimited: true });
     }
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const trimmedEmail = email.trim().toLowerCase();
 
     // 1. Validacion sintactica, dominios y usuarios falsos
-    const syntaxCheck = validateEmailSyntaxAndDomain(trimmedEmail);
+    const syntaxCheck = validarSintaxisYDominioEmail(trimmedEmail);
     if (!syntaxCheck.valid) {
       return NextResponse.json({
         valid: false,

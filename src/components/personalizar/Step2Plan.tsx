@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Product, getPlanPromos, PlanPromosMap } from '@/lib/db';
+import { useState, useEffect } from 'react';
+import { Producto, obtenerPromocionesPlan, MapaPromocionesPlanes } from '@/lib/bd';
 import { Check, CheckCircle2, Sparkles, Image as ImageIcon, Music, Heart, Mic, Video, MapPin, KeyRound, Calendar, Flame } from 'lucide-react';
 import { THEME_HIGHLIGHTS } from './Step1Tematica';
 
 interface Step2PlanProps {
-  products: Product[];
+  products: Producto[];
   selectedPlan: string;
   setSelectedPlan: (id: string) => void;
   selectedTheme: string;
@@ -19,10 +19,10 @@ export default function Step2Plan({
   selectedTheme,
 }: Step2PlanProps) {
   const themeInfo = THEME_HIGHLIGHTS[selectedTheme] || THEME_HIGHLIGHTS['anniversary'];
-  const [planPromos, setPlanPromos] = useState<PlanPromosMap>({});
+  const [planPromos, setPlanPromos] = useState<MapaPromocionesPlanes>({});
 
   useEffect(() => {
-    getPlanPromos().then(setPlanPromos).catch(() => {});
+    obtenerPromocionesPlan().then(setPlanPromos).catch(() => {});
   }, []);
 
   const basicFeatures = themeInfo?.plans?.basic || [
@@ -237,3 +237,5 @@ export default function Step2Plan({
     </div>
   );
 }
+
+export const Paso2Plan = Step2Plan;

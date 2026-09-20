@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { getExperienceBySlug, Experience, Photo, Milestone, ExperienceSection, ensureExperienceSections } from '@/lib/db';
-import { getFontFamily } from '@/lib/fonts';
-import PhotoGallery from '@/components/gallery/PhotoGallery';
+import { obtenerExperienciaPorSlug, Experiencia, Foto, Hito, SeccionExperiencia, asegurarSeccionesExperiencia } from '@/lib/bd';
+import { obtenerFamiliaFuente } from '@/lib/fuentes';
+import { obtenerExperienciaEjemploPorSlug } from '@/data/experienciasEjemplo';
+import GaleriaFotos from '@/components/gallery/GaleriaFotos';
 import { 
   Heart, 
   Music, 
@@ -39,7 +40,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
 // --- MOCK TEMPLATE DATA FOR DEMOS ---
-const DEMO_DIGITAL: Experience = {
+const DEMO_DIGITAL: Experiencia = {
   id: 'demo-digital-id',
   slug: 'ejemplo-digital',
   title: 'Para Sofía con Amor',
@@ -62,7 +63,7 @@ const DEMO_DIGITAL: Experience = {
   milestones: []
 };
 
-const DEMO_PREMIUM: Experience = {
+const DEMO_PREMIUM: Experiencia = {
   id: 'demo-premium-id',
   slug: 'ejemplo-premium',
   title: 'Nuestra Vida Juntos',
@@ -92,7 +93,7 @@ const DEMO_PREMIUM: Experience = {
 
 export default function AmorExperiencePage() {
   const { slug } = useParams();
-  const [experience, setExperience] = useState<Experience | null>(null);
+  const [experience, setExperience] = useState<Experiencia | null>(null);
   const [loading, setLoading] = useState(true);
   
   // Gate step states
@@ -234,18 +235,25 @@ export default function AmorExperiencePage() {
 
     const loadExp = async () => {
       const lowerSlug = slug.toString().toLowerCase();
-      if (lowerSlug === 'ejemplo-digital') {
-        const fullExp = ensureExperienceSections(DEMO_DIGITAL);
+      const demoEncontrada = obtenerExperienciaEjemploPorSlug(lowerSlug);
+
+      if (demoEncontrada) {
+        const fullExp = asegurarSeccionesExperiencia(demoEncontrada);
+        setExperience(fullExp);
+        resolveMusicSource(demoEncontrada.song_url || '');
+        setLoading(false);
+      } else if (lowerSlug === 'ejemplo-digital') {
+        const fullExp = asegurarSeccionesExperiencia(DEMO_DIGITAL);
         setExperience(fullExp);
         resolveMusicSource(DEMO_DIGITAL.song_url || '');
         setLoading(false);
       } else if (lowerSlug === 'ejemplo-premium') {
-        const fullExp = ensureExperienceSections(DEMO_PREMIUM);
+        const fullExp = asegurarSeccionesExperiencia(DEMO_PREMIUM);
         setExperience(fullExp);
         resolveMusicSource(DEMO_PREMIUM.song_url || '');
         setLoading(false);
       } else {
-        const res = await getExperienceBySlug(slug.toString());
+        const res = await obtenerExperienciaPorSlug(slug.toString());
         if (res) {
           setExperience(res);
           const musicSec = res.sections?.find((s: any) => s.type === 'musica');
@@ -266,6 +274,7 @@ export default function AmorExperiencePage() {
     };
 
     loadExp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   // Reactive audio playback effect
@@ -466,6 +475,7 @@ export default function AmorExperiencePage() {
       window.removeEventListener('ended', handleGlobalPauseOrEnded, true);
       window.removeEventListener('message', handleWindowMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   const triggerCelebrationConfetti = () => {
@@ -677,7 +687,7 @@ export default function AmorExperiencePage() {
      themeId === 'reconciliation' ? '#f9fafb' : '#fffcfd');
 
   const textColor = customColors?.text || '#111827';
-  const selectedFontFamily = getFontFamily(customFont);
+  const selectedFontFamily = obtenerFamiliaFuente(customFont);
 
   const style = {
     bgClass: customColors ? '' : defaultStyle.bgClass,
@@ -2261,7 +2271,7 @@ export default function AmorExperiencePage() {
                   <div key={sec.id} className={`rounded-3xl p-2 sm:p-4 shadow-md border text-center space-y-2 ${style.cardClass}`}>
 
                     {galleryPhotos.length > 0 ? (
-                      <PhotoGallery
+                      <GaleriaFotos
                         photos={galleryPhotos}
                         style={galleryStyle}
                         secondaryStyle={dualSecondaryStyle}

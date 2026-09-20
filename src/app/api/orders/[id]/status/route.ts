@@ -1,24 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { orderStatusUpdateSchema } from '@/schemas/order';
+import { esquemaActualizacionEstadoPedido } from '@/schemas/pedido';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { handleApiError, AppError, ErrorCodes } from '@/lib/errors';
+import { manejarErrorApi, ErrorApp, CodigosError } from '@/lib/errores';
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     if (!id) {
-      throw new AppError('ID de pedido requerido', ErrorCodes.VALIDATION_ERROR, 400);
+      throw new ErrorApp('ID de pedido requerido', CodigosError.VALIDATION_ERROR, 400);
     }
 
     // 🔒 SEGURIDAD: Validar sesión de administrador
     const token = req.cookies.get('sb-access-token')?.value || req.headers.get('authorization')?.replace('Bearer ', '');
     const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder-project');
     if (!token && !isMock && process.env.NODE_ENV === 'production') {
-      throw new AppError('No autorizado. Se requiere sesión de administrador.', ErrorCodes.UNAUTHORIZED, 401);
+      throw new ErrorApp('No autorizado. Se requiere sesión de administrador.', CodigosError.UNAUTHORIZED, 401);
     }
 
     const body = await req.json();
-    const validated = orderStatusUpdateSchema.parse(body);
+    const validated = esquemaActualizacionEstadoPedido.parse(body);
 
     const supabase = createServerSupabaseClient();
     const { data, error } = await supabase
@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       .single();
 
     if (error) {
-      throw new AppError(`Error al actualizar el pedido: ${error.message}`, ErrorCodes.DATABASE_ERROR, 500);
+      throw new ErrorApp(`Error al actualizar el pedido: ${error.message}`, CodigosError.DATABASE_ERROR, 500);
     }
 
     return NextResponse.json({
@@ -38,6 +38,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       message: `Pedido actualizado a estado "${validated.status}"`,
     });
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }

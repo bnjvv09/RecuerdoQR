@@ -69,3 +69,11 @@ export function handleApiError(error: unknown): NextResponse<ApiResponse> {
     { status: 500 }
   );
 }
+
+export const CodigosError = ErrorCodes;
+export type CodigosError = ErrorCodes;
+export const ErrorApp = AppError;
+export type ErrorApp = AppError;
+export type RespuestaApi<T = any> = ApiResponse<T>;
+export const manejarErrorApi = handleApiError;
+

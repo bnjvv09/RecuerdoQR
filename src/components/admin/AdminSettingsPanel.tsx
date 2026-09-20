@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAdminStore } from '@/lib/store';
-import { updateSiteSettings, SiteSettings, Coupon, getCoupons, createCoupon, deleteCoupon, toggleCoupon } from '@/lib/db';
+import { usarTiendaAdmin } from '@/lib/tienda';
+import { actualizarConfigSitio, ConfigSitio, Cupon, obtenerCupones, crearCupon, eliminarCupon, alternarCupon } from '@/lib/bd';
 import { 
   Settings, 
   Mail, 
@@ -25,12 +25,12 @@ import {
 import { toast } from 'sonner';
 
 export default function AdminSettingsPanel() {
-  const { settings, setSettings, updateSettingsLocal } = useAdminStore();
-  const [formData, setFormData] = useState<SiteSettings>(settings);
+  const { settings, setSettings, updateSettingsLocal } = usarTiendaAdmin();
+  const [formData, setFormData] = useState<ConfigSitio>(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'contact' | 'coupons' | 'legal'>('contact');
-  const [couponsList, setCouponsList] = useState<Coupon[]>([]);
+  const [couponsList, setCouponsList] = useState<Cupon[]>([]);
   const [newCouponCode, setNewCouponCode] = useState('');
   const [newCouponType, setNewCouponType] = useState<'percent' | 'fixed'>('percent');
   const [newCouponDiscount, setNewCouponDiscount] = useState(15);
@@ -38,7 +38,7 @@ export default function AdminSettingsPanel() {
 
   useEffect(() => {
     setFormData(settings);
-    getCoupons().then(setCouponsList).catch(console.error);
+    obtenerCupones().then(setCouponsList).catch(console.error);
   }, [settings]);
 
   const handleSendTestEmail = async () => {
@@ -72,7 +72,7 @@ export default function AdminSettingsPanel() {
       return;
     }
     const maxUsesVal = newCouponMaxUses !== '' && Number(newCouponMaxUses) > 0 ? Number(newCouponMaxUses) : null;
-    const created = await createCoupon(newCouponCode, newCouponType, newCouponDiscount, maxUsesVal);
+    const created = await crearCupon(newCouponCode, newCouponType, newCouponDiscount, maxUsesVal);
     setCouponsList(prev => [created, ...prev.filter(c => c.code !== created.code)]);
     setNewCouponCode('');
     setNewCouponMaxUses('');
@@ -82,13 +82,13 @@ export default function AdminSettingsPanel() {
   };
 
   const handleToggleCoupon = async (id: string) => {
-    await toggleCoupon(id);
+    await alternarCupon(id);
     setCouponsList(prev => prev.map(c => c.id === id ? { ...c, is_active: !c.is_active } : c));
     toast.success('Estado del cupón actualizado');
   };
 
   const handleDeleteCoupon = async (id: string) => {
-    await deleteCoupon(id);
+    await eliminarCupon(id);
     setCouponsList(prev => prev.filter(c => c.id !== id));
     toast.success('Cupón eliminado');
   };
@@ -97,7 +97,7 @@ export default function AdminSettingsPanel() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const updated = await updateSiteSettings(formData);
+      const updated = await actualizarConfigSitio(formData);
       setSettings(updated);
       updateSettingsLocal(updated);
       toast.success('Configuracion y textos guardados exitosamente');
@@ -646,3 +646,5 @@ export default function AdminSettingsPanel() {
     </form>
   );
 }
+
+export const AdminPanelConfiguracion = AdminSettingsPanel;

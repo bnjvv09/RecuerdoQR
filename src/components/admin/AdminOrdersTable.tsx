@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAdminStore } from '@/lib/store';
-import { Order, Experience } from '@/lib/db';
+import { usarTiendaAdmin } from '@/lib/tienda';
+import { Pedido, Experiencia } from '@/lib/bd';
 import { 
   ShoppingBag, 
   Search, 
@@ -41,7 +41,7 @@ interface AdminOrdersTableProps {
     cardTitle?: string;
     cardFrom?: string;
   }) => void;
-  onEditExperience?: (exp: Experience) => void;
+  onEditExperience?: (exp: Experiencia) => void;
 }
 
 export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperience }: AdminOrdersTableProps) {
@@ -57,7 +57,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
     currentPage,
     setCurrentPage,
     updateOrderStatusLocal,
-  } = useAdminStore();
+  } = usarTiendaAdmin();
 
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [isResendingEmail, setIsResendingEmail] = useState(false);
@@ -103,7 +103,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
     ? experiences.find((e) => e.order_id === selectedOrder.id)
     : null;
 
-  const handleUpdateStatus = async (orderId: string, newStatus: Order['status']) => {
+  const handleUpdateStatus = async (orderId: string, newStatus: Pedido['status']) => {
     if (!window.confirm(`¿Estás seguro de cambiar el estado del pedido a "${newStatus}"?`)) {
       return;
     }
@@ -160,7 +160,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
       if (typeof window !== 'undefined') {
         localStorage.removeItem('amor_qr_orders');
       }
-      useAdminStore.getState().setOrders([]);
+      usarTiendaAdmin.getState().setOrders([]);
       setSelectedOrder(null);
       toast.dismiss(toastId);
       toast.success('¡Pedidos de prueba eliminados! Tu tienda está en 0.');
@@ -563,3 +563,5 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
     </div>
   );
 }
+
+export const AdminTablaPedidos = AdminOrdersTable;

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loginSchema } from '@/schemas/auth';
-import { handleApiError, AppError, ErrorCodes } from '@/lib/errors';
+import { esquemaLogin } from '@/schemas/autenticacion';
+import { manejarErrorApi, ErrorApp, CodigosError } from '@/lib/errores';
 import { supabase } from '@/lib/supabase';
-import { checkRateLimit } from '@/lib/rateLimit';
+import { verificarLimitePeticiones } from '@/lib/limitePeticiones';
 
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for') || 'unknown-ip';
     // 🔒 SEGURIDAD: Máximo 5 intentos cada 15 minutos por IP
-    const rateCheck = checkRateLimit(`login-attempt-${ip}`, 5, 15 * 60 * 1000);
+    const rateCheck = verificarLimitePeticiones(`login-attempt-${ip}`, 5, 15 * 60 * 1000);
     if (!rateCheck.success) {
       return NextResponse.json(
         { 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const validated = loginSchema.parse(body);
+    const validated = esquemaLogin.parse(body);
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: validated.email,
@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      throw new AppError(
+      throw new ErrorApp(
         error.message || 'Credenciales inválidas. Verifica tu correo y contraseña.',
-        ErrorCodes.UNAUTHORIZED,
+        CodigosError.UNAUTHORIZED,
         401
       );
     }
@@ -61,6 +61,6 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }

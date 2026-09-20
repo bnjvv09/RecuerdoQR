@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { usePersonalizarForm } from '@/components/personalizar/usePersonalizarForm';
-import Step1Tematica from '@/components/personalizar/Step1Tematica';
-import Step2Plan from '@/components/personalizar/Step2Plan';
-import Step2Personalizacion from '@/components/personalizar/Step2Personalizacion';
-import Step4Preview from '@/components/personalizar/Step4Preview';
-import Step4TarjetaRegalo from '@/components/personalizar/Step4TarjetaRegalo';
+import { usarFormularioPersonalizar } from '@/components/personalizar/usarFormularioPersonalizar';
+import Paso1Tematica from '@/components/personalizar/Paso1Tematica';
+import Paso2Plan from '@/components/personalizar/Paso2Plan';
+import Paso2Personalizacion from '@/components/personalizar/Paso2Personalizacion';
+import Paso4VistaPrevia from '@/components/personalizar/Paso4VistaPrevia';
+import Paso4TarjetaRegalo from '@/components/personalizar/Paso4TarjetaRegalo';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -23,7 +23,7 @@ import {
   Mail,
   Globe
 } from 'lucide-react';
-import { uploadImage } from '@/lib/upload';
+import { subirImagen } from '@/lib/subida';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
 
@@ -46,7 +46,7 @@ interface AdminCreatorStudioProps {
 }
 
 export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreatorStudioProps) {
-  const form = usePersonalizarForm();
+  const form = usarFormularioPersonalizar();
 
   // Custom slug for admin
   const [customSlug, setCustomSlug] = useState('');
@@ -123,7 +123,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
       const uploadedPhotosList: Array<{ url: string; caption?: string }> = [];
       for (const p of form.photos) {
         if (p.file) {
-          const publicUrl = await uploadImage(p.file, finalSlug);
+          const publicUrl = await subirImagen(p.file, finalSlug);
           uploadedPhotosList.push({ url: publicUrl, caption: p.caption });
         } else {
           uploadedPhotosList.push({ url: p.previewUrl, caption: p.caption });
@@ -135,7 +135,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
       for (const m of form.milestones) {
         let imgUrl = m.previewUrl || '';
         if (m.image) {
-          imgUrl = await uploadImage(m.image, finalSlug);
+          imgUrl = await subirImagen(m.image, finalSlug);
         }
         formattedMilestones.push({
           title: m.title,
@@ -148,7 +148,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
       // Upload voice note
       let uploadedVoiceNoteUrl = '';
       if (form.voiceNoteFile) {
-        uploadedVoiceNoteUrl = await uploadImage(form.voiceNoteFile, finalSlug);
+        uploadedVoiceNoteUrl = await subirImagen(form.voiceNoteFile, finalSlug);
       }
 
       const extraConfig = {
@@ -332,7 +332,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
         
         {/* Step 1: Theme Selection */}
         {form.step === 1 && (
-          <Step1Tematica
+          <Paso1Tematica
             themes={form.themes}
             selectedTheme={form.selectedTheme}
             setSelectedTheme={form.setSelectedTheme}
@@ -341,7 +341,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
 
         {/* Step 2: Plan Selection */}
         {form.step === 2 && (
-          <Step2Plan
+          <Paso2Plan
             products={form.products}
             selectedPlan={form.selectedPlan}
             setSelectedPlan={form.setSelectedPlan}
@@ -351,7 +351,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
 
         {/* Step 3: Web Content & Sections */}
         {form.step === 3 && (
-          <Step2Personalizacion
+          <Paso2Personalizacion
             selectedPlan={form.selectedPlan}
             selectedTheme={form.selectedTheme}
             voiceNoteFile={form.voiceNoteFile}
@@ -489,7 +489,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
 
         {/* Step 4: Preview & Style */}
         {form.step === 4 && (
-          <Step4Preview
+          <Paso4VistaPrevia
             selectedTheme={form.selectedTheme}
             selectedPlan={form.selectedPlan}
             secondaryPhotoStyle={form.secondaryPhotoStyle}
@@ -555,7 +555,7 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
 
         {/* Step 5: Gift Card & Characters */}
         {form.step === 5 && (
-          <Step4TarjetaRegalo
+          <Paso4TarjetaRegalo
             selectedPlan={form.selectedPlan}
             selectedCharacter={form.selectedCharacter}
             setSelectedCharacter={form.setSelectedCharacter}
@@ -792,3 +792,5 @@ export default function AdminCreatorStudio({ onOpenPrintableModal }: AdminCreato
     </div>
   );
 }
+
+export const AdminEstudioCreador = AdminCreatorStudio;

@@ -113,3 +113,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
       settings: { ...state.settings, ...updated },
     })),
 }));
+
+export const usarTiendaAdmin = useAdminStore;
+export type PestañaAdmin = AdminTab;
+export type TiendaAdmin = AdminStore;
+

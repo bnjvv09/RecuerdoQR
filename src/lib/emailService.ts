@@ -336,3 +336,9 @@ export async function sendAdminSalesNotification(data: OrderEmailData) {
     return { success: false, error };
   }
 }
+
+export type DatosEmailPedido = OrderEmailData;
+export const enviarEmailConfirmacionCliente = sendCustomerConfirmationEmail;
+export const enviarNotificacionVentaAdmin = sendAdminSalesNotification;
+export const obtenerTransporteGmail = getGmailTransporter;
+

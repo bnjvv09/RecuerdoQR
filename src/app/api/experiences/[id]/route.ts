@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { handleApiError, AppError, ErrorCodes } from '@/lib/errors';
+import { manejarErrorApi, ErrorApp, CodigosError } from '@/lib/errores';
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     if (!id) {
-      throw new AppError('ID de experiencia requerido', ErrorCodes.VALIDATION_ERROR, 400);
+      throw new ErrorApp('ID de experiencia requerido', CodigosError.VALIDATION_ERROR, 400);
     }
 
     const body = await req.json();
@@ -45,7 +45,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       .single();
 
     if (expError) {
-      throw new AppError(`Error al actualizar la experiencia: ${expError.message}`, ErrorCodes.DATABASE_ERROR, 500);
+      throw new ErrorApp(`Error al actualizar la experiencia: ${expError.message}`, CodigosError.DATABASE_ERROR, 500);
     }
 
     // 2. If photosList provided, synchronize photos table
@@ -71,7 +71,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       message: 'Experiencia actualizada exitosamente',
     });
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }
 
@@ -79,14 +79,14 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     const { id } = params;
     if (!id) {
-      throw new AppError('ID de experiencia requerido', ErrorCodes.VALIDATION_ERROR, 400);
+      throw new ErrorApp('ID de experiencia requerido', CodigosError.VALIDATION_ERROR, 400);
     }
 
     const supabase = createServerSupabaseClient();
     const { error } = await supabase.from('experiences').delete().eq('id', id);
 
     if (error) {
-      throw new AppError(`Error al eliminar la experiencia: ${error.message}`, ErrorCodes.DATABASE_ERROR, 500);
+      throw new ErrorApp(`Error al eliminar la experiencia: ${error.message}`, CodigosError.DATABASE_ERROR, 500);
     }
 
     return NextResponse.json({
@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       message: 'Experiencia eliminada exitosamente',
     });
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }
 

@@ -41,3 +41,8 @@ export function getFontFamily(fontId?: string): string {
   const found = FONT_OPTIONS.find(f => f.id === fontId);
   return found ? found.family : "'Playfair Display', serif";
 }
+
+export type OpcionFuente = FontOption;
+export const OPCIONES_FUENTES = FONT_OPTIONS;
+export const obtenerFamiliaFuente = getFontFamily;
+

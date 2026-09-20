@@ -5,16 +5,16 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import QRCode from 'qrcode';
-import { getExperienceBySlug, Experience } from '@/lib/db';
-import { CHARACTERS_DATABASE, CharacterTheme } from '@/data/charactersData';
-import { getFontFamily } from '@/lib/fonts';
+import { obtenerExperienciaPorSlug, Experiencia } from '@/lib/bd';
+import { BASE_DATOS_PERSONAJES, TemaPersonaje } from '@/data/datosPersonajes';
+import { obtenerFamiliaFuente } from '@/lib/fuentes';
 import { Printer, ArrowLeft, Scissors, Sparkles } from 'lucide-react';
 
 export default function ImprimirTarjetaPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const [experience, setExperience] = useState<Experience | null>(null);
+  const [experience, setExperience] = useState<Experiencia | null>(null);
   const [loading, setLoading] = useState(true);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
@@ -24,7 +24,7 @@ export default function ImprimirTarjetaPage() {
 
     async function loadData() {
       try {
-        const exp = await getExperienceBySlug(slug);
+        const exp = await obtenerExperienciaPorSlug(slug);
         if (isMounted) {
           setExperience(exp);
           if (exp) {
@@ -33,10 +33,10 @@ export default function ImprimirTarjetaPage() {
             const expConfig = (exp.config as any) || {};
 
             // Resuelve el personaje tanto por objeto completo como por ID
-            const foundChar: CharacterTheme | null = 
+            const foundChar: TemaPersonaje | null = 
               expConfig.selectedCharacter 
-              || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
-              || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+              || (expConfig.selectedCharacterId ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacterId) : null)
+              || (expConfig.selectedCharacter?.id ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacter.id) : null)
               || null;
 
             const primaryColor = foundChar ? foundChar.primary : (expConfig.cardPalette || '#a21232');
@@ -95,10 +95,10 @@ export default function ImprimirTarjetaPage() {
   const expConfig = (experience.config as any) || {};
   
   // Resuelve el personaje de forma infalible
-  const foundChar: CharacterTheme | null = 
+  const foundChar: TemaPersonaje | null = 
     expConfig.selectedCharacter 
-    || (expConfig.selectedCharacterId ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacterId) : null)
-    || (expConfig.selectedCharacter?.id ? CHARACTERS_DATABASE.find(c => c.id === expConfig.selectedCharacter.id) : null)
+    || (expConfig.selectedCharacterId ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacterId) : null)
+    || (expConfig.selectedCharacter?.id ? BASE_DATOS_PERSONAJES.find(c => c.id === expConfig.selectedCharacter.id) : null)
     || null;
 
   const cardPalette = expConfig.cardPalette || '#a21232';
@@ -114,7 +114,7 @@ export default function ImprimirTarjetaPage() {
 
   const primaryColor = foundChar ? foundChar.primary : cardPalette;
   const accentColor = foundChar ? foundChar.accent : primaryColor;
-  const activeFontFamily = getFontFamily(cardFont);
+  const activeFontFamily = obtenerFamiliaFuente(cardFont);
   const isHorizontal = cardOrientation === 'horizontal';
 
   const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';

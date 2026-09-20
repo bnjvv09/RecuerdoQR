@@ -38,3 +38,6 @@ export function useFetchOrders() {
     refreshOrders: fetchOrders,
   };
 }
+
+export const usarObtenerPedidos = useFetchOrders;
+

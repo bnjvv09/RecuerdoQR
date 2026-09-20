@@ -1,46 +1,46 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAdminStore } from '@/lib/store';
+import { usarTiendaAdmin } from '@/lib/tienda';
 import { supabase } from '@/lib/supabase';
 import { 
-  getOrders, 
-  getExperiences, 
-  getThemes, 
-  getProducts, 
-  getSiteSettings,
-  deleteExperience,
-  updateProductPrice,
-  Product, 
-  Experience 
-} from '@/lib/db';
+  obtenerPedidos, 
+  obtenerExperiencias, 
+  obtenerTemas, 
+  obtenerProductos, 
+  obtenerConfigSitio,
+  eliminarExperiencia,
+  actualizarPrecioProducto,
+  Producto, 
+  Experiencia 
+} from '@/lib/bd';
 import dynamic from 'next/dynamic';
-import AdminHeader from '@/components/admin/AdminHeader';
+import AdminEncabezado from '@/components/admin/AdminEncabezado';
 
-const AdminOrdersTable = dynamic(() => import('@/components/admin/AdminOrdersTable'), {
+const AdminTablaPedidos = dynamic(() => import('@/components/admin/AdminTablaPedidos'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando pedidos...</div>,
   ssr: false,
 });
-const AdminThemesPanel = dynamic(() => import('@/components/admin/AdminThemesPanel'), {
+const AdminPanelTemas = dynamic(() => import('@/components/admin/AdminPanelTemas'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando temáticas...</div>,
   ssr: false,
 });
-const AdminPlansPanel = dynamic(() => import('@/components/admin/AdminPlansPanel'), {
+const AdminPanelPlanes = dynamic(() => import('@/components/admin/AdminPanelPlanes'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando planes y ofertas...</div>,
   ssr: false,
 });
-const AdminSettingsPanel = dynamic(() => import('@/components/admin/AdminSettingsPanel'), {
+const AdminPanelConfiguracion = dynamic(() => import('@/components/admin/AdminPanelConfiguracion'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando ajustes...</div>,
   ssr: false,
 });
-const AdminCreatorStudio = dynamic(() => import('@/components/admin/AdminCreatorStudio'), {
+const AdminEstudioCreador = dynamic(() => import('@/components/admin/AdminEstudioCreador'), {
   loading: () => <div className="p-8 text-center text-xs text-gray-400 animate-pulse">Cargando estudio de creación...</div>,
   ssr: false,
 });
-const AdminEditExperienceModal = dynamic(() => import('@/components/admin/AdminEditExperienceModal'), {
+const AdminModalEditarExperiencia = dynamic(() => import('@/components/admin/AdminModalEditarExperiencia'), {
   ssr: false,
 });
-const PrintableGiftCardModal = dynamic(() => import('@/components/card/PrintableGiftCardModal'), {
+const ModalTarjetaRegaloImprimible = dynamic(() => import('@/components/card/ModalTarjetaRegaloImprimible'), {
   ssr: false,
 });
 import { 
@@ -78,7 +78,7 @@ export default function AdminPage() {
     deleteExperienceLocal,
     updateExperienceLocal,
     updateProductPriceLocal,
-  } = useAdminStore();
+  } = usarTiendaAdmin();
 
   // Auth form states
   const [email, setEmail] = useState('');
@@ -87,7 +87,7 @@ export default function AdminPage() {
   const [userEmail, setUserEmail] = useState<string>('');
 
   // Experience editing modal state
-  const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
+  const [editingExperience, setEditingExperience] = useState<Experiencia | null>(null);
 
   // Printable card modal state
   const [printableCardData, setPrintableCardData] = useState<{
@@ -113,11 +113,11 @@ export default function AdminPage() {
   const loadInitialData = useCallback(async () => {
     try {
       const [orderList, expList, themeList, prodList, settingsData] = await Promise.all([
-        getOrders(),
-        getExperiences(),
-        getThemes(),
-        getProducts(),
-        getSiteSettings(),
+        obtenerPedidos(),
+        obtenerExperiencias(),
+        obtenerTemas(),
+        obtenerProductos(),
+        obtenerConfigSitio(),
       ]);
       setOrders(orderList);
       setExperiences(expList);
@@ -330,7 +330,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50/50 pb-16">
       
       {/* Header Bar */}
-      <AdminHeader onLogout={handleLogout} userEmail={userEmail} />
+      <AdminEncabezado onLogout={handleLogout} userEmail={userEmail} />
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
@@ -412,7 +412,7 @@ export default function AdminPage() {
 
         {/* Tab 1: Orders & Shipments */}
         {activeTab === 'orders' && (
-          <AdminOrdersTable 
+          <AdminTablaPedidos 
             onOpenPrintableModal={setPrintableCardData} 
             onEditExperience={setEditingExperience} 
           />
@@ -501,27 +501,27 @@ export default function AdminPage() {
 
         {/* Tab 3: Planes y Precios (Gestor Completo) */}
         {(activeTab === 'plans' || (activeTab as string) === 'pricing') && (
-          <AdminPlansPanel />
+          <AdminPanelPlanes />
         )}
 
         {/* Tab 4: Configuración & Footer */}
         {activeTab === 'settings' && (
-          <AdminSettingsPanel />
+          <AdminPanelConfiguracion />
         )}
 
         {/* Tab 5: Themes */}
-        {activeTab === 'themes' && <AdminThemesPanel />}
+        {activeTab === 'themes' && <AdminPanelTemas />}
 
         {/* Tab 6: Creator Studio */}
         {activeTab === 'creator' && (
-          <AdminCreatorStudio onOpenPrintableModal={setPrintableCardData} />
+          <AdminEstudioCreador onOpenPrintableModal={setPrintableCardData} />
         )}
 
       </main>
 
       {/* Printable Gift Card Modal */}
       {printableCardData && (
-        <PrintableGiftCardModal
+        <ModalTarjetaRegaloImprimible
           isOpen={!!printableCardData}
           onClose={() => setPrintableCardData(null)}
           partnerName={printableCardData.partnerName}
@@ -542,7 +542,7 @@ export default function AdminPage() {
 
       {/* Edit Experience Modal */}
       {editingExperience && (
-        <AdminEditExperienceModal
+        <AdminModalEditarExperiencia
           isOpen={!!editingExperience}
           experience={editingExperience}
           onClose={() => setEditingExperience(null)}

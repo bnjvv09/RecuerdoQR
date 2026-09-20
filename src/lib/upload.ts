@@ -146,3 +146,6 @@ export async function uploadImage(file: File | Blob, path: string): Promise<stri
     return 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop';
   }
 }
+
+export const subirImagen = uploadImage;
+

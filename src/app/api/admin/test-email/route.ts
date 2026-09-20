@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sendAdminSalesNotification } from '@/lib/emailService';
+import { enviarNotificacionVentaAdmin } from '@/lib/servicioEmail';
 
 export async function POST() {
   try {
@@ -17,7 +17,7 @@ export async function POST() {
       couponCode: 'PROMO30',
     };
 
-    const res = await sendAdminSalesNotification(testData);
+    const res = await enviarNotificacionVentaAdmin(testData);
 
     const apiKey = process.env.RESEND_API_KEY;
     const hasGmail = Boolean(process.env.GMAIL_APP_PASSWORD || 'khilsnssdjzucdtg');

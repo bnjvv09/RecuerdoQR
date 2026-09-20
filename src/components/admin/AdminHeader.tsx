@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAdminStore, AdminTab } from '@/lib/store';
+import { usarTiendaAdmin, PestañaAdmin } from '@/lib/tienda';
 import { 
   ShoppingBag, 
   Sparkles, 
@@ -21,9 +21,9 @@ interface AdminHeaderProps {
 }
 
 export default function AdminHeader({ onLogout, userEmail }: AdminHeaderProps) {
-  const { activeTab, setActiveTab } = useAdminStore();
+  const { activeTab, setActiveTab } = usarTiendaAdmin();
 
-  const tabs: Array<{ id: AdminTab; label: string; icon: React.ReactNode }> = [
+  const tabs: Array<{ id: PestañaAdmin; label: string; icon: React.ReactNode }> = [
     { id: 'orders', label: 'Pedidos & Clientes', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
     { id: 'experiences', label: 'Experiencias QR', icon: <Sparkles className="w-3.5 h-3.5" /> },
     { id: 'plans', label: 'Planes y Precios', icon: <DollarSign className="w-3.5 h-3.5" /> },
@@ -119,3 +119,5 @@ export default function AdminHeader({ onLogout, userEmail }: AdminHeaderProps) {
     </header>
   );
 }
+
+export const AdminEncabezado = AdminHeader;

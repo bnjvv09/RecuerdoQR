@@ -1,6 +1,6 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { getOrderById, getExperienceByOrderId } from '@/lib/db';
-import { sendCustomerConfirmationEmail } from '@/lib/emailService';
+import { NextRequest, NextResponse } from 'next/server';
+import { obtenerPedidoPorId, obtenerExperienciaPorPedidoId } from '@/lib/bd';
+import { enviarEmailConfirmacionCliente } from '@/lib/servicioEmail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,12 +9,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'ID de orden requerido' }, { status: 400 });
     }
 
-    const order = await getOrderById(orderId);
+    const order = await obtenerPedidoPorId(orderId);
     if (!order) {
       return NextResponse.json({ success: false, error: 'Pedido no encontrado' }, { status: 404 });
     }
 
-    const exp = await getExperienceByOrderId(orderId);
+    const exp = await obtenerExperienciaPorPedidoId(orderId);
     if (!exp) {
       return NextResponse.json({ success: false, error: 'Experiencia no encontrada' }, { status: 404 });
     }
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       couponCode: (exp.config as any)?.couponCode,
     };
 
-    const res = await sendCustomerConfirmationEmail(emailPayload);
+    const res = await enviarEmailConfirmacionCliente(emailPayload);
 
     return NextResponse.json({
       success: true,

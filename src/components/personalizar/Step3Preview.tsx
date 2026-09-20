@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Smartphone, Heart, Sparkles, Music, MapPin, Gift, Lock } from 'lucide-react';
-import PhotoGallery from '@/components/gallery/PhotoGallery';
-import { PhotoStyle } from '@/types/gallery';
-import { getFontFamily } from '@/lib/fonts';
-import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
+import GaleriaFotos from '@/components/gallery/GaleriaFotos';
+import { EstiloFoto } from '@/types/galeria';
+import { obtenerFamiliaFuente } from '@/lib/fuentes';
+import { EntradaFoto, EntradaHito, SeccionExperiencia, ColoresPersonalizados } from './tipos';
 
 interface Step3PreviewProps {
   selectedPlan?: string;
-  secondaryPhotoStyle?: PhotoStyle | null;
+  secondaryPhotoStyle?: EstiloFoto | null;
   enableDualPhotoStyle?: boolean;
   partnerName: string;
   userName: string;
@@ -24,11 +24,11 @@ interface Step3PreviewProps {
   proposalQuestion: string;
   surpriseMessage: string;
   customFont: string;
-  customColors: CustomColors;
-  photoStyle: PhotoStyle;
-  sections: ExperienceSection[];
-  photos: PhotoInput[];
-  milestones: MilestoneInput[];
+  customColors: ColoresPersonalizados;
+  photoStyle: EstiloFoto;
+  sections: SeccionExperiencia[];
+  photos: EntradaFoto[];
+  milestones: EntradaHito[];
 }
 
 export default function Step3Preview({
@@ -53,7 +53,7 @@ export default function Step3Preview({
   photos,
   milestones,
 }: Step3PreviewProps) {
-  const activeFontFamily = getFontFamily(customFont);
+  const activeFontFamily = obtenerFamiliaFuente(customFont);
 
   const [timeElapsed, setTimeElapsed] = useState({
     years: 0,
@@ -204,7 +204,7 @@ export default function Step3Preview({
                 return (
                   <div key={sec.id} className="space-y-2 py-2">
                     <h3 className="text-xs font-bold text-gray-800 font-serif">📸 Nuestros Recuerdos</h3>
-                    <PhotoGallery
+                    <GaleriaFotos
                       photos={photos.map(p => ({ url: p.previewUrl, caption: p.caption }))}
                       style={photoStyle}
                       secondaryStyle={enableDualPhotoStyle ? secondaryPhotoStyle : null}

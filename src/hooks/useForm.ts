@@ -57,3 +57,6 @@ export function useForm<T extends Record<string, any>>(initialValues: T, schema?
     setIsSubmitting,
   };
 }
+
+export const usarFormulario = useForm;
+

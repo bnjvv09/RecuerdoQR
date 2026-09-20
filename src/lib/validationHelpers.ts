@@ -118,3 +118,10 @@ export function validateEmailSyntaxAndDomain(emailStr: string): { valid: boolean
 
   return { valid: true };
 }
+
+export const DOMINIOS_EMAIL_FALSOS = FAKE_EMAIL_DOMAINS;
+export const USUARIOS_EMAIL_FALSOS = FAKE_EMAIL_USERS;
+export const PATRONES_TELEFONO_FALSOS = FAKE_PHONE_PATTERNS;
+export const validarTelefonoChileno = validateChileanPhone;
+export const validarSintaxisYDominioEmail = validateEmailSyntaxAndDomain;
+

@@ -38,3 +38,6 @@ export function useFetchExperiences() {
     refreshExperiences: fetchExperiences,
   };
 }
+
+export const usarObtenerExperiencias = useFetchExperiences;
+

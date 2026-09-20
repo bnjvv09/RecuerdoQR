@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAdminStore } from '@/lib/store';
-import { updateProduct, Product, getPlanPromos, updatePlanPromo, PlanPromosMap, PlanPromoConfig } from '@/lib/db';
+import { usarTiendaAdmin } from '@/lib/tienda';
+import { actualizarProducto, Producto, obtenerPromocionesPlan, actualizarPromocionPlan, MapaPromocionesPlanes, ConfigPromocionPlan } from '@/lib/bd';
 import { 
   DollarSign, 
   Save, 
@@ -30,8 +30,8 @@ interface PromoCardState {
 }
 
 export default function AdminPlansPanel() {
-  const { products, setProducts, updateProductLocal } = useAdminStore();
-  const [editingPlan, setEditingPlan] = useState<Product | null>(null);
+  const { products, setProducts, updateProductLocal } = usarTiendaAdmin();
+  const [editingPlan, setEditingPlan] = useState<Producto | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [newFeatureText, setNewFeatureText] = useState('');
 
@@ -45,7 +45,7 @@ export default function AdminPlansPanel() {
 
   const loadPromos = async () => {
     try {
-      const data = await getPlanPromos();
+      const data = await obtenerPromocionesPlan();
       const next: Record<string, PromoCardState> = {};
       ['basic', 'medium', 'premium'].forEach(pid => {
         const p = data[pid];
@@ -94,7 +94,7 @@ export default function AdminPlansPanel() {
     if (!item) return;
     setSavingPlanId(planId);
     try {
-      const ok = await updatePlanPromo(planId, {
+      const ok = await actualizarPromocionPlan(planId, {
         isActive: item.isActive,
         promoPrice: item.promoPrice,
         regularPrice: item.regularPrice,
@@ -125,7 +125,7 @@ export default function AdminPlansPanel() {
     if (!confirm(`¿Deseas reiniciar los cupos vendidos a 0 para el ${planName}?`)) return;
     setSavingPlanId(planId);
     try {
-      const ok = await updatePlanPromo(planId, {
+      const ok = await actualizarPromocionPlan(planId, {
         isActive: true,
         promoPrice: item.promoPrice,
         regularPrice: item.regularPrice,
@@ -145,7 +145,7 @@ export default function AdminPlansPanel() {
     }
   };
 
-  const handleSelectPlan = (plan: Product) => {
+  const handleSelectPlan = (plan: Producto) => {
     setEditingPlan(JSON.parse(JSON.stringify(plan)));
     setNewFeatureText('');
   };
@@ -178,7 +178,7 @@ export default function AdminPlansPanel() {
 
     setIsSaving(true);
     try {
-      const ok = await updateProduct(editingPlan);
+      const ok = await actualizarProducto(editingPlan);
       if (ok) {
         updateProductLocal(editingPlan);
         toast.success(`Plan "${editingPlan.name}" guardado y actualizado con éxito`);
@@ -624,3 +624,5 @@ export default function AdminPlansPanel() {
     </div>
   );
 }
+
+export const AdminPanelPlanes = AdminPlansPanel;

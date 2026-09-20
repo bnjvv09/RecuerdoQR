@@ -62,3 +62,8 @@ export function getClientIp(req: Request): string {
   }
   return '127.0.0.1';
 }
+
+export const limitarPeticiones = rateLimit;
+export const obtenerIpCliente = getClientIp;
+export const verificarLimitePeticiones = checkRateLimit;
+

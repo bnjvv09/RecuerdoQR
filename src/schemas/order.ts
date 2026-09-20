@@ -41,3 +41,11 @@ export const orderCreateSchema = z.object({
 
 export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;
 export type OrderCreateInput = z.infer<typeof orderCreateSchema>;
+
+export const enumEstadoPedido = orderStatusEnum;
+export const esquemaActualizarEstadoPedido = orderStatusUpdateSchema;
+export const esquemaActualizacionEstadoPedido = orderStatusUpdateSchema;
+export const esquemaCrearPedido = orderCreateSchema;
+export type EntradaActualizarEstadoPedido = OrderStatusUpdateInput;
+export type EntradaCrearPedido = OrderCreateInput;
+

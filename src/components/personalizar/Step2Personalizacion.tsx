@@ -35,10 +35,10 @@ import {
   Pause,
   Volume2
 } from 'lucide-react';
-import PhotoStyleSelector from '@/components/gallery/PhotoStyleSelector';
-import { PhotoStyle } from '@/types/gallery';
-import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
-import { compressImage } from '@/lib/imageCompression';
+import SelectorEstiloFoto from '@/components/gallery/SelectorEstiloFoto';
+import { EstiloFoto } from '@/types/galeria';
+import { EntradaFoto, EntradaHito, SeccionExperiencia, ColoresPersonalizados } from './tipos';
+import { comprimirImagen } from '@/lib/compresionImagenes';
 import { toast } from 'sonner';
 
 export const ROMANTIC_SONGS = [
@@ -207,26 +207,26 @@ interface Step2PersonalizacionProps {
   setSpecialPlaceAddress: (val: string) => void;
   customFont?: string;
   setCustomFont?: (val: string) => void;
-  customColors?: CustomColors;
-  setCustomColors?: (val: CustomColors) => void;
-  photoStyle: PhotoStyle;
-  setPhotoStyle: (val: PhotoStyle) => void;
-  secondaryPhotoStyle?: PhotoStyle | null;
-  setSecondaryPhotoStyle?: (val: PhotoStyle | null) => void;
+  customColors?: ColoresPersonalizados;
+  setCustomColors?: (val: ColoresPersonalizados) => void;
+  photoStyle: EstiloFoto;
+  setPhotoStyle: (val: EstiloFoto) => void;
+  secondaryPhotoStyle?: EstiloFoto | null;
+  setSecondaryPhotoStyle?: (val: EstiloFoto | null) => void;
   enableDualPhotoStyle?: boolean;
   setEnableDualPhotoStyle?: (val: boolean) => void;
-  sections: ExperienceSection[];
+  sections: SeccionExperiencia[];
   expandedSection: string | null;
   setExpandedSection: (val: string | null) => void;
-  photos: PhotoInput[];
-  secondaryPhotos?: PhotoInput[];
+  photos: EntradaFoto[];
+  secondaryPhotos?: EntradaFoto[];
   handleSecondaryPhotoUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeSecondaryPhoto?: (idx: number) => void;
   updateSecondaryPhotoCaption?: (idx: number, cap: string) => void;
   maxPrimaryPhotos?: number;
   maxSecondaryPhotos?: number;
-  milestones: MilestoneInput[];
-  addSection: (type: ExperienceSection['type']) => void;
+  milestones: EntradaHito[];
+  addSection: (type: SeccionExperiencia['type']) => void;
   removeSection: (id: string) => void;
   moveSection: (idx: number, dir: 'up' | 'down') => void;
   handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -234,7 +234,7 @@ interface Step2PersonalizacionProps {
   updatePhotoCaption: (idx: number, cap: string) => void;
   addMilestone: () => void;
   removeMilestone: (idx: number) => void;
-  updateMilestone: (idx: number, field: keyof MilestoneInput, val: any) => void;
+  updateMilestone: (idx: number, field: keyof EntradaHito, val: any) => void;
   handleMilestoneImage: (idx: number, e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -487,7 +487,7 @@ export default function Step2Personalizacion({
   const isReconciliation = selectedTheme === 'reconciliation';
 
   // Section icons and labels helper
-  const getSectionMetadata = (type: ExperienceSection['type'], index?: number) => {
+  const getSectionMetadata = (type: SeccionExperiencia['type'], index?: number) => {
     switch (type) {
       case 'portada':
         return { 
@@ -569,7 +569,7 @@ export default function Step2Personalizacion({
   // Secondary gallery for Premium plan
   const canAddSecondGallery = isPremium && galleryCount === 1;
 
-  const handleAddSectionWithCheck = (type: ExperienceSection['type'], planRequired: string) => {
+  const handleAddSectionWithCheck = (type: SeccionExperiencia['type'], planRequired: string) => {
     if (planRequired === 'medium' && isBasic) {
       toast.error('🔒 Esta sección requiere Plan Medio o Plan Máximo.');
       return;
@@ -1005,7 +1005,7 @@ export default function Step2Personalizacion({
                                           const file = e.target.files?.[0];
                                           if (!file) return;
                                           try {
-                                            const dataUrl = await compressImage(file, 1200, 1200, 0.8);
+                                            const dataUrl = await comprimirImagen(file, 1200, 1200, 0.8);
                                             setScratchUltrasoundUrl && setScratchUltrasoundUrl(dataUrl);
                                             toast.success('Foto de ecografía cargada con éxito ✨');
                                           } catch {
@@ -1444,7 +1444,7 @@ export default function Step2Personalizacion({
                             <label className="block text-[9px] font-bold text-gray-500 uppercase mb-2">
                               🎨 Estilo de Diseño de {isPremium ? 'la Primera Galería' : 'la Galería'}
                             </label>
-                            <PhotoStyleSelector
+                            <SelectorEstiloFoto
                               selectedPlan={selectedPlan}
                               selectedStyle={photoStyle}
                               onSelectStyle={setPhotoStyle}
@@ -1524,7 +1524,7 @@ export default function Step2Personalizacion({
                             <label className="block text-[9px] font-bold text-teal-900 uppercase mb-2">
                               🎨 Estilo de Diseño de la Segunda Galería
                             </label>
-                            <PhotoStyleSelector
+                            <SelectorEstiloFoto
                               selectedPlan={selectedPlan}
                               selectedStyle={secondaryPhotoStyle || 'collage'}
                               onSelectStyle={(st) => setSecondaryPhotoStyle && setSecondaryPhotoStyle(st)}
@@ -1963,3 +1963,5 @@ export default function Step2Personalizacion({
     </div>
   );
 }
+
+export const Paso2Personalizacion = Step2Personalizacion;

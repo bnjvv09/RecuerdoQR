@@ -31,4 +31,10 @@ export interface CustomColors {
   surpriseBg?: string;
 }
 
+export type EntradaFoto = PhotoInput;
+export type EntradaHito = MilestoneInput;
+export type SeccionExperiencia = ExperienceSection;
+export type ColoresPersonalizados = CustomColors;
+
+
 

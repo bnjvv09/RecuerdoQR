@@ -2,39 +2,39 @@
 
 import React, { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { usePersonalizarForm } from '@/components/personalizar/usePersonalizarForm';
+import { usarFormularioPersonalizar } from '@/components/personalizar/usarFormularioPersonalizar';
 import dynamic from 'next/dynamic';
-import Step1Tematica from '@/components/personalizar/Step1Tematica';
-import Step2Plan from '@/components/personalizar/Step2Plan';
+import Paso1Tematica from '@/components/personalizar/Paso1Tematica';
+import Paso2Plan from '@/components/personalizar/Paso2Plan';
 
-const Step2Personalizacion = dynamic(() => import('@/components/personalizar/Step2Personalizacion'), {
+const Paso2Personalizacion = dynamic(() => import('@/components/personalizar/Paso2Personalizacion'), {
   loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando editor de personalización...</div>,
   ssr: false,
 });
-const Step4Preview = dynamic(() => import('@/components/personalizar/Step4Preview'), {
+const Paso4VistaPrevia = dynamic(() => import('@/components/personalizar/Paso4VistaPrevia'), {
   loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Preparando vista previa...</div>,
   ssr: false,
 });
-const Step4TarjetaRegalo = dynamic(() => import('@/components/personalizar/Step4TarjetaRegalo'), {
+const Paso4TarjetaRegalo = dynamic(() => import('@/components/personalizar/Paso4TarjetaRegalo'), {
   loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando tarjeta de regalo...</div>,
   ssr: false,
 });
-const Step4Checkout = dynamic(() => import('@/components/personalizar/Step4Checkout'), {
+const Paso4Pago = dynamic(() => import('@/components/personalizar/Paso4Pago'), {
   loading: () => <div className="p-12 text-center text-xs text-gray-400 animate-pulse">Cargando pasarela de pago...</div>,
   ssr: false,
 });
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { uploadImage } from '@/lib/upload';
-import { compressImageToFile } from '@/lib/imageCompression';
-import { createOrder, createExperience, redeemCoupon } from '@/lib/db';
-import { sanitizeText, sanitizeObject } from '@/lib/sanitize';
+import { subirImagen } from '@/lib/subida';
+import { comprimirImagenAArchivo } from '@/lib/compresionImagenes';
+import { crearPedido, crearExperiencia, canjearCupon } from '@/lib/bd';
+import { sanitizarTexto, sanitizarObjeto } from '@/lib/sanitizar';
 import { toast } from 'sonner';
 
 function PersonalizarContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const form = usePersonalizarForm(
+  const form = usarFormularioPersonalizar(
     searchParams.get('plan') || undefined,
     searchParams.get('theme') || undefined
   );
@@ -52,6 +52,7 @@ function PersonalizarContent() {
     if (statusParam === 'failure' || statusParam === 'pending') {
       toast.info('Regresaste al resumen de pago. Puedes modificar lo que desees o volver a pagar cuando estés listo.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepParam, statusParam]);
 
   const handleNextStep = () => {
@@ -90,14 +91,14 @@ function PersonalizarContent() {
 
     try {
       // Sanitizar datos del cliente
-      const cleanCustomerName = sanitizeText(form.customerName);
-      const cleanCustomerEmail = sanitizeText(form.customerEmail).toLowerCase();
-      const cleanCustomerPhone = sanitizeText(form.customerPhone);
-      const cleanDeliveryAddress = sanitizeText(form.deliveryAddress);
+      const cleanCustomerName = sanitizarTexto(form.customerName);
+      const cleanCustomerEmail = sanitizarTexto(form.customerEmail).toLowerCase();
+      const cleanCustomerPhone = sanitizarTexto(form.customerPhone);
+      const cleanDeliveryAddress = sanitizarTexto(form.deliveryAddress);
 
       // Sanitizar textos de personalización
-      const cleanPartner = sanitizeText(form.partnerName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'amor';
-      const cleanUser = sanitizeText(form.userName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'pareja';
+      const cleanPartner = sanitizarTexto(form.partnerName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'amor';
+      const cleanUser = sanitizarTexto(form.userName).toLowerCase().replace(/[^a-z0-9]/g, '') || 'pareja';
       const slug = `${cleanPartner}-${cleanUser}-${Math.floor(100 + Math.random() * 900)}`;
 
       // 🚀 UPLOAD ULTRA-RÁPIDO EN PARALELO SIMULTÁNEO (con compresión previa)
@@ -106,22 +107,22 @@ function PersonalizarContent() {
         Promise.all(
           form.photos.map(async (p) => {
             if (p.file) {
-              const fileToUpload = await compressImageToFile(p.file);
-              const publicUrl = await uploadImage(fileToUpload, slug);
-              return { url: publicUrl, caption: sanitizeText(p.caption) };
+              const fileToUpload = await comprimirImagenAArchivo(p.file);
+              const publicUrl = await subirImagen(fileToUpload, slug);
+              return { url: publicUrl, caption: sanitizarTexto(p.caption) };
             }
-            return { url: p.previewUrl, caption: sanitizeText(p.caption) };
+            return { url: p.previewUrl, caption: sanitizarTexto(p.caption) };
           })
         ),
         // 2. Fotos secundarias en paralelo con compresión previa
         Promise.all(
           form.secondaryPhotos.map(async (p) => {
             if (p.file) {
-              const fileToUpload = await compressImageToFile(p.file);
-              const publicUrl = await uploadImage(fileToUpload, `${slug}-sec`);
-              return { url: publicUrl, caption: sanitizeText(p.caption) };
+              const fileToUpload = await comprimirImagenAArchivo(p.file);
+              const publicUrl = await subirImagen(fileToUpload, `${slug}-sec`);
+              return { url: publicUrl, caption: sanitizarTexto(p.caption) };
             }
-            return { url: p.previewUrl, caption: sanitizeText(p.caption) };
+            return { url: p.previewUrl, caption: sanitizarTexto(p.caption) };
           })
         ),
         // 3. Hitos (Timeline) en paralelo
@@ -129,26 +130,26 @@ function PersonalizarContent() {
           form.milestones.map(async (m) => {
             let imgUrl = m.previewUrl || '';
             if (m.image) {
-              const fileToUpload = await compressImageToFile(m.image);
-              imgUrl = await uploadImage(fileToUpload, `${slug}-hito`);
+              const fileToUpload = await comprimirImagenAArchivo(m.image);
+              imgUrl = await subirImagen(fileToUpload, `${slug}-hito`);
             }
             return {
-              title: sanitizeText(m.title),
+              title: sanitizarTexto(m.title),
               date: m.date,
-              description: sanitizeText(m.description),
+              description: sanitizarTexto(m.description),
               image_url: imgUrl,
             };
           })
         ),
         // 4. Nota de voz
-        form.voiceNoteFile ? uploadImage(form.voiceNoteFile, slug) : Promise.resolve(''),
+        form.voiceNoteFile ? subirImagen(form.voiceNoteFile, slug) : Promise.resolve(''),
         // 5. Video subido
-        form.uploadedVideoFile ? uploadImage(form.uploadedVideoFile, slug) : Promise.resolve(form.youtubeVideoUrl || '')
+        form.uploadedVideoFile ? subirImagen(form.uploadedVideoFile, slug) : Promise.resolve(form.youtubeVideoUrl || '')
       ]);
 
       // Create Order
       const finalAmount = finalDiscountPrice !== undefined ? finalDiscountPrice : form.totalPrice;
-      const newOrder = await createOrder({
+      const newOrder = await crearPedido({
         product_id: form.selectedPlan,
         customer_name: cleanCustomerName,
         customer_email: cleanCustomerEmail,
@@ -185,7 +186,7 @@ function PersonalizarContent() {
       });
 
       // Create Experience in DB
-      await createExperience(
+      await crearExperiencia(
         {
           order_id: newOrder.id,
           slug,
@@ -258,7 +259,7 @@ function PersonalizarContent() {
 
       if (couponCode) {
         try {
-          await redeemCoupon(couponCode);
+          await canjearCupon(couponCode);
         } catch (cErr) {
           console.warn('Error redeeming coupon:', cErr);
         }
@@ -380,7 +381,7 @@ function PersonalizarContent() {
         
         {/* Step 1: Theme Selection */}
         {form.step === 1 && (
-          <Step1Tematica
+          <Paso1Tematica
             themes={form.themes}
             selectedTheme={form.selectedTheme}
             setSelectedTheme={form.setSelectedTheme}
@@ -389,7 +390,7 @@ function PersonalizarContent() {
 
         {/* Step 2: Plan Selection */}
         {form.step === 2 && (
-          <Step2Plan
+          <Paso2Plan
             products={form.products}
             selectedPlan={form.selectedPlan}
             setSelectedPlan={form.setSelectedPlan}
@@ -399,7 +400,7 @@ function PersonalizarContent() {
 
         {/* Step 3: Web Content & Sections */}
         {form.step === 3 && (
-          <Step2Personalizacion
+          <Paso2Personalizacion
             selectedPlan={form.selectedPlan}
             selectedTheme={form.selectedTheme}
             voiceNoteFile={form.voiceNoteFile}
@@ -531,7 +532,7 @@ function PersonalizarContent() {
 
         {/* Step 4: Live Web Preview & Visual Styling (Colors & Fonts) */}
         {form.step === 4 && (
-          <Step4Preview
+          <Paso4VistaPrevia
             selectedTheme={form.selectedTheme}
             selectedPlan={form.selectedPlan}
             secondaryPhotoStyle={form.secondaryPhotoStyle}
@@ -598,7 +599,7 @@ function PersonalizarContent() {
 
         {/* Step 5: Gift Card Customization */}
         {form.step === 5 && (
-          <Step4TarjetaRegalo
+          <Paso4TarjetaRegalo
             selectedPlan={form.selectedPlan}
             selectedCharacter={form.selectedCharacter}
             setSelectedCharacter={form.setSelectedCharacter}
@@ -622,7 +623,7 @@ function PersonalizarContent() {
 
         {/* Step 6: Checkout and Payment */}
         {form.step === 6 && (
-          <Step4Checkout
+          <Paso4Pago
             currentProduct={form.currentProduct}
             selectedPlan={form.selectedPlan}
             totalPrice={form.totalPrice}

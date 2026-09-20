@@ -30,10 +30,10 @@ import {
   Feather,
   Layers
 } from 'lucide-react';
-import PhotoGallery from '@/components/gallery/PhotoGallery';
-import { PhotoStyle } from '@/types/gallery';
-import { FONT_OPTIONS, getFontFamily } from '@/lib/fonts';
-import { PhotoInput, MilestoneInput, ExperienceSection, CustomColors } from './types';
+import GaleriaFotos from '@/components/gallery/GaleriaFotos';
+import { EstiloFoto } from '@/types/galeria';
+import { OPCIONES_FUENTES, obtenerFamiliaFuente } from '@/lib/fuentes';
+import { EntradaFoto, EntradaHito, SeccionExperiencia, ColoresPersonalizados } from './tipos';
 import confetti from 'canvas-confetti';
 
 const COLOR_PRESETS = [
@@ -68,7 +68,7 @@ const DEDICATION_STYLES = [
 interface Step4PreviewProps {
   selectedTheme: string;
   selectedPlan?: string;
-  secondaryPhotoStyle?: PhotoStyle | null;
+  secondaryPhotoStyle?: EstiloFoto | null;
   enableDualPhotoStyle?: boolean;
   partnerName: string;
   userName: string;
@@ -120,14 +120,14 @@ interface Step4PreviewProps {
   reconciliationPromise?: string;
   customFont: string;
   setCustomFont?: (font: string) => void;
-  customColors: CustomColors;
-  setCustomColors?: (colors: CustomColors) => void;
-  photoStyle: PhotoStyle;
+  customColors: ColoresPersonalizados;
+  setCustomColors?: (colors: ColoresPersonalizados) => void;
+  photoStyle: EstiloFoto;
   specialPlaceAddress?: string;
-  sections: ExperienceSection[];
-  photos: PhotoInput[];
-  secondaryPhotos?: PhotoInput[];
-  milestones: MilestoneInput[];
+  sections: SeccionExperiencia[];
+  photos: EntradaFoto[];
+  secondaryPhotos?: EntradaFoto[];
+  milestones: EntradaHito[];
 }
 
 export default function Step4Preview({
@@ -193,7 +193,7 @@ export default function Step4Preview({
   secondaryPhotos = [],
   milestones,
 }: Step4PreviewProps) {
-  const activeFontFamily = getFontFamily(customFont);
+  const activeFontFamily = obtenerFamiliaFuente(customFont);
   const [fontCategory, setFontCategory] = useState<'all' | 'Cursiva' | 'Elegante' | 'Moderna'>('all');
 
   // Progressive Sequential States for Themes
@@ -1270,7 +1270,7 @@ export default function Step4Preview({
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-60 overflow-y-auto pr-1">
-              {FONT_OPTIONS.filter(f => fontCategory === 'all' || f.category === fontCategory).map((font) => {
+              {OPCIONES_FUENTES.filter(f => fontCategory === 'all' || f.category === fontCategory).map((font) => {
                 const isSelected = customFont === font.id;
                 return (
                   <button
@@ -1577,7 +1577,7 @@ export default function Step4Preview({
                             📸 Sube fotos para tu segunda galería en el Paso 3.
                           </div>
                         ) : (
-                          <PhotoGallery
+                          <GaleriaFotos
                             photos={currentGalleryPhotos.map(p => ({ url: p.previewUrl, caption: p.caption }))}
                             style={isSecondGallery && secondaryPhotoStyle ? secondaryPhotoStyle : photoStyle}
                             secondaryStyle={null}
@@ -1912,3 +1912,5 @@ export default function Step4Preview({
     </div>
   );
 }
+
+export const Paso4VistaPrevia = Step4Preview;

@@ -1,6 +1,6 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { sendCustomerConfirmationEmail } from '@/lib/emailService';
+import { enviarEmailConfirmacionCliente } from '@/lib/servicioEmail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       const latestOrder = orders[0];
       const latestExp = experiences.find((e) => e.order_id === latestOrder.id) || experiences[0];
       if (latestExp) {
-        sendCustomerConfirmationEmail({
+        enviarEmailConfirmacionCliente({
           orderId: latestOrder.id,
           customerName: latestOrder.customer_name,
           customerEmail: latestOrder.customer_email,

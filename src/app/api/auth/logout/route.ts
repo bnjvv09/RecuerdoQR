@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { handleApiError } from '@/lib/errors';
+import { manejarErrorApi } from '@/lib/errores';
 
 export async function POST() {
   try {
@@ -9,6 +9,6 @@ export async function POST() {
     response.cookies.delete('sb-access-token');
     return response;
   } catch (error) {
-    return handleApiError(error);
+    return manejarErrorApi(error);
   }
 }

@@ -1,6 +1,6 @@
 import { supabase, isMockMode } from './supabase';
 
-export interface Product {
+export interface Producto {
   id: string;
   name: string;
   price: number;
@@ -9,8 +9,9 @@ export interface Product {
   badge?: string;
   features: string[];
 }
+export type Product = Producto;
 
-export interface SiteSettings {
+export interface ConfigSitio {
   id?: string;
   support_email: string;
   support_phone: string;
@@ -24,8 +25,9 @@ export interface SiteSettings {
   whatsapp_url?: string;
   whatsapp_message?: string;
 }
+export type SiteSettings = ConfigSitio;
 
-export interface Coupon {
+export interface Cupon {
   id: string;
   code: string;
   discount_type: 'percent' | 'fixed';
@@ -35,8 +37,9 @@ export interface Coupon {
   is_active: boolean;
   created_at: string;
 }
+export type Coupon = Cupon;
 
-export interface Order {
+export interface Pedido {
   id: string;
   product_id: string;
   status: 'pending' | 'paid' | 'in_preparation' | 'ready' | 'shipped' | 'completed';
@@ -47,18 +50,20 @@ export interface Order {
   total: number;
   payment_id?: string;
   created_at: string;
-  product?: Product;
+  product?: Producto;
 }
+export type Order = Pedido;
 
-export interface Photo {
+export interface Foto {
   id: string;
   experience_id: string;
   url: string;
   caption?: string;
   order_index: number;
 }
+export type Photo = Foto;
 
-export interface Milestone {
+export interface Hito {
   id: string;
   experience_id: string;
   title: string;
@@ -67,15 +72,17 @@ export interface Milestone {
   image_url?: string;
   order_index: number;
 }
+export type Milestone = Hito;
 
-export interface ExperienceSection {
+export interface SeccionExperiencia {
   id: string;
   type: 'portada' | 'carta' | 'galeria' | 'timeline' | 'musica' | 'video' | 'audio' | 'tematica' | 'pregunta' | 'contador' | 'secreto' | 'sorpresa' | 'lugar' | 'corazones';
   title?: string;
   content: any;
 }
+export type ExperienceSection = SeccionExperiencia;
 
-export interface ExperienceConfig {
+export interface ConfigExperiencia {
   selectedPlan?: string;
   selectedTheme?: string;
   primaryColor?: string;
@@ -129,8 +136,9 @@ export interface ExperienceConfig {
   customQuoteAuthor?: string;
   [key: string]: any;
 }
+export type ExperienceConfig = ConfigExperiencia;
 
-export interface Experience {
+export interface Experiencia {
   id: string;
   order_id?: string;
   slug: string;
@@ -142,14 +150,15 @@ export interface Experience {
   history_text: string;
   song_url?: string;
   theme?: string;
-  config?: ExperienceConfig;
+  config?: ConfigExperiencia;
   created_at: string;
-  photos?: Photo[];
-  milestones?: Milestone[];
-  sections?: ExperienceSection[];
+  photos?: Foto[];
+  milestones?: Hito[];
+  sections?: SeccionExperiencia[];
 }
+export type Experience = Experiencia;
 
-export interface Theme {
+export interface Tema {
   id: string;
   name: string;
   description: string;
@@ -157,6 +166,7 @@ export interface Theme {
   config: any;
   created_at?: string;
 }
+export type Theme = Tema;
 
 // Default static products to seed or use in mock mode
 const DEFAULT_PRODUCTS: Product[] = [
@@ -205,7 +215,7 @@ const DEFAULT_PRODUCTS: Product[] = [
   }
 ];
 
-export const DEFAULT_SETTINGS: SiteSettings = {
+export const CONFIG_SITIO_PREDETERMINADA: ConfigSitio = {
   support_email: 'soporte@recuerdoqr.cl',
   support_phone: '+56 9 1234 5678',
   support_address: 'Santiago, Región Metropolitana, Chile',
@@ -229,6 +239,7 @@ Si por alguna razón tu experiencia digital no te enamora al 100% o tienes cualq
   instagram_url: 'https://instagram.com',
   tiktok_url: 'https://tiktok.com',
 };
+export const DEFAULT_SETTINGS = CONFIG_SITIO_PREDETERMINADA;
 
 // Helper to interact with Mock Data in LocalStorage (client-side only)
 const getLocalData = <T>(key: string, defaultValue: T): T => {
@@ -1111,13 +1122,15 @@ export async function getCreatedExperiencesCount(): Promise<number> {
 }
 
 // 4. COUPONS
-export const DEFAULT_COUPONS: Coupon[] = [
+export const CUPONES_PREDETERMINADOS: Cupon[] = [
   { id: 'c1', code: 'AMOR10', discount_type: 'percent', discount_value: 10, is_active: true, created_at: new Date().toISOString() },
   { id: 'c2', code: 'AMOR2000', discount_type: 'fixed', discount_value: 2000, is_active: true, created_at: new Date().toISOString() },
   { id: 'c3', code: 'TIKTOK15', discount_type: 'percent', discount_value: 15, is_active: true, created_at: new Date().toISOString() },
 ];
+export const DEFAULT_COUPONS = CUPONES_PREDETERMINADOS;
 
-export const LAUNCH_PROMO_CODE = '__SYS_LAUNCH_PROMO__';
+export const CODIGO_PROMO_LANZAMIENTO = '__SYS_LAUNCH_PROMO__';
+export const LAUNCH_PROMO_CODE = CODIGO_PROMO_LANZAMIENTO;
 
 export async function getCoupons(includeSystem: boolean = false): Promise<Coupon[]> {
   let allCoupons: Coupon[] = [];
@@ -1344,7 +1357,7 @@ export async function redeemCoupon(code: string): Promise<boolean> {
 }
 
 // 5. AUTOMATIC MULTI-PLAN LAUNCH PROMO SYSTEM (No Coupons Required for Customers)
-export interface PlanPromoConfig {
+export interface ConfigPromocionPlan {
   planId: string; // 'basic' | 'medium' | 'premium'
   isActive: boolean;
   promoPrice: number;
@@ -1354,14 +1367,17 @@ export interface PlanPromoConfig {
   remainingSlots: number;
   badgeText: string;
 }
+export type PlanPromoConfig = ConfigPromocionPlan;
 
-export type PlanPromosMap = Record<string, PlanPromoConfig>;
+export type MapaPromocionesPlanes = Record<string, ConfigPromocionPlan>;
+export type PlanPromosMap = MapaPromocionesPlanes;
 
-export const PLAN_PROMO_CODES: Record<string, string> = {
+export const CODIGOS_PROMO_PLANES: Record<string, string> = {
   basic: '__SYS_PROMO_BASIC__',
   medium: '__SYS_PROMO_MEDIUM__',
   premium: '__SYS_PROMO_PREMIUM__',
 };
+export const PLAN_PROMO_CODES = CODIGOS_PROMO_PLANES;
 
 const DEFAULT_PLAN_CONFIGS: Record<string, { regularPrice: number; promoPrice: number; totalSlots: number; defaultActive: boolean }> = {
   basic: { regularPrice: 4990, promoPrice: 3990, totalSlots: 10, defaultActive: false },
@@ -1534,5 +1550,43 @@ export async function updateLaunchPromo(config: {
 export async function recordLaunchPromoSale(): Promise<void> {
   return recordPlanPromoSale('premium');
 }
+
+// ==========================================
+// ALIASES EN ESPAÑOL DE TODAS LAS FUNCIONES
+// ==========================================
+export const obtenerProductos = getProducts;
+export const actualizarProducto = updateProduct;
+export const actualizarPrecioProducto = updateProductPrice;
+export const obtenerConfigSitio = getSiteSettings;
+export const actualizarConfigSitio = updateSiteSettings;
+export const obtenerPedidos = getOrders;
+export const crearPedido = createOrder;
+export const actualizarEstadoPedido = updateOrderStatus;
+export const actualizarPagoPedido = updateOrderPayment;
+export const obtenerPedidoPorId = getOrderById;
+export const obtenerExperienciaPorPedidoId = getExperienceByOrderId;
+export const asegurarSeccionesExperiencia = ensureExperienceSections;
+export const obtenerExperienciaPorSlug = getExperienceBySlug;
+export const crearExperiencia = createExperience;
+export const obtenerExperiencias = getExperiences;
+export const eliminarExperiencia = deleteExperience;
+export const obtenerTemas = getThemes;
+export const actualizarTema = updateTheme;
+export const actualizarTemaExperiencia = updateExperienceTheme;
+export const obtenerConteoExperienciasCreadas = getCreatedExperiencesCount;
+export const obtenerCupones = getCoupons;
+export const crearCupon = createCoupon;
+export const eliminarCupon = deleteCoupon;
+export const alternarCupon = toggleCoupon;
+export const validarCupon = validateCoupon;
+export const canjearCupon = redeemCoupon;
+export const obtenerPromocionesPlan = getPlanPromos;
+export const actualizarPromocionPlan = updatePlanPromo;
+export const registrarVentaPromocionPlan = recordPlanPromoSale;
+export const obtenerPromocionLanzamiento = getLaunchPromo;
+export const actualizarPromocionLanzamiento = updateLaunchPromo;
+export const registrarVentaPromocionLanzamiento = recordLaunchPromoSale;
+export type ConfigPromocionLanzamiento = LaunchPromoConfig;
+
 
 

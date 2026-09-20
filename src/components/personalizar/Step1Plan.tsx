@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Product } from '@/lib/db';
+import { Producto } from '@/lib/bd';
 import { Check, CheckCircle2 } from 'lucide-react';
 
 interface Step1PlanProps {
-  products: Product[];
+  products: Producto[];
   selectedPlan: string;
   setSelectedPlan: (id: string) => void;
 }

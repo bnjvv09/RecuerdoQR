@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAdminStore } from '@/lib/store';
-import { Theme, updateTheme } from '@/lib/db';
+import { usarTiendaAdmin } from '@/lib/tienda';
+import { Tema, actualizarTema } from '@/lib/bd';
 import { Palette, Check, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminThemesPanel() {
-  const { themes, setThemes } = useAdminStore();
+  const { themes, setThemes } = usarTiendaAdmin();
   const [editingThemeId, setEditingThemeId] = useState<string | null>(null);
   const [themeName, setThemeName] = useState('');
   const [themeDesc, setThemeDesc] = useState('');
 
-  const handleStartEdit = (t: Theme) => {
+  const handleStartEdit = (t: Tema) => {
     setEditingThemeId(t.id);
     setThemeName(t.name);
     setThemeDesc(t.description);
@@ -21,7 +21,7 @@ export default function AdminThemesPanel() {
   const handleSaveTheme = async (id: string) => {
     const t = themes.find(item => item.id === id);
     try {
-      await updateTheme(id, t?.is_active ?? true, themeName, themeDesc);
+      await actualizarTema(id, t?.is_active ?? true, themeName, themeDesc);
       setThemes(themes.map(item => item.id === id ? { ...item, name: themeName, description: themeDesc } : item));
       setEditingThemeId(null);
       toast.success('Temática actualizada exitosamente');
@@ -30,10 +30,10 @@ export default function AdminThemesPanel() {
     }
   };
 
-  const handleToggleTheme = async (t: Theme) => {
+  const handleToggleTheme = async (t: Tema) => {
     const nextActive = !t.is_active;
     try {
-      await updateTheme(t.id, nextActive);
+      await actualizarTema(t.id, nextActive);
       setThemes(themes.map(item => item.id === t.id ? { ...item, is_active: nextActive } : item));
       toast.success(`Temática ${nextActive ? 'activada' : 'desactivada'}`);
     } catch (err: any) {
@@ -130,3 +130,5 @@ export default function AdminThemesPanel() {
     </div>
   );
 }
+
+export const AdminPanelTemas = AdminThemesPanel;

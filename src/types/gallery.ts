@@ -22,3 +22,8 @@ export interface PhotoGalleryProps {
   onPhotoClick?: (index: number) => void;
   className?: string;
 }
+
+export type EstiloFoto = PhotoStyle;
+export type ElementoFoto = PhotoItem;
+export type PropsGaleriaFotos = PhotoGalleryProps;
+

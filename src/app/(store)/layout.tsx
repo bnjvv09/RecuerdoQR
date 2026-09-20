@@ -1,6 +1,6 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import WhatsAppFloatingButton from '@/components/common/WhatsAppFloatingButton';
+import BarraNavegacion from '@/components/BarraNavegacion';
+import PieDePagina from '@/components/PieDePagina';
+import BotonFlotanteWhatsApp from '@/components/common/BotonFlotanteWhatsApp';
 
 export default function StoreLayout({
   children,
@@ -9,10 +9,10 @@ export default function StoreLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <BarraNavegacion />
       <main className="flex-grow">{children}</main>
-      <Footer />
-      <WhatsAppFloatingButton />
+      <PieDePagina />
+      <BotonFlotanteWhatsApp />
     </div>
   );
 }

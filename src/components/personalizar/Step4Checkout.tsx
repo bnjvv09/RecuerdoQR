@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Product, validateCoupon } from '@/lib/db';
+import { Producto, validarCupon } from '@/lib/bd';
 import { ShieldCheck, Lock, RefreshCw, CheckCircle2, AlertCircle, Sparkles, Ticket } from 'lucide-react';
-import { validateChileanPhone, validateEmailSyntaxAndDomain } from '@/lib/validationHelpers';
+import { validarTelefonoChileno, validarSintaxisYDominioEmail } from '@/lib/ayudantesValidacion';
 import { toast } from 'sonner';
 
 interface Step4CheckoutProps {
-  currentProduct?: Product;
+  currentProduct?: Producto;
   selectedPlan: string;
   totalPrice: number;
   partnerName: string;
@@ -80,7 +80,7 @@ export default function Step4Checkout({
     if (!couponInput.trim()) return;
     setCouponLoading(true);
     try {
-      const result = await validateCoupon(couponInput);
+      const result = await validarCupon(couponInput);
       if (result.valid && result.discount_value) {
         const type = result.discount_type || 'percent';
         setAppliedCoupon({ 
@@ -106,12 +106,12 @@ export default function Step4Checkout({
   // Validaciones instantáneas del lado del cliente
   const phoneValidation = useMemo(() => {
     if (!phoneDigits) return { valid: false, error: 'Ingresa los 9 dígitos de tu celular (ej. 9 4452 6132)' };
-    return validateChileanPhone(phoneDigits);
+    return validarTelefonoChileno(phoneDigits);
   }, [phoneDigits]);
 
   const clientEmailValidation = useMemo(() => {
     if (!customerEmail.trim()) return { valid: false, error: 'Ingresa tu correo electrónico' };
-    return validateEmailSyntaxAndDomain(customerEmail);
+    return validarSintaxisYDominioEmail(customerEmail);
   }, [customerEmail]);
 
   const nameValidation = useMemo(() => {
@@ -165,7 +165,7 @@ export default function Step4Checkout({
   // Validar email en el servidor con registros MX y typos
   const validateEmailServer = useCallback(async (emailToTest: string) => {
     const trimmed = emailToTest.trim();
-    const localCheck = validateEmailSyntaxAndDomain(trimmed);
+    const localCheck = validarSintaxisYDominioEmail(trimmed);
     if (!localCheck.valid) {
       setServerEmailStatus({ loading: false, valid: false, error: localCheck.error });
       return;
@@ -601,3 +601,5 @@ export default function Step4Checkout({
     </form>
   );
 }
+
+export const Paso4Pago = Step4Checkout;

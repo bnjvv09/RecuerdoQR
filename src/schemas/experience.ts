@@ -40,3 +40,9 @@ export const experienceCreateSchema = z.object({
 });
 
 export type ExperienceCreateInput = z.infer<typeof experienceCreateSchema>;
+
+export const esquemaFoto = photoItemSchema;
+export const esquemaHito = milestoneItemSchema;
+export const esquemaCrearExperiencia = experienceCreateSchema;
+export type EntradaCrearExperiencia = ExperienceCreateInput;
+

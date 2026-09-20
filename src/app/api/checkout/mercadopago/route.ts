@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rateLimit';
-import { sanitizeText } from '@/lib/sanitize';
+import { verificarLimitePeticiones } from '@/lib/limitePeticiones';
+import { sanitizarTexto } from '@/lib/sanitizar';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { getPlanPromos } from '@/lib/db';
+import { obtenerPromocionesPlan } from '@/lib/bd';
 
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
-    const rateCheck = checkRateLimit(`checkout-${ip}`, 10, 60 * 1000);
+    const rateCheck = verificarLimitePeticiones(`checkout-${ip}`, 10, 60 * 1000);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: 'Demasiadas solicitudes. Por favor espera un minuto antes de reintentar.' },
@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const orderId = sanitizeText(body.orderId);
-    const customerEmail = sanitizeText(body.customerEmail).toLowerCase();
+    const orderId = sanitizarTexto(body.orderId);
+    const customerEmail = sanitizarTexto(body.customerEmail).toLowerCase();
 
     if (!orderId) {
       return NextResponse.json({ error: 'ID de pedido requerido' }, { status: 400 });
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
     // 🔒 SEGURIDAD: Verificar el precio real en la base de datos (NUNCA confiar en body.total)
     const supabase = createServerSupabaseClient();
-    const planPromos = await getPlanPromos();
+    const planPromos = await obtenerPromocionesPlan();
     
     // 1. Buscar la orden real en la base de datos
     const { data: order } = await supabase
