@@ -47,25 +47,6 @@ export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [experiencesCount, setExperiencesCount] = useState<number>(10);
   const [customerReviews, setCustomerReviews] = useState<any[]>([]);
-  const [showExitPopup, setShowExitPopup] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
-
-  useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0) {
-        setShowExitPopup(true);
-        // Remove event listener after triggering once
-        document.removeEventListener('mouseleave', handleMouseLeave);
-      }
-    };
-    
-    // Only add in desktop
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      document.addEventListener('mouseleave', handleMouseLeave);
-    }
-    
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, []);
 
   useEffect(() => {
     obtenerProductos().then(setProducts);
@@ -678,71 +659,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      
-      {/* EXIT INTENT POPUP (Glassmorphism Style) */}
-      <div 
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-all duration-500 ${
-          showExitPopup ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div 
-          className={`glass border border-white rounded-[2.5rem] p-10 max-w-lg w-[90%] mx-auto relative shadow-[0_30px_60px_rgba(0,0,0,0.15)] transition-transform duration-500 ${
-            showExitPopup ? 'scale-100' : 'scale-95'
-          }`}
-        >
-          
-          <button 
-            onClick={() => setShowExitPopup(false)}
-            className="absolute top-6 right-6 w-10 h-10 bg-white/50 hover:bg-white rounded-full flex items-center justify-center text-gray-500 transition shadow-sm"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          
-          <div className="text-center space-y-5">
-            <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-rose-200 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner border border-white">
-              🎁
-            </div>
-            
-            <h3 className="font-serif text-3xl font-black text-gray-900 leading-tight">
-              No dejes pasar el momento.
-            </h3>
-            <p className="text-gray-600 font-light text-sm px-4">
-              Un regalo así se recuerda para toda la vida. Llévate la experiencia completa con un <strong className="text-[#a21232] font-semibold">15% de descuento adicional</strong>, solo por hoy.
-            </p>
-            
-            <div className="bg-white/60 border border-white shadow-inner rounded-2xl p-4 flex items-center justify-between mt-6">
-              <span className="font-mono font-bold text-[#a21232] text-xl tracking-widest pl-2">SORPRESA15</span>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText('SORPRESA15');
-                  setCopiedCode(true);
-                  setTimeout(() => setCopiedCode(false), 2000);
-                }}
-                className={`text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-colors shadow-md ${
-                  copiedCode ? 'bg-emerald-500' : 'bg-gray-900 hover:bg-[#a21232]'
-                }`}
-              >
-                {copiedCode ? '¡COPIADO!' : 'COPIAR'}
-              </button>
-            </div>
-
-            <Link
-              href="/personalizar"
-              onClick={() => setShowExitPopup(false)}
-              className="w-full mt-6 py-4 bg-[#a21232] hover:bg-[#8a0f2a] text-white font-bold rounded-2xl text-sm uppercase tracking-wider shadow-[0_10px_20px_rgba(162,18,50,0.3)] transition-transform hover:-translate-y-0.5 block"
-            >
-              Aplicar Descuento
-            </Link>
-            
-            <button 
-              onClick={() => setShowExitPopup(false)} 
-              className="text-xs text-gray-500 font-medium hover:text-gray-800 pt-3 transition block w-full text-center"
-            >
-              No gracias, no quiero el descuento
-            </button>
-          </div>
-        </div>
-      </div>
       
     </div>
   );
