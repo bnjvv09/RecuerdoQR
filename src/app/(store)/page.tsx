@@ -185,13 +185,14 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[1.05] text-gray-900"
+            className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-tight md:leading-snug text-gray-900"
           >
             Regala una <br className="hidden lg:block"/>
             <span className="relative whitespace-nowrap">
               <span className="relative z-10 text-[#a21232] italic pr-2">experiencia</span>
-              <svg className="absolute -bottom-1 md:-bottom-2 w-full h-3 md:h-4 -z-0 text-rose-200" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 15 100 5 L 100 10 L 0 10 Z" fill="currentColor"/></svg>
-            </span> inolvidable.
+              <svg className="absolute -bottom-0 md:-bottom-1 w-full h-2 md:h-3 -z-0 text-rose-200" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 15 100 5 L 100 10 L 0 10 Z" fill="currentColor"/></svg>
+            </span>
+            <br className="block lg:hidden"/> inolvidable.
           </motion.h1>
           
           <motion.p 
@@ -242,7 +243,7 @@ export default function LandingPage() {
             </div>
             <div className="text-left">
               <div className="flex text-amber-400 text-xs md:text-sm">★★★★★</div>
-              <p className="text-[10px] md:text-xs font-semibold text-gray-700">Más de 3,000 parejas sorprendidas</p>
+              <p className="text-[10px] md:text-xs font-semibold text-gray-700">+{experiencesCount} parejas sorprendidas</p>
             </div>
           </motion.div>
         </div>
