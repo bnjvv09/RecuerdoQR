@@ -7,6 +7,7 @@ export interface Producto {
   description: string;
   subtitle?: string;
   badge?: string;
+  photoBadge?: string;
   features: string[];
 }
 export type Product = Producto;
@@ -174,13 +175,16 @@ const DEFAULT_PRODUCTS: Product[] = [
     id: 'basic',
     name: 'Plan Básico',
     price: 4990,
-    subtitle: 'Hasta 10 Fotos • Polaroid & Collage',
-    description: 'Página web con la interacción clave de Aniversario, 2 estilos de fotos y tarjeta digital con color libre.',
+    subtitle: 'El detalle romántico esencial',
+    photoBadge: '10 Fotos',
+    description: 'Página web con la interacción clave de Declaración de Amor, dedicatoria y tarjeta digital.',
     features: [
-      '⏱️ Contador de amor en tiempo real (años, días, segundos)',
-      '💖 Dedicatoria final con corazón palpitante',
-      '📸 Hasta 10 Fotos en Polaroid y Collage',
-      '🎨 Tarjeta digital con color personalizado'
+      '📸 Hasta 10 Fotos en Polaroid & Collage',
+      '⏱️ Contador de Tiempo en Vivo (Años, meses y días juntos)',
+      '💖 Portada Interactiva con corazón palpitante',
+      '💌 Dedicatoria y Carta personalizada',
+      '🎨 Tarjeta de Regalo con Código QR (Diseño clásico listo para imprimir o enviar)',
+      '📱 Código QR en Alta Calidad activo de por vida'
     ]
   },
   {
@@ -188,29 +192,34 @@ const DEFAULT_PRODUCTS: Product[] = [
     name: 'Plan Medio',
     price: 6990,
     badge: 'Más Recomendado',
-    subtitle: 'Tarjeta 145 Personajes + Música 🎵 + Interacciones Extra',
-    description: 'Nuestra opción más recomendada para Aniversario. Incluye música de fondo, tarjeta con 145 personajes temáticos e interacciones adicionales.',
+    subtitle: 'Música Oficial + 145 Personajes',
+    photoBadge: '20 Fotos',
+    description: 'La opción más recomendada: incluye música de fondo oficial y tarjeta con 145 personajes temáticos.',
     features: [
-      '⏱️ Contador de amor en vivo + Corazones',
-      '✨ Catálogo de 145 Personajes Temáticos a elección',
-      '🔢 Estadísticas divertidas (horas juntos, cafés compartidos)',
-      '🎵 Canción especial de la pareja de fondo (YouTube)',
-      '💌 Carta de aniversario interactiva',
-      '📸 Hasta 20 Fotos en HD'
+      '✓ Todo lo incluido en el Plan Básico',
+      '📸 Hasta 20 Fotos en HD (6 estilos de galería a elección)',
+      '🎵 Música Personalizada (Banda Sonora Oficial sin anuncios)',
+      '🔢 Estadísticas de la Pareja / Momentos Compartidos',
+      '💌 Carta de Dedicatoria Interactiva',
+      '✨ Tarjeta de Regalo con Código QR (Catálogo de 145 Personajes para imprimir o regalar)'
     ]
   },
   {
     id: 'premium',
     name: 'Plan Máximo',
-    price: 7990,
-    subtitle: '🎙️ Nota de Voz Real + 🎬 Video Directo + 35 Fotos 👑',
-    description: 'La experiencia definitiva de Aniversario: tu nota de voz grabada estilo WhatsApp, subida de video directo, combina 2 estilos de fotos, línea de tiempo y rincón secreto.',
+    price: 8990,
+    badge: 'Experiencia Pro',
+    subtitle: 'Nota de Voz + Video + 40 Fotos 👑',
+    photoBadge: '40 Fotos Dual',
+    description: 'La experiencia definitiva: nota de voz grabada estilo WhatsApp, video HD, línea de tiempo y rincón secreto.',
     features: [
-      '⏱️ Contador + Estadísticas + 🎵 Música + 💌 Carta',
-      '✨ Incluye los 145 Personajes Temáticos',
-      '✨ Línea de tiempo de hitos con fotos y fechas',
-      '📍 Mapa interactivo del lugar donde se conocieron',
-      '📸 Hasta 35 Fotos (combina 2 estilos juntos)'
+      '✓ Todo lo incluido en el Plan Medio',
+      '📸 Hasta 40 Fotos en HD (Combina 2 galerías distintas juntas)',
+      '🎙️ Nota de Voz Real de WhatsApp (Grabada con micrófono en vivo)',
+      '🎬 Video Dedicado en HD (Subida directa de video)',
+      '⏳ Línea de Tiempo Histórica (Hitos con fotos y fechas especiales)',
+      '📍 Mapa Interactivo del lugar especial donde se conocieron',
+      '🔒 Rincón Secreto Protegido con PIN de 4 dígitos'
     ]
   }
 ];

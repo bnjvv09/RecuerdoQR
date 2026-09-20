@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { obtenerProductos, Producto, obtenerTemas, Tema, obtenerConteoExperienciasCreadas } from '@/lib/bd';
+import { obtenerProductos, Producto, obtenerTemas, Tema, obtenerConteoExperienciasCreadas, obtenerPromocionesPlan, MapaPromocionesPlanes } from '@/lib/bd';
 import { 
   Heart, 
   QrCode, 
@@ -24,6 +24,8 @@ import {
   CreditCard,
   Send,
   Check,
+  CheckCircle2,
+  Image as ImageIcon,
   Cake,
   Mail,
   Baby,
@@ -40,6 +42,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Producto[]>([]);
   const [themes, setThemes] = useState<Tema[]>([]);
+  const [planPromos, setPlanPromos] = useState<MapaPromocionesPlanes>({});
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [experiencesCount, setExperiencesCount] = useState<number>(10);
   const [customerReviews, setCustomerReviews] = useState<any[]>([]);
@@ -48,6 +51,7 @@ export default function LandingPage() {
     obtenerProductos().then(setProducts);
     obtenerTemas().then(data => setThemes(data.filter(t => t.is_active)));
     obtenerConteoExperienciasCreadas().then(setExperiencesCount).catch(() => setExperiencesCount(10));
+    obtenerPromocionesPlan().then(setPlanPromos).catch(() => {});
 
     try {
       const stored = JSON.parse(localStorage.getItem('recuerdo_customer_reviews') || '[]');
@@ -436,58 +440,100 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
-            {products.map((product) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, scale: 0.96 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className={`bg-white rounded-3xl p-8 border ${
-                  product.badge || product.id === 'medium' || product.id === 'card'
-                    ? 'border-[#a21232] shadow-xl relative scale-105 md:-translate-y-1.5 z-10' 
-                    : 'border-rose-100 shadow-md'
-                } flex flex-col justify-between`}
-              >
-                {(product.badge || product.id === 'medium' || product.id === 'card') && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#a21232] text-white text-[9px] font-extrabold tracking-widest rounded-full uppercase shadow-md">
-                    {product.badge || 'Más Popular'}
-                  </span>
-                )}
-
-                <div>
-                  <h3 className="font-serif text-xl font-bold text-gray-900 mb-1">{product.name}</h3>
-                  
-                  <div className="flex items-baseline gap-1.5 my-4">
-                    <span className="text-3xl font-extrabold text-gray-900">
-                      ${Number(product.price).toLocaleString('es-CL')}
-                    </span>
-                    <span className="text-xs text-gray-400 font-semibold uppercase">CLP</span>
-                  </div>
-
-                  <p className="text-xs text-gray-400 mb-6 font-light leading-relaxed">{product.description}</p>
-                  
-                  <ul className="space-y-3.5 mb-8 border-t border-rose-50 pt-6">
-                    {product.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-2 text-xs text-gray-600">
-                        <Check className="w-4 h-4 text-[#a21232] shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Link
-                  href={`/personalizar?plan=${product.id}`}
-                  className={`w-full py-3.5 text-center text-xs font-bold rounded-xl transition shadow-sm ${
-                    product.id === 'medium' || product.id === 'card'
-                      ? 'bg-[#a21232] hover:bg-[#880e28] text-white hover:shadow-md'
-                      : 'bg-rose-50 text-[#a21232] hover:bg-rose-100/50 border border-rose-100'
+            {products.map((product) => {
+              const promo = planPromos[product.id];
+              const isPromo = Boolean(promo && promo.isActive && promo.remainingSlots > 0);
+              const isSelected = product.id === 'medium';
+              const price = isPromo ? promo.promoPrice : product.price;
+              const regularPrice = isPromo ? (promo.regularPrice || product.price) : null;
+              const badge = isPromo ? `🔥 LANZAMIENTO (${promo.remainingSlots} CUPOS)` : (product.badge || (product.id === 'medium' ? 'Más Recomendado' : null));
+              
+              return (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  className={`relative rounded-3xl p-6 md:p-8 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
+                    isSelected
+                      ? 'border-2 border-[#a21232] bg-white shadow-xl shadow-rose-950/10 md:scale-[1.02] ring-2 ring-rose-200 z-10'
+                      : 'border border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
                   }`}
                 >
-                  Elegir este plan
-                </Link>
-              </motion.div>
-            ))}
+                  {badge && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#a21232] text-white text-[10px] font-extrabold uppercase px-4 py-1.5 rounded-full shadow-md tracking-wider whitespace-nowrap z-10">
+                      {badge}
+                    </div>
+                  )}
+
+                  <div className="space-y-4 flex-1">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-2 border-b border-gray-100 pb-3">
+                      <div className="space-y-1">
+                        <h3 className="font-serif font-bold text-xl text-gray-900">{product.name}</h3>
+                        <p className="text-[11px] text-[#a21232] font-semibold leading-snug">{product.subtitle}</p>
+                      </div>
+                    </div>
+
+                    {/* Price & Photos Badge */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className={`font-serif text-3xl font-black ${isPromo ? 'text-[#a21232]' : 'text-gray-900'}`}>
+                          ${Number(price).toLocaleString('es-CL')}
+                        </span>
+                        {regularPrice && (
+                          <span className="text-xs text-gray-400 line-through font-semibold">
+                            ${Number(regularPrice).toLocaleString('es-CL')}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-gray-500 font-bold uppercase">CLP</span>
+                      </div>
+
+                      {product.photoBadge && (
+                        <span className="px-2.5 py-1 bg-rose-50 text-[#a21232] border border-rose-200 text-[10px] font-bold rounded-lg flex items-center gap-1">
+                          <ImageIcon className="w-3 h-3 text-[#a21232]" />
+                          <span>{product.photoBadge}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Features List */}
+                    <ul className="space-y-2.5 pt-4 border-t border-gray-100">
+                      {product.features.map((f, fIdx) => {
+                        const isAllIncluded = f.startsWith('✓ Todo');
+                        return (
+                          <li 
+                            key={fIdx} 
+                            className={`text-xs flex items-start gap-2 leading-relaxed py-0.5 ${
+                              isAllIncluded
+                                ? 'font-bold text-[#a21232] bg-rose-50/70 p-2 rounded-lg border border-rose-200/60'
+                                : 'text-gray-600 font-medium'
+                            }`}
+                          >
+                            <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${
+                              isAllIncluded ? 'text-[#a21232]' : 'text-emerald-600'
+                            }`} />
+                            <span>{f}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+
+                  {/* Action Button */}
+                  <Link
+                    href={`/personalizar?plan=${product.id}`}
+                    className={`w-full mt-8 py-3.5 text-center text-xs font-bold rounded-xl transition shadow-sm flex items-center justify-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#a21232] hover:bg-[#880e28] text-white hover:shadow-md'
+                        : 'bg-rose-50 text-[#a21232] hover:bg-rose-100/50 border border-rose-100'
+                    }`}
+                  >
+                    Elegir este plan
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
