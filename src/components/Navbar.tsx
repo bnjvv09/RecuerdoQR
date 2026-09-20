@@ -24,13 +24,7 @@ export default function Navbar() {
   };
 
   return (
-    <>
-      <div className="bg-[#a21232] text-white py-2 overflow-hidden flex justify-center items-center gap-3 relative shadow-md z-50">
-        <span className="animate-heartbeat-slow text-sm md:text-base">✨</span>
-        <span className="font-medium text-[10px] md:text-xs tracking-wider uppercase text-center px-2">Promoción Exclusiva: 20% de descuento en el Plan Máximo</span>
-        <div className="bg-white/20 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold tracking-widest backdrop-blur-sm border border-white/20">🔥 HOY</div>
-      </div>
-      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-rose-100 shadow-sm">
+    <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-rose-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
@@ -152,7 +146,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-      </header>
-    </>
+    </header>
   );
 }
