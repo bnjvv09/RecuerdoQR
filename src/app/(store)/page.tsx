@@ -26,6 +26,7 @@ import {
   Check,
   CheckCircle2,
   Image as ImageIcon,
+  X,
   Cake,
   Mail,
   Baby,
@@ -46,6 +47,25 @@ export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [experiencesCount, setExperiencesCount] = useState<number>(10);
   const [customerReviews, setCustomerReviews] = useState<any[]>([]);
+  const [showExitPopup, setShowExitPopup] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0) {
+        setShowExitPopup(true);
+        // Remove event listener after triggering once
+        document.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+    
+    // Only add in desktop
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      document.addEventListener('mouseleave', handleMouseLeave);
+    }
+    
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, []);
 
   useEffect(() => {
     obtenerProductos().then(setProducts);
@@ -160,148 +180,145 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="overflow-hidden bg-[#fffcfd]">
-      
+    <div className="overflow-hidden bg-gradient-animated">
       {/* Hero Section */}
-      <section className="relative pt-10 pb-16 md:pt-16 md:pb-24 bg-gradient-to-b from-rose-50/50 to-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 md:pt-20 md:pb-32 relative z-10 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        
+        {/* Decorative Blurs Background */}
+        <div className="absolute top-10 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-rose-300/30 rounded-full blur-[80px] md:blur-[100px] -z-10 mix-blend-multiply"></div>
+        <div className="absolute bottom-0 right-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-[#a21232]/10 rounded-full blur-[60px] md:blur-[80px] -z-10"></div>
+
+        {/* Left Text Content */}
+        <div className="flex-1 space-y-6 md:space-y-8 relative z-20 text-center lg:text-left w-full">
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-rose-200 shadow-sm mx-auto lg:mx-0"
+          >
+            <span className="text-rose-500 animate-pulse">❤️</span>
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#a21232]">El regalo del año</span>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[1.05] text-gray-900"
+          >
+            Regala una <br className="hidden lg:block"/>
+            <span className="relative whitespace-nowrap">
+              <span className="relative z-10 text-[#a21232] italic pr-2">experiencia</span>
+              <svg className="absolute -bottom-1 md:-bottom-2 w-full h-3 md:h-4 -z-0 text-rose-200" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 15 100 5 L 100 10 L 0 10 Z" fill="currentColor"/></svg>
+            </span> inolvidable.
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-base md:text-lg text-gray-600 font-light max-w-xl mx-auto lg:mx-0 leading-relaxed"
+          >
+            Tus fotos, su canción favorita y una dedicatoria secreta escondida en un Código QR premium. Una página web exclusiva que durará para siempre.
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-5 pt-4"
+          >
+            <Link 
+              href="/personalizar" 
+              className="btn-glow w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 bg-[#a21232] hover:bg-[#8a0f2a] text-white rounded-[2rem] text-sm font-bold uppercase tracking-wider shadow-[0_10px_40px_rgba(162,18,50,0.4)] transition-transform hover:-translate-y-1 flex items-center justify-center gap-3"
+            >
+              <span>Crear mi QR</span>
+              <Heart className="w-4 h-4 fill-current" />
+            </Link>
             
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-100/50 text-[#a21232] text-[10px] font-bold tracking-widest uppercase"
-              >
-                <Sparkles className="w-3 h-3 fill-current" />
-                Experiencias que enamoran
-              </motion.div>
-              
-              <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="font-serif text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 leading-[1.12]"
-              >
-                Convierte tus recuerdos en una experiencia que <br /> <span className="text-[#a21232] relative inline-block">nunca olvidará ❤️</span>
-              </motion.h1>
-              
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed"
-              >
-                Crea una página personalizada con fotos, música, carta y contador de amor. Recibe tu enlace web exclusivo y código QR digital al instante.
-              </motion.p>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2"
-              >
-                <Link
-                  href="/personalizar"
-                  prefetch={true}
-                  className="px-8 py-4 bg-[#a21232] hover:bg-[#880e28] text-white font-bold rounded-full transition shadow-lg shadow-rose-900/10 flex items-center justify-center gap-2 text-sm"
-                >
-                  Crear mi experiencia ❤️
-                </Link>
-                <Link
-                  href="/ejemplos"
-                  prefetch={true}
-                  className="px-8 py-4 bg-white hover:bg-rose-50/20 text-[#a21232] border border-rose-200 font-bold rounded-full transition text-sm flex items-center justify-center"
-                >
-                  Ver ejemplos
-                </Link>
-              </motion.div>
+            <Link 
+              href="/ejemplos" 
+              className="w-full sm:w-auto px-8 py-4 md:py-5 glass hover:bg-white text-gray-800 rounded-[2rem] text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 group border border-gray-200"
+            >
+              <span className="bg-white/80 p-1 md:p-1.5 rounded-full shadow-sm group-hover:scale-110 transition flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-[#a21232]" />
+              </span>
+              Ver Demostración
+            </Link>
+          </motion.div>
+          
+          {/* Trust badges */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center lg:justify-start gap-3 md:gap-4 pt-6 md:pt-8"
+          >
+            <div className="flex -space-x-3">
+              <img src="https://i.pravatar.cc/100?img=1" className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white shadow-sm" alt="User" />
+              <img src="https://i.pravatar.cc/100?img=5" className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white shadow-sm" alt="User" />
+              <img src="https://i.pravatar.cc/100?img=9" className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white shadow-sm" alt="User" />
+            </div>
+            <div className="text-left">
+              <div className="flex text-amber-400 text-xs md:text-sm">★★★★★</div>
+              <p className="text-[10px] md:text-xs font-semibold text-gray-700">Más de 3,000 parejas sorprendidas</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right STRIKING Visual Mockup */}
+        <div className="flex-1 relative w-full flex justify-center lg:justify-end mt-12 lg:mt-0 max-w-lg mx-auto lg:max-w-none">
+          
+          {/* Big beautiful Glass Card holding the QR */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+            className="glass w-full max-w-xs md:max-w-md rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_60px_rgba(162,18,50,0.15)] animate-float-smooth relative z-20 border border-white"
+          >
+            
+            {/* Top decorative dots */}
+            <div className="flex justify-center gap-1.5 mb-6 md:mb-8">
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-rose-200"></div>
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-rose-300"></div>
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#a21232]"></div>
             </div>
 
-            {/* Right Graphics Mockups (Digital Card + Phone Frame + Roses) */}
-            <div className="lg:col-span-5 relative flex justify-center items-center py-6">
-              
-              {/* Styled Digital QR Card Mockup */}
-              <motion.div
-                initial={{ opacity: 0, x: -30, rotate: -8 }}
-                animate={{ opacity: 1, x: -40, rotate: -4 }}
-                transition={{ duration: 0.8 }}
-                className="relative w-52 aspect-[0.7/1] bg-rose-50 border border-rose-100 rounded-3xl shadow-xl p-5 flex flex-col justify-between z-10"
-              >
-                <div className="flex flex-col items-center text-center space-y-2 mt-2">
-                  <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-white shrink-0">
-                    <Heart className="w-3.5 h-3.5 fill-current" />
-                  </div>
-                  <h4 className="font-serif font-bold text-gray-800 text-sm leading-snug">
-                    Para el amor<br />de mi vida
-                  </h4>
-                </div>
-
-                <div className="flex flex-col items-center gap-3 bg-white p-3 rounded-2xl border border-rose-100/40">
-                  <div className="w-20 h-20 bg-gray-50 flex items-center justify-center rounded-lg border border-gray-150 p-1">
-                    <QrCode className="w-full h-full text-gray-800" />
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Phone Mockup Screen */}
-              <motion.div
-                initial={{ opacity: 0, x: 30, rotate: 8 }}
-                animate={{ opacity: 1, x: 20, rotate: 4 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="relative w-[210px] aspect-[9/18.5] bg-gray-900 rounded-[36px] p-2 shadow-2xl border-[6px] border-gray-800 z-20 overflow-hidden"
-              >
-                <div className="absolute top-0 inset-x-0 h-4 bg-gray-900 rounded-b-xl z-25 flex justify-center">
-                  <div className="w-12 h-2.5 bg-black rounded-b-lg flex items-center justify-center">
-                    <div className="w-4 h-0.5 bg-gray-800 rounded-full mb-0.5"></div>
-                  </div>
-                </div>
-
-                <div className="w-full h-full bg-[#fffafb] rounded-[28px] overflow-hidden flex flex-col pt-5 pb-3 px-3 justify-between relative select-none">
-                  {/* Music header */}
-                  <div className="flex items-center justify-between border-b border-rose-50 pb-1 text-[8px] text-gray-400 font-medium">
-                    <span>Perfect (Ed Sheeran)</span>
-                    <Music className="w-3 h-3 text-rose-500 animate-spin" style={{ animationDuration: '4s' }} />
-                  </div>
-
-                  {/* Main view mock */}
-                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2.5 my-2">
-                    <Heart className="w-6 h-6 text-rose-500 fill-rose-500 animate-bounce" />
-                    <h3 className="font-serif font-extrabold text-gray-900 text-xs leading-tight">Para el amor<br />de mi vida</h3>
-                    
-                    <button className="px-3 py-1 bg-rose-500 text-white font-bold text-[8px] rounded-full shadow-sm">
-                      Te amo ❤️
-                    </button>
-
-                    <div className="w-full aspect-[4/3] rounded-xl bg-rose-50 overflow-hidden relative flex items-center justify-center border border-rose-100/50">
-                      {/* Simulated couples picture inside phone */}
-                      <Image 
-                        src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&auto=format&fit=crop" 
-                        alt="Couples mockup" 
-                        fill
-                        sizes="180px"
-                        priority
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Decorative Rose Flower Image behind or next to mockups */}
-              <div className="absolute right-[-40px] bottom-[-20px] w-36 h-36 opacity-90 pointer-events-none select-none z-0 hidden sm:block relative">
-                <Image 
-                  src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop" 
-                  alt="Decorative Rose" 
-                  fill
-                  sizes="144px"
-                  className="object-contain mix-blend-multiply opacity-25"
-                />
+            <div className="bg-white rounded-[1.5rem] md:rounded-3xl p-4 md:p-6 shadow-lg relative group overflow-hidden">
+              <div className="aspect-square bg-gray-50 flex items-center justify-center rounded-xl md:rounded-2xl border border-gray-100 p-2 md:p-4 relative">
+                <QrCode className="w-full h-full text-gray-800" />
+                {/* Scan Line Animation */}
+                <div className="absolute top-0 left-0 w-full h-1 md:h-1.5 bg-[#a21232] shadow-[0_0_15px_#a21232] opacity-0 group-hover:opacity-100 group-hover:animate-scan"></div>
               </div>
-
             </div>
-          </div>
+
+            <div className="mt-6 md:mt-8 text-center space-y-1 md:space-y-2">
+              <p className="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-widest">Para:</p>
+              <p className="font-serif text-2xl md:text-3xl font-bold text-gray-900">Valentina & Diego</p>
+            </div>
+          </motion.div>
+
+          {/* Floating Elements for depth */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="absolute -top-6 -left-4 md:-top-10 md:-left-10 lg:left-0 glass-dark p-3 md:p-4 rounded-2xl animate-float-delayed z-30 shadow-xl border border-white/40"
+          >
+            <Heart className="w-6 h-6 md:w-8 md:h-8 text-[#a21232] fill-current animate-heartbeat-slow" />
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.8 }}
+            className="absolute bottom-6 -right-2 md:bottom-10 md:-right-5 lg:-right-10 bg-white p-2 md:p-3 rounded-2xl animate-float-smooth shadow-2xl rotate-12 z-30 border border-rose-100"
+          >
+            <div className="w-16 h-16 md:w-24 md:h-24 rounded-lg md:rounded-xl bg-gray-100 overflow-hidden relative">
+              <Image src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&auto=format&fit=crop" alt="Pareja" fill sizes="96px" className="object-cover" />
+            </div>
+          </motion.div>
+
         </div>
       </section>
 
@@ -661,6 +678,71 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      
+      {/* EXIT INTENT POPUP (Glassmorphism Style) */}
+      <div 
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-all duration-500 ${
+          showExitPopup ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div 
+          className={`glass border border-white rounded-[2.5rem] p-10 max-w-lg w-[90%] mx-auto relative shadow-[0_30px_60px_rgba(0,0,0,0.15)] transition-transform duration-500 ${
+            showExitPopup ? 'scale-100' : 'scale-95'
+          }`}
+        >
+          
+          <button 
+            onClick={() => setShowExitPopup(false)}
+            className="absolute top-6 right-6 w-10 h-10 bg-white/50 hover:bg-white rounded-full flex items-center justify-center text-gray-500 transition shadow-sm"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          
+          <div className="text-center space-y-5">
+            <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-rose-200 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner border border-white">
+              🎁
+            </div>
+            
+            <h3 className="font-serif text-3xl font-black text-gray-900 leading-tight">
+              No dejes pasar el momento.
+            </h3>
+            <p className="text-gray-600 font-light text-sm px-4">
+              Un regalo así se recuerda para toda la vida. Llévate la experiencia completa con un <strong className="text-[#a21232] font-semibold">15% de descuento adicional</strong>, solo por hoy.
+            </p>
+            
+            <div className="bg-white/60 border border-white shadow-inner rounded-2xl p-4 flex items-center justify-between mt-6">
+              <span className="font-mono font-bold text-[#a21232] text-xl tracking-widest pl-2">SORPRESA15</span>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText('SORPRESA15');
+                  setCopiedCode(true);
+                  setTimeout(() => setCopiedCode(false), 2000);
+                }}
+                className={`text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-colors shadow-md ${
+                  copiedCode ? 'bg-emerald-500' : 'bg-gray-900 hover:bg-[#a21232]'
+                }`}
+              >
+                {copiedCode ? '¡COPIADO!' : 'COPIAR'}
+              </button>
+            </div>
+
+            <Link
+              href="/personalizar"
+              onClick={() => setShowExitPopup(false)}
+              className="w-full mt-6 py-4 bg-[#a21232] hover:bg-[#8a0f2a] text-white font-bold rounded-2xl text-sm uppercase tracking-wider shadow-[0_10px_20px_rgba(162,18,50,0.3)] transition-transform hover:-translate-y-0.5 block"
+            >
+              Aplicar Descuento
+            </Link>
+            
+            <button 
+              onClick={() => setShowExitPopup(false)} 
+              className="text-xs text-gray-500 font-medium hover:text-gray-800 pt-3 transition block w-full text-center"
+            >
+              No gracias, no quiero el descuento
+            </button>
+          </div>
+        </div>
+      </div>
       
     </div>
   );
