@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Generates a cryptographically secure UUID (v4)
  * Uses native crypto.randomUUID() when available with fallback.
  */

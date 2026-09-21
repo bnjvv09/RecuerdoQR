@@ -1,1 +1,1 @@
-﻿export * from './AdminOrdersTable'; export { default } from './AdminOrdersTable';
+export * from './AdminOrdersTable'; export { default } from './AdminOrdersTable';

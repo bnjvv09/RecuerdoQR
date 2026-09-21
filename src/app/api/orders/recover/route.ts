@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       experiences = exps || [];
     }
 
-    const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
+    const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.vercel.app';
 
     // 3. Resend email for the latest order
     if (orders.length > 0 && experiences.length > 0) {

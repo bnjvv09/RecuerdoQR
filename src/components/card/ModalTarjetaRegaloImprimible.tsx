@@ -1,1 +1,1 @@
-﻿export * from './PrintableGiftCardModal'; export { default } from './PrintableGiftCardModal';
+export * from './PrintableGiftCardModal'; export { default } from './PrintableGiftCardModal';

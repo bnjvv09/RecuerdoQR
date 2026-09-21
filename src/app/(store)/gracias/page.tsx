@@ -197,7 +197,7 @@ function GraciasContent() {
     );
   }
 
-  const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
+  const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.vercel.app';
   const experienceLink = `${appUrl}/amor/${experience.slug}`;
   const formattedDate = experience.special_date || new Date().toLocaleDateString('es-CL');
 

@@ -270,7 +270,7 @@ export default async function Image() {
                 fontWeight: 500,
               }}
             >
-              recuerdo-qr.vercel.app
+              recuerdoqr.vercel.app
             </div>
           </div>
         </div>

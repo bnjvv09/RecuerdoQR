@@ -28,7 +28,7 @@ export default function ImprimirTarjetaPage() {
         if (isMounted) {
           setExperience(exp);
           if (exp) {
-            const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
+            const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.vercel.app';
             const liveUrl = `${domain}/${exp.theme || 'amor'}/${exp.slug}`;
             const expConfig = (exp.config as any) || {};
 
@@ -117,7 +117,7 @@ export default function ImprimirTarjetaPage() {
   const activeFontFamily = obtenerFamiliaFuente(cardFont);
   const isHorizontal = cardOrientation === 'horizontal';
 
-  const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdo-qr.vercel.app';
+  const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://recuerdoqr.vercel.app';
   const liveUrl = `${domain}/${experience.theme || 'amor'}/${experience.slug}`;
 
   const handlePrint = () => {

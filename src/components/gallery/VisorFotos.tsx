@@ -1,1 +1,1 @@
-﻿export * from './PhotoLightbox'; export { default } from './PhotoLightbox';
+export * from './PhotoLightbox'; export { default } from './PhotoLightbox';

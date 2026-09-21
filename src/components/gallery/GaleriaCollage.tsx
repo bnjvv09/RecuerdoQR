@@ -1,1 +1,1 @@
-﻿export * from './CollageGallery'; export { default } from './CollageGallery';
+export * from './CollageGallery'; export { default } from './CollageGallery';

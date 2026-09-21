@@ -1,1 +1,1 @@
-﻿export * from './WhatsAppFloatingButton'; export { default } from './WhatsAppFloatingButton';
+export * from './WhatsAppFloatingButton'; export { default } from './WhatsAppFloatingButton';

@@ -1,1 +1,1 @@
-﻿export * from './charactersData';
+export * from './charactersData';

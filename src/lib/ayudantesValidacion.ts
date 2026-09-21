@@ -1,1 +1,1 @@
-﻿export * from './validationHelpers';
+export * from './validationHelpers';

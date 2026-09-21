@@ -1,1 +1,1 @@
-﻿export * from './AdminPlansPanel'; export { default } from './AdminPlansPanel';
+export * from './AdminPlansPanel'; export { default } from './AdminPlansPanel';

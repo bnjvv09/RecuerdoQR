@@ -1,1 +1,1 @@
-﻿export * from './imageCompression';
+export * from './imageCompression';

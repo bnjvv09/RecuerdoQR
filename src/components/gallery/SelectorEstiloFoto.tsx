@@ -1,1 +1,1 @@
-﻿export * from './PhotoStyleSelector'; export { default } from './PhotoStyleSelector';
+export * from './PhotoStyleSelector'; export { default } from './PhotoStyleSelector';

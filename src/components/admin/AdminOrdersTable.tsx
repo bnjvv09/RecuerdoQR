@@ -158,7 +158,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
 
   const handleDownloadQr = async (slug: string) => {
     try {
-      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.vercel.app';
       const liveUrl = `${origin}/amor/${slug}`;
       const qrDataUrl = await QRCode.toDataURL(liveUrl, { width: 600, margin: 2 });
       const link = document.createElement('a');
@@ -491,7 +491,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                       <button
                         type="button"
                         onClick={async () => {
-                          const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdo-qr.vercel.app';
+                          const origin = typeof window !== 'undefined' ? window.location.origin : 'https://recuerdoqr.vercel.app';
                           const liveUrl = `${origin}/amor/${selectedExp.slug}`;
                           const expConfig = (selectedExp.config as any) || {};
                           const foundChar = expConfig.selectedCharacter 
@@ -549,7 +549,7 @@ export default function AdminOrdersTable({ onOpenPrintableModal, onEditExperienc
                       {selectedOrder.customer_phone && (
                         <a
                           href={`https://wa.me/${selectedOrder.customer_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                            `¡Hola ${selectedOrder.customer_name}! ❤️ Tu Recuerdo QR ya está listo. Puedes ver tu página en vivo aquí: https://recuerdo-qr.vercel.app/amor/${selectedExp.slug} ¡Esperamos que les encante!`
+                            `¡Hola ${selectedOrder.customer_name}! ❤️ Tu Recuerdo QR ya está listo. Puedes ver tu página en vivo aquí: https://recuerdoqr.vercel.app/amor/${selectedExp.slug} ¡Esperamos que les encante!`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"

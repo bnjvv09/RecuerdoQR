@@ -1,4 +1,4 @@
-Ôªø'use client';
+'use client';
 
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -24,10 +24,10 @@ export default function ErrorBoundary({
 
         <div className="space-y-2">
           <h1 className="font-serif text-xl sm:text-2xl font-bold text-gray-900">
-            Algo inesperado ocurri√≥
+            Algo inesperado ocurriÛ
           </h1>
           <p className="text-xs text-gray-500 font-light leading-relaxed">
-            No te preocupes, tus datos e informaci√≥n est√°n seguros. Hubo un peque√±o inconveniente al cargar esta vista.
+            No te preocupes, tus datos e informaciÛn est·n seguros. Hubo un pequeÒo inconveniente al cargar esta vista.
           </p>
         </div>
 

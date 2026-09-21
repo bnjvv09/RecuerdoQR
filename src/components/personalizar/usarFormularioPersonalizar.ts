@@ -1,1 +1,1 @@
-﻿export * from './usePersonalizarForm';
+export * from './usePersonalizarForm';

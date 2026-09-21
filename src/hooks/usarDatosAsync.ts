@@ -1,1 +1,1 @@
-﻿export * from './useAsyncData';
+export * from './useAsyncData';
