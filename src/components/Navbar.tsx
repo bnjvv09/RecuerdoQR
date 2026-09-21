@@ -15,6 +15,7 @@ export default function Navbar() {
     { name: 'Cómo funciona', href: '/#como-funciona' },
     { name: 'Productos', href: '/planes' },
     { name: 'Ejemplos', href: '/ejemplos' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Preguntas', href: '/#preguntas' },
   ];
 

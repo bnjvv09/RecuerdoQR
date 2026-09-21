@@ -19,7 +19,8 @@ import {
   Star,
   Lock,
   Unlock,
-  Scissors
+  Scissors,
+  Gift
 } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
@@ -653,6 +654,45 @@ function GraciasContent() {
             <div className="text-[11px] text-gray-500 font-light px-1">
               ✉️ Confirmación y enlace enviados a: <strong>{order.customer_email}</strong>
             </div>
+            
+            {/* REFERRAL BLOCK */}
+            <div className="mt-8 bg-gradient-to-br from-[#a21232] to-[#8a0f2a] rounded-3xl p-6 md:p-8 text-white text-center shadow-lg relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-black/10 rounded-full blur-2xl"></div>
+              
+              <div className="relative z-10">
+                <Gift className="w-10 h-10 mx-auto mb-3 text-rose-200" />
+                <h3 className="font-serif text-xl md:text-2xl font-bold mb-2">¡Comparte el Amor!</h3>
+                <p className="text-xs md:text-sm text-rose-100 mb-5 px-2 leading-relaxed">
+                  ¿Tienes algún amigo al que le vendría bien un detalle como este? Regálale un <strong>15% de descuento</strong> usando este código secreto.
+                </p>
+                
+                <div className="bg-white/10 border border-white/20 rounded-xl p-2 pl-4 flex items-center justify-between backdrop-blur-sm mb-5 shadow-inner">
+                  <span className="font-mono font-bold tracking-widest text-lg md:text-xl">AMIGOS15</span>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText('AMIGOS15');
+                      toast.success('¡Código copiado!');
+                    }}
+                    className="bg-white text-[#a21232] text-[10px] md:text-xs font-bold uppercase px-4 py-2.5 rounded-lg hover:bg-rose-50 transition shadow-sm"
+                  >
+                    Copiar
+                  </button>
+                </div>
+                
+                <a 
+                  href={`https://wa.me/?text=${encodeURIComponent(`¡Acabo de crearle una experiencia súper linda a mi pareja en RecuerdoQR! Te comparto este código secreto (AMIGOS15) por si quieres hacer una tú también con 15% de descuento: ${appUrl}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-[#25D366] hover:bg-[#22bf5b] text-white font-bold rounded-xl text-xs md:text-sm flex items-center justify-center gap-2 transition shadow-md hover:-translate-y-0.5"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Enviar a un amigo por WhatsApp
+                </a>
+              </div>
+            </div>
+            {/* END REFERRAL BLOCK */}
+            
           </div>
 
         </div>
