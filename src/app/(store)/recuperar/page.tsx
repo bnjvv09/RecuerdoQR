@@ -1,4 +1,4 @@
-'use client';
+Ôªø'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -28,7 +28,7 @@ export default function RecuperarPedidoPage() {
     e.preventDefault();
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      toast.error('Por favor ingresa un correo electrÛnico v·lido');
+      toast.error('Por favor ingresa un correo electr√≥nico v√°lido');
       return;
     }
 
@@ -50,10 +50,10 @@ export default function RecuperarPedidoPage() {
       }
 
       setExperiences(data.experiences || []);
-      setSuccessMessage(data.message || '°Pedidos encontrados!');
+      setSuccessMessage(data.message || '¬°Pedidos encontrados!');
       setSearched(true);
       toast.dismiss(toastId);
-      toast.success('°Encontramos tus recuerdos QR!');
+      toast.success('¬°Encontramos tus recuerdos QR!');
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || 'Error al buscar tu pedido');
@@ -77,7 +77,7 @@ export default function RecuperarPedidoPage() {
           Recuperar mi Recuerdo QR
         </h1>
         <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto font-light leading-relaxed">
-          øNo encuentras el correo con tu enlace o necesitas volver a descargar la tarjeta para imprimir? Ingresa tu email y te los mostraremos de inmediato.
+          ¬øNo encuentras el correo con tu enlace o necesitas volver a descargar la tarjeta para imprimir? Ingresa tu email y te los mostraremos de inmediato.
         </p>
       </div>
 
@@ -86,7 +86,7 @@ export default function RecuperarPedidoPage() {
         <form onSubmit={handleRecover} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">
-              Correo ElectrÛnico de la Compra
+              Correo Electr√≥nico de la Compra
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -121,7 +121,7 @@ export default function RecuperarPedidoPage() {
         </form>
 
         <p className="text-[11px] text-gray-400 text-center pt-2">
-          ?? B˙squeda protegida. Solo se muestran los recuerdos vinculados al correo exacto.
+          üîí B√∫squeda protegida. Solo se muestran los recuerdos vinculados al correo exacto.
         </p>
       </div>
 
@@ -154,7 +154,7 @@ export default function RecuperarPedidoPage() {
 
                       {exp.special_date && (
                         <span className="text-[10px] font-mono bg-rose-50 text-rose-800 border border-rose-200 px-2.5 py-1 rounded-full self-start sm:self-auto">
-                          ?? {exp.special_date}
+                          üìÖ {exp.special_date}
                         </span>
                       )}
                     </div>
@@ -186,13 +186,13 @@ export default function RecuperarPedidoPage() {
             </div>
           ) : (
             <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 text-center space-y-3">
-              <span className="text-3xl block">????</span>
+              <span className="text-3xl block">üîçüíî</span>
               <h3 className="font-bold text-sm text-gray-900">No encontramos compras con este correo</h3>
               <p className="text-xs text-gray-500 font-light max-w-sm mx-auto leading-relaxed">
-                Verifica que el correo estÈ escrito sin errores ortogr·ficos. Si compraste recientemente o pagaste con otro email, escrÌbenos directamente a WhatsApp y te ayudamos de inmediato.
+                Verifica que el correo est√© escrito sin errores ortogr√°ficos. Si compraste recientemente o pagaste con otro email, escr√≠benos directamente a WhatsApp y te ayudamos de inmediato.
               </p>
               <a
-                href="https://wa.me/56912345678?text=Hola!%20No%20encuentro%20el%20enlace%20de%20mi%20Recuerdo%20QR.%20øMe%20pueden%20ayudar?"
+                href="https://wa.me/56912345678?text=Hola!%20No%20encuentro%20el%20enlace%20de%20mi%20Recuerdo%20QR.%20¬øMe%20pueden%20ayudar?"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition"
@@ -212,7 +212,7 @@ export default function RecuperarPedidoPage() {
           className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 font-semibold transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Volver a la P·gina Principal</span>
+          <span>Volver a la P√°gina Principal</span>
         </Link>
       </div>
 
