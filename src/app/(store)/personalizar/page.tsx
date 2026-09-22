@@ -407,7 +407,7 @@ function PersonalizarContent() {
       )}
 
       {/* Stepper Navigation */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-3 sm:p-4 shadow-xs">
+      <div className="bg-white dark:bg-[#121218] rounded-3xl border border-gray-200 dark:border-white/10 p-3 sm:p-4 shadow-xs">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">
           {steps.map((s) => {
             const isActive = form.step === s.num;
@@ -424,8 +424,8 @@ function PersonalizarContent() {
                   isActive
                     ? 'bg-[#a21232] text-white shadow-md'
                     : isCompleted
-                    ? 'bg-rose-50 text-[#a21232] hover:bg-rose-100'
-                    : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                    ? 'bg-rose-50 dark:bg-rose-950/40 text-[#a21232] dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40'
+                    : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10'
                 }`}
               >
                 <span className="truncate">{s.label}</span>
@@ -436,7 +436,7 @@ function PersonalizarContent() {
       </div>
 
       {/* Step View Container */}
-      <div className="bg-white/70 backdrop-blur-xs rounded-3xl border border-gray-200/80 p-5 sm:p-8 shadow-xs">
+      <div className="bg-white/70 dark:bg-[#121218] backdrop-blur-xs rounded-3xl border border-gray-200/80 dark:border-white/10 p-5 sm:p-8 shadow-xs">
         
         {/* Step 1: Theme Selection */}
         {form.step === 1 && (
